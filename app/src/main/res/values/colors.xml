@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="myLightPrimaryColor">#A3D2FA</color>
+    <color name="myPrimaryColor">#03A9F4</color>
+    <color name="myPrimaryDarkColor">#0288D1</color>
+    <color name="myPrimaryDarkestColor">#015F92</color>
+    <color name="myAccentColor">#FF5722</color>
+    <color name="myAccentDarkColor">#EE3900</color>
+    <color name="myDrawerBackground">#FFF</color>
+    <color name="myWindowBackground">#FFFFFF</color>
+    <color name="myTextPrimaryColor">#212121</color>
+    <color name="myTextSecondaryColor">#727272</color>
+    <color name="myNavigationColor">#000000</color>
+    <color name="myDividerColor">#B6B6B6</color>
+
+    <color name="selected_gray">#ffdbdbdb</color>
+
+
+    <color name="primaryColor">#1e7daa</color>
+    <color name="secondaryColor">#0c5d88</color>
+    <color name="primaryColorTransparent">#000c5d88</color>
+    <color name="primaryColorSemiTransparent">#bb0c5d88</color>
+    <color name="tertiaryColor">#a5c3c3c3</color>
+    <color name="accent">#1565C0</color>
+    <color name="accentLight">#F4FF81</color>
+
+    <color name="backgroundColor">#eeeeee</color>
+    <color name="foregroundColor">#ffffff</color>
+
+    <color name="internalBorderColor">#d0d0d0</color>
+    <color name="externalBorderColor">#e3e3e3</color>
+
+    <color name="grayTextColor">#a5828282</color>
+    <color name="grayDarkerTextColor">#a5161616</color>
+
+    <color name="labelTextColor">#0c5d88</color>
+
+
+
+    <color name="ultra_dark">#29303F</color>
+    <color name="dark">#696E79</color>
+    <color name="ultra_dark_overlay">#0D29303F</color>
+</resources>

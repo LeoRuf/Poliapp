@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+    <!--
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginBottom="2dp"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/main_content2">
+
+                <RelativeLayout
+                    android:layout_width="80dp"
+                    android:layout_height="wrap_content"
+                    android:padding="5dp"
+                    android:layout_gravity="center_vertical"
+                    >
+                    <ImageView
+                        android:id="@+id/category_icon2"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:src="@drawable/blue_train_2"
+                        />
+                    <ImageView
+                        android:id="@+id/sell_icon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/sell_icon"
+                        android:layout_alignTop="@id/category_icon2"
+                        android:layout_alignEnd="@id/category_icon2"
+                        android:layout_alignRight="@id/category_icon2"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginTop="4dp"
+                        android:gravity="top" />
+
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="1">
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="8dp">
+                        <TextView
+                            android:id="@+id/header_text2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Vendo biglietto treno"
+                            android:textColor="@color/myPrimaryColor"
+                            android:textSize="23sp"/>
+                        <TextView
+                            android:id="@+id/published_by2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/header_text2"
+                            android:layout_marginTop="6dp"
+                            android:text="Published by "
+                            android:textSize="13sp"
+                            android:textStyle="italic"/>
+                        <TextView
+                            android:id="@+id/publisher_name2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/header_text2"
+                            android:layout_toRightOf="@+id/published_by2"
+                            android:layout_marginTop="6dp"
+                            android:textColor="@color/myAccentColor"
+                            android:text="Enrico Di Fazio"
+                            android:textStyle="bold"
+                            android:textSize="13sp" />
+                        <TextView
+                            android:id="@+id/blog_content2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/publisher_name2"
+                            android:layout_marginTop="12dp"
+                            android:text="Vendo biglietto ITALO: da TORINO PORTA SUSA (08:47) a ROMA TERMINI (13:05) del 24/11/2015\nPrez..."
+                            android:textSize="13sp" />
+                        <ImageView
+                            android:id="@+id/time2"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:layout_below="@+id/blog_content2"
+                            android:layout_marginTop="6dp"
+                            android:src="@drawable/timetable_icon" />
+                        <TextView
+                            android:id="@+id/time_text2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/blog_content2"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="9dp"
+                            android:text="Published 20 minutes ago"
+                            android:textSize="11sp"
+                            android:textStyle="italic"/>
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/selected_gray"
+                android:layout_below="@id/main_content2"
+                android:id="@+id/separator2"
+                android:layout_marginTop="4dp"/>
+            <Button
+                android:id="@+id/read_more2"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/separator2"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:text="SHARE"
+                android:background="@color/primaryColorTransparent"
+
+                />
+            <Button
+                android:id="@+id/share2"
+                android:layout_width="wrap_content"
+                android:layout_height="42dp"
+                android:layout_below="@+id/separator2"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:text="EDIT"
+                android:textColor="@color/myAccentColor"
+                android:layout_toEndOf="@+id/read_more2"
+                android:layout_toRightOf="@+id/read_more2"
+                android:background="@color/primaryColorTransparent"
+                />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+-->
+    <android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="17dp"
+        android:layout_marginBottom="2dp"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="3dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:focusable="true"
+        android:clickable="true"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/main_content"
+            android:minHeight="120dp"
+            >
+
+            <RelativeLayout
+                android:layout_width="80dp"
+                android:layout_height="match_parent"
+                >
+                <ImageView
+                    android:id="@+id/category_icon"
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp"
+                    android:src="@drawable/blue_train_2"
+                    android:layout_marginTop="20dp"
+                    />
+                <ImageView
+                    android:id="@+id/search_icon"
+                    android:layout_width="25dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/search_icon"
+                    android:layout_below="@+id/category_icon"
+                    android:layout_marginLeft="15dp"
+                    android:gravity="top" />
+                <ImageView
+                    android:id="@+id/sell_icon"
+                    android:layout_width="25dp"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/sell_icon"
+                    android:layout_below="@+id/category_icon"
+                    android:layout_toRightOf="@id/search_icon"
+                    android:alpha="0.3"
+                    android:gravity="top" />
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="0.8">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp">
+                    <TextView
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cerco biglietto treno"
+                        android:textColor="@color/myPrimaryColor"
+                        android:textSize="23sp"/>
+                    <TextView
+                        android:id="@+id/published_by"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/title"
+                        android:layout_marginTop="6dp"
+                        android:text="Published by "
+                        android:textSize="13sp"
+                        android:textStyle="italic"/>
+                    <TextView
+                        android:id="@+id/publisher_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/title"
+                        android:layout_toRightOf="@+id/published_by"
+                        android:layout_marginTop="6dp"
+                        android:textColor="@color/myAccentColor"
+                        android:text="Enrico Di Fazio"
+                        android:textStyle="bold"
+                        android:textSize="13sp"
+                        android:background="?android:attr/selectableItemBackground"
+                        android:focusable="true"
+                        android:clickable="true" />
+                    <TextView
+                        android:id="@+id/blog_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/publisher_name"
+                        android:layout_marginTop="12dp"
+                        android:text="Cerco biglietto treno da TORINO a ROMA giorno 25/11/2015 a qualsiasi orar..."
+                        android:textSize="13sp" />
+                    <ImageView
+                        android:id="@+id/time"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_below="@+id/blog_content"
+                        android:layout_marginTop="6dp"
+                        android:src="@drawable/timetable_icon" />
+                    <TextView
+                        android:id="@+id/time_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/blog_content"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="9dp"
+                        android:text="Published 20 minutes ago"
+                        android:textSize="11sp"
+                        android:textStyle="italic"/>
+
+                </RelativeLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/selected_gray"
+            android:layout_below="@id/main_content"
+            android:id="@+id/separator"
+            android:layout_marginTop="4dp"/>
+        <Button
+            android:id="@+id/share"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/separator"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="SHARE"
+            android:background="?android:attr/selectableItemBackground"
+            android:focusable="true"
+            android:clickable="true"
+            />
+        <Button
+            android:id="@+id/edit"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_below="@+id/separator"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
+            android:text="EDIT"
+            android:textColor="@color/myAccentColor"
+            android:layout_toEndOf="@+id/share"
+            android:layout_toRightOf="@+id/share"
+            android:background="?android:attr/selectableItemBackground"
+            android:focusable="true"
+            android:clickable="true"
+            />
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
