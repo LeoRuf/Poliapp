@@ -3,6 +3,8 @@ package it.polito.mobilecourseproject.poliapp;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import it.polito.mobilecourseproject.poliapp.model.User;
+
 /**
  *
  */

@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import it.polito.mobilecourseproject.poliapp.noticeboard.NoticeboardFragment;
+
 public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;

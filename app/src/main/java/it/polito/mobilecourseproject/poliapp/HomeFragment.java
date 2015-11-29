@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import it.polito.mobilecourseproject.poliapp.R;
+
 
 public class HomeFragment extends Fragment {
 

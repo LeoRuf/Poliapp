@@ -4,8 +4,8 @@
     <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/AccountManager.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/AsyncTaskWithoutProgressBar.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/Connectivity.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/Notice.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/User.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/model/Notice.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/model/User.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_account_box.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_add.png" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_filter_white.png" charset="windows-1252" />

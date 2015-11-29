@@ -4,8 +4,10 @@ import android.app.Application;
 import android.content.Context;
 
 import com.parse.Parse;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
+
+import it.polito.mobilecourseproject.poliapp.model.Notice;
+import it.polito.mobilecourseproject.poliapp.model.User;
 
 /**
  * Created by a-endifa on 18/11/2015.
