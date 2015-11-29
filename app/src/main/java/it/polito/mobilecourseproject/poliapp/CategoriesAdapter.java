@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -59,6 +60,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
         // - replace the contents of the view with that element
 
         ((TextView)holder.linearLayout.findViewById(R.id.category_name)).setText(categories[position]);
+        ((ImageView)holder.linearLayout.findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(categories[position]));
+
         if(!categoriesToBeFiltered.contains(categories[position])) {
             ((TextView) holder.linearLayout.findViewById(R.id.category_name)).setTextColor(context.getResources().getColor(R.color.myTextSecondaryColor));
             (holder.linearLayout.findViewById(R.id.category_icon)).setAlpha((float) 0.3);

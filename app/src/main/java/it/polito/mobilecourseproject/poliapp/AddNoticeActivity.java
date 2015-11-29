@@ -13,6 +13,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -130,6 +131,8 @@ public class AddNoticeActivity extends AppCompatActivity implements SearchView.O
                         if(!categoriesSelected.isEmpty()) {
                             categoryTextView.setText(categoriesSelected.get(0));
                             categoryTextView.setTextColor(getResources().getColor(R.color.myTextPrimaryColor));
+                            ((ImageView)findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(categoriesSelected.get(0)));
+                            ((ImageView)findViewById(R.id.category_icon)).setAlpha((float)1);
                         }
                         dialog.dismiss();
                     }

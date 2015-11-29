@@ -25,12 +25,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
+import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -40,7 +46,9 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
     private OnFragmentInteractionListener mListener;
     private List<String> categoriesFiltered;
     private List<String> categoriesToBeFiltered;
+    private NoticesAdapter noticesAdapter;
     CoordinatorLayout.Behavior behavior;
+    SwipeRefreshLayout swypeRefreshLayout;
     int scrollFlags;
 
 
@@ -54,6 +62,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
         setHasOptionsMenu(true);
         categoriesToBeFiltered = new LinkedList<>();
         categoriesFiltered = new LinkedList<>();
+        noticesAdapter = new NoticesAdapter();
     }
 
 
@@ -63,18 +72,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
         // Inflate the layout for this fragment
         View fragmentView = inflater.inflate(R.layout.fragment_noticeboard, container, false);
 
-        SwipeRefreshLayout swypeRefreshLayout = ((SwipeRefreshLayout) fragmentView.findViewById(R.id.swipeRefreshLayout));
-
-        swypeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                //TODO: Refresh
-            }
-        });
-
-        //TODO: Capire come cambiare il colore
-        swypeRefreshLayout.setColorSchemeColors(R.color.myAccentColor);
-
+        swypeRefreshLayout = ((SwipeRefreshLayout) fragmentView.findViewById(R.id.swipeRefreshLayout));
 
         RecyclerView recyclerView = (RecyclerView) fragmentView.findViewById(R.id.itemsRecyclerView);
 
@@ -86,16 +84,41 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
-        recyclerView.setAdapter(new NoticesAdapter(null));
+        recyclerView.setAdapter(noticesAdapter);
 
         FloatingActionButton fab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getActivity(),AddNoticeActivity.class);
+                Intent intent = new Intent(getActivity(), AddNoticeActivity.class);
                 startActivity(intent);
             }
         });
+
+        search();
+
+        swypeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                ParseQuery<Notice> query = ParseQuery.getQuery("Notice");
+                query.setLimit(1000); //TODO: Aggiungere controllo timestamp
+                query.findInBackground(new FindCallback<Notice>() {
+                    @Override
+                    public void done(List<Notice> objects, ParseException e) {
+                        ParseObject.pinAllInBackground(objects, new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                search();
+                            }
+                        });
+                    }
+                });
+
+            }
+        });
+
+        //TODO: Capire come cambiare il colore
+        swypeRefreshLayout.setColorSchemeColors(R.color.myAccentColor);
 
         return fragmentView;
     }
@@ -311,12 +334,22 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
     }
 
     public void search(){
-
+        ParseQuery<Notice> query = ParseQuery.getQuery("Notice");
+        query.fromLocalDatastore();
+        query.setLimit(1000);
+        query.findInBackground(new FindCallback<Notice>() {
+            @Override
+            public void done(List<Notice> objects, ParseException e) {
+                noticesAdapter.setNotices(objects);
+                noticesAdapter.notifyDataSetChanged();
+                swypeRefreshLayout.setRefreshing(false);
+            }
+        });
     }
 
 
     public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.ViewHolder> {
-        private ParseObject[] notices;
+        private List<Notice> notices;
 
         // Provide a reference to the views for each data item
         // Complex data items may need more than one view per item, and
@@ -331,9 +364,13 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
             }
         }
 
-        // Provide a suitable constructor (depends on the kind of dataset)
-        public NoticesAdapter(ParseObject[] myDataset) {
+        public void setNotices(List<Notice> myDataset) {
             notices = myDataset;
+        }
+
+        // Provide a suitable constructor (depends on the kind of dataset)
+        public NoticesAdapter() {
+            notices = new ArrayList<>();
         }
 
         // Create new views (invoked by the layout manager)
@@ -353,6 +390,9 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
         public void onBindViewHolder(ViewHolder holder, int position) {
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
+
+            ((TextView)holder.cardView.findViewById(R.id.title)).setText(notices.get(position).getTitle());
+            ((TextView)holder.cardView.findViewById(R.id.description)).setText(notices.get(position).getDescription());
 
             holder.cardView.findViewById(R.id.share).setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -382,15 +422,16 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
                 }
             });
 
+            ((ImageView)holder.cardView.findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory("NOME DELLA CATEGORIA"));
+
+
         }
 
         // Return the size of your dataset (invoked by the layout manager)
         @Override
         public int getItemCount() {
 
-            return 4;
-
-            //return notices.length;
+            return notices.size();
         }
     }
 

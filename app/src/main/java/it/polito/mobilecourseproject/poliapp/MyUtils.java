@@ -1,8 +1,5 @@
 package it.polito.mobilecourseproject.poliapp;
 
-/**
- * Created by a-endifa on 18/11/2015.
- */
 public class MyUtils {
 
     private static String[] categories= {
@@ -18,7 +15,7 @@ public class MyUtils {
                 "Other 5",
                 "Other 6",
                 "Other 7"
-    };;
+    };
 
     public final static int CATEGORY_TYPE_SEARCH=1;
     public final static int CATEGORY_TYPE_SELL=2;
@@ -28,8 +25,8 @@ public class MyUtils {
         return categories;
     }
 
-    public int getIconForCategory(String category){
-        return 0;
+    public static int getIconForCategory(String category){
+        return R.drawable.blue_train_2;
     }
 
     public int getTypeForCategory(String category) {
