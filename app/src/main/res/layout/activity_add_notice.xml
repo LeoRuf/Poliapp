@@ -163,10 +163,10 @@
                         android:id="@+id/addPhotoButton"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/button_height"
-                        android:layout_marginBottom="@dimen/activity_vertical_margin"
+                        android:layout_marginBottom="9dp"
                         android:layout_marginLeft="@dimen/activity_horizontal_margin"
                         android:layout_marginRight="@dimen/activity_horizontal_margin"
-                        android:layout_marginTop="@dimen/margin_medium"
+                        android:layout_marginTop="4dp"
                         android:visibility="gone"
                         android:onClick="addPhoto"
                         android:text="ATTACH A PHOTO"
@@ -181,9 +181,6 @@
                         app:pb_textError="Error... Retry"
                         app:pb_textProgress="Uploading..."
                         />
-
-
-
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>

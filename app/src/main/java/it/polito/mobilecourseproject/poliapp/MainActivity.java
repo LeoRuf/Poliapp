@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import it.polito.mobilecourseproject.poliapp.noticeboard.NoticeboardFragment;
+import it.polito.mobilecourseproject.poliapp.time_schedule.TimeScheduleFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -99,6 +100,19 @@ public class MainActivity extends AppCompatActivity {
 
                             case R.id.nav_messages:
                                 Toast.makeText(getApplicationContext(), "Messages Selected", Toast.LENGTH_SHORT).show();
+                                return true;
+
+                            case R.id.nav_time_schedule:
+                                TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)getSupportFragmentManager().findFragmentByTag("TIMESCHEDULE_FRAGMENT");
+                                if(timeScheduleFragment==null)
+                                    timeScheduleFragment = new TimeScheduleFragment();
+
+                                if (!timeScheduleFragment.isVisible()) {
+                                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.replace(R.id.frame,timeScheduleFragment,"TIMESCHEDULE_FRAGMENT");
+                                    fragmentTransaction.commit();
+                                }
+
                                 return true;
 
                             default:
