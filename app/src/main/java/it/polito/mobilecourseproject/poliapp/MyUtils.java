@@ -1,13 +1,22 @@
 package it.polito.mobilecourseproject.poliapp;
 
+import java.util.Random;
+
 public class MyUtils {
 
+    private final static String SEARCH_TRAIN = "Looking for train ticket";
+    private final static String SELL_TRAIN = "Selling train ticket";
+    private final static String SELL_BOOK = "Selling books";
+    private final static String SEARCH_BOOK = "Looking for books";
+    private final static String RENT_HOUSE = "Renting house";
+
+
     private static String[] categories= {
-        "Looking for train ticket",
-                "Selling train ticket",
-                "Selling books",
-                "Looking for books",
-                "Renting house",
+            SEARCH_TRAIN,
+            SELL_TRAIN,
+            SELL_BOOK,
+            SEARCH_BOOK,
+            RENT_HOUSE,
                 "Other 1",
                 "Other 2",
                 "Other 3",
@@ -17,19 +26,23 @@ public class MyUtils {
                 "Other 7"
     };
 
-    public final static int CATEGORY_TYPE_SEARCH=1;
-    public final static int CATEGORY_TYPE_SELL=2;
-    public final static int CATEGORY_TYPE_OTHER=0;
-
     public static String[] getCategories(){
         return categories;
     }
 
     public static int getIconForCategory(String category){
-        return R.drawable.blue_train_2;
-    }
 
-    public int getTypeForCategory(String category) {
-        return CATEGORY_TYPE_OTHER;
+        if(category==null)
+            return R.drawable.cat_no_category;
+
+        switch(category) {
+            case SEARCH_TRAIN: return R.drawable.cat_train_purple;
+            case SELL_TRAIN: return R.drawable.cat_train_green;
+            case SELL_BOOK: return R.drawable.cat_book_blue;
+            case SEARCH_BOOK: return R.drawable.cat_book_green;
+            case RENT_HOUSE: return R.drawable.cat_house_red;
+            default: return R.drawable.cat_no_category;
+        }
+
     }
 }

@@ -15,7 +15,6 @@ import it.polito.mobilecourseproject.poliapp.model.User;
 @ParseClassName("Notice")
 public class Notice extends ParseObject {
 
-
     public String getTitle() {
         return getString("title");
     }

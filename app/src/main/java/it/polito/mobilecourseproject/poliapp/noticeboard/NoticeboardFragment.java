@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -35,10 +36,13 @@ import com.parse.ParseQuery;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.polito.mobilecourseproject.poliapp.ExternalIntents;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
+import it.polito.mobilecourseproject.poliapp.TimeManager;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
 import it.polito.mobilecourseproject.poliapp.R;
 
@@ -103,16 +107,23 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
             @Override
             public void onRefresh() {
                 ParseQuery<Notice> query = ParseQuery.getQuery("Notice");
-                query.setLimit(1000); //TODO: Aggiungere controllo timestamp
+                query.setLimit(1000);
+                query.orderByDescending("updatedAt");
+                query.whereGreaterThan("updatedAt",new Date(PreferenceManager.getDefaultSharedPreferences(getActivity()).getLong("Noticeboard_timestamp", 0)));
                 query.findInBackground(new FindCallback<Notice>() {
                     @Override
-                    public void done(List<Notice> objects, ParseException e) {
-                        ParseObject.pinAllInBackground(objects, new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                                search();
-                            }
-                        });
+                    public void done(final List<Notice> objects, ParseException e) {
+                        if(objects.size()!=0) {
+                            ParseObject.pinAllInBackground(objects, new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putLong("Noticeboard_timestamp", objects.get(0).getUpdatedAt().getTime()).commit();
+                                    search();
+                                }
+                            });
+                        } else {
+                            swypeRefreshLayout.setRefreshing(false);
+                        }
                     }
                 });
 
@@ -280,7 +291,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
                 final Dialog dialog = new Dialog(getActivity());
                 dialog.setContentView(R.layout.dialog_categories);
                 dialog.setCanceledOnTouchOutside(true);
-                dialog.setTitle("Choose categories you are interested in");
+                dialog.setTitle("Filter categories");
                 dialog.setCancelable(true);
                 SearchView searchView= (SearchView)dialog.findViewById(R.id.searchView);
                 searchView.setOnQueryTextListener(this);
@@ -338,6 +349,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
     public void search(){
         ParseQuery<Notice> query = ParseQuery.getQuery("Notice");
         query.fromLocalDatastore();
+        query.orderByDescending("createdAt");
         query.setLimit(1000);
         query.findInBackground(new FindCallback<Notice>() {
             @Override
@@ -393,20 +405,38 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
             // - get element from your dataset at this position
             // - replace the contents of the view with that element
 
-            ((TextView)holder.cardView.findViewById(R.id.title)).setText(notices.get(position).getTitle());
-            ((TextView)holder.cardView.findViewById(R.id.description)).setText(notices.get(position).getDescription());
+            final Notice notice = notices.get(position);
+            ((TextView)holder.cardView.findViewById(R.id.title)).setText(notice.getTitle());
+            ((TextView)holder.cardView.findViewById(R.id.description)).setText(notice.getDescription());
+            ((TextView)holder.cardView.findViewById(R.id.time_text)).setText(TimeManager.getFormattedTimestamp(notice.getCreatedAt(), "Published"));
+            ((ImageView)holder.cardView.findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(notice.getCategory()));
+
+            try {
+                ((TextView) holder.cardView.findViewById(R.id.publisher_name)).setText(notice.getPublisher().getFirstName() + " " + notice.getPublisher().getLastName());
+                holder.cardView.findViewById(R.id.publisher_name).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(getActivity(), "Nome cliccato", Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            } catch (Exception e) {
+
+            }
 
             holder.cardView.findViewById(R.id.share).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Share cliccato", Toast.LENGTH_LONG).show();
+                    ExternalIntents.share(getActivity(), "Notice published on Poliapp: "+notice.getTitle(), notice.getDescription());
                 }
             });
 
             holder.cardView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Edit cliccato", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getActivity(), AddNoticeActivity.class);
+                    intent.putExtra("noticeId", notice.getObjectId());
+                    startActivity(intent);
                 }
             });
 
@@ -417,14 +447,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
                 }
             });
 
-            holder.cardView.findViewById(R.id.publisher_name).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Nome cliccato", Toast.LENGTH_LONG).show();
-                }
-            });
-
-            ((ImageView)holder.cardView.findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory("NOME DELLA CATEGORIA"));
+            ((ImageView)holder.cardView.findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(notice.getCategory()));
 
 
         }

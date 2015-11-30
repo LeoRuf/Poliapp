@@ -180,59 +180,41 @@
             android:minHeight="120dp"
             >
 
-            <RelativeLayout
-                android:layout_width="80dp"
-                android:layout_height="match_parent"
-                >
                 <ImageView
                     android:id="@+id/category_icon"
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp"
-                    android:src="@drawable/blue_train_2"
-                    android:layout_marginTop="20dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="45dp"
+                    android:src="@drawable/cat_house_red"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginEnd="5dp"
                     />
-                <ImageView
-                    android:id="@+id/search_icon"
-                    android:layout_width="25dp"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/search_icon"
-                    android:layout_below="@+id/category_icon"
-                    android:layout_marginLeft="15dp"
-                    android:gravity="top" />
-                <ImageView
-                    android:id="@+id/sell_icon"
-                    android:layout_width="25dp"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/sell_icon"
-                    android:layout_below="@+id/category_icon"
-                    android:layout_toRightOf="@id/search_icon"
-                    android:alpha="0.3"
-                    android:gravity="top" />
-
-            </RelativeLayout>
-
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_weight="0.8">
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:padding="8dp">
+                android:layout_weight="0.8"
+                android:paddingRight="5dp"
+                android:paddingBottom="5dp">
                     <TextView
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Cerco biglietto treno"
                         android:textColor="@color/myPrimaryColor"
-                        android:textSize="23sp"/>
+                        android:textSize="23sp"
+                        android:paddingTop="10dp"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
                     <TextView
                         android:id="@+id/published_by"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/title"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="5dp"
                         android:text="Published by "
                         android:textSize="13sp"
                         android:textStyle="italic"/>
@@ -240,9 +222,7 @@
                         android:id="@+id/publisher_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/title"
-                        android:layout_toRightOf="@+id/published_by"
-                        android:layout_marginTop="6dp"
+                        android:layout_marginTop="5dp"
                         android:textColor="@color/myAccentColor"
                         android:text="Enrico Di Fazio"
                         android:textStyle="bold"
@@ -250,33 +230,37 @@
                         android:background="?android:attr/selectableItemBackground"
                         android:focusable="true"
                         android:clickable="true" />
+                </LinearLayout>
                     <TextView
                         android:id="@+id/description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/publisher_name"
-                        android:layout_marginTop="12dp"
+                        android:layout_marginTop="9dp"
                         android:text="Cerco biglietto treno da TORINO a ROMA giorno 25/11/2015 a qualsiasi orar..."
                         android:textSize="13sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="horizontal">
                     <ImageView
                         android:id="@+id/time"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_below="@+id/description"
-                        android:layout_marginTop="6dp"
-                        android:src="@drawable/timetable_icon" />
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_action_time" />
                     <TextView
                         android:id="@+id/time_text"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/description"
-                        android:layout_marginLeft="20dp"
-                        android:layout_marginTop="9dp"
                         android:text="Published 20 minutes ago"
+                        android:layout_gravity="center_vertical"
                         android:textSize="11sp"
                         android:textStyle="italic"/>
+                </LinearLayout>
 
-                </RelativeLayout>
+
             </LinearLayout>
 
         </LinearLayout>

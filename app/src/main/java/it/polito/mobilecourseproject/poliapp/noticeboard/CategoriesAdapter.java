@@ -67,7 +67,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Vi
 
         if(!categoriesToBeFiltered.contains(categories[position])) {
             ((TextView) holder.linearLayout.findViewById(R.id.category_name)).setTextColor(context.getResources().getColor(R.color.myTextSecondaryColor));
-            (holder.linearLayout.findViewById(R.id.category_icon)).setAlpha((float) 0.3);
+            (holder.linearLayout.findViewById(R.id.category_icon)).setAlpha((float) 0.25);
         } else {
             ((TextView) holder.linearLayout.findViewById(R.id.category_name)).setTextColor(context.getResources().getColor(R.color.myTextPrimaryColor));
             (holder.linearLayout.findViewById(R.id.category_icon)).setAlpha((float) 1);

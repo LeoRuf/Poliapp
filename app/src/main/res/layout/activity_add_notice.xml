@@ -209,72 +209,32 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:id="@+id/main_content_2"
-                    android:minHeight="90dp"
-                    >
+                    android:id="@+id/category_item"
+                    android:padding="8dp">
 
-                    <RelativeLayout
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.35"
-                        android:paddingBottom="5dp"
-                        android:paddingTop="5dp"
-                        >
-                        <ImageView
-                            android:id="@+id/category_icon"
-                            android:layout_width="match_parent"
-                            android:layout_centerHorizontal="true"
-                            android:layout_height="65dp"
-                            android:src="@drawable/blue_train_2"
-                            android:alpha="0.3"
-                            />
-                        <Space
-                            android:layout_width="0dp"
-                            android:layout_height="0dp"
-                            android:layout_centerHorizontal="true"
-                            android:id="@+id/centerSpace"
-                            />
-                        <ImageView
-                            android:id="@+id/search_icon"
-                            android:layout_width="18dp"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/search_icon"
-                            android:layout_below="@+id/category_icon"
-                            android:layout_toLeftOf="@id/centerSpace"
-                            android:alpha="0.3"
-                            android:gravity="top"
-                            android:visibility="gone"/>
-                        <ImageView
-                            android:id="@+id/sell_icon"
-                            android:layout_width="18dp"
-                            android:layout_height="wrap_content"
-                            android:src="@drawable/sell_icon"
-                            android:layout_below="@+id/category_icon"
-                            android:layout_toRightOf="@id/search_icon"
-                            android:alpha="0.3"
-                            android:gravity="top"
-                            android:visibility="gone"/>
+                    <ImageView
+                        android:id="@+id/category_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:src="@drawable/cat_no_category"
+                        android:alpha="0.25"
+                        />
 
-                    </RelativeLayout>
 
                     <TextView
                         android:id="@+id/categoryTextView"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_weight="0.65"
                         android:text="Select a category"
-                        android:layout_gravity="center"
-                        android:gravity="center"
+                        android:gravity="center_vertical"
+                        android:paddingLeft="20dp"
                         android:textColor="@color/myAccentColor"
-                        android:textSize="17sp"
-                        />
+                        android:textSize="16sp"
+                        android:layout_weight="1"/>
 
                 </LinearLayout>
+
             </android.support.v7.widget.CardView>
-
-
-
         </LinearLayout>
 </ScrollView>
 

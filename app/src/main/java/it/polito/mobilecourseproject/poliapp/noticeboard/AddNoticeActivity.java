@@ -10,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,10 +26,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.dd.processbutton.iml.ActionProcessButton;
+import com.parse.GetCallback;
 import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.SaveCallback;
 
@@ -52,6 +55,7 @@ public class AddNoticeActivity extends AppCompatActivity implements SearchView.O
     private EditText title;
     private EditText description;
     private TextView categoryTextView;
+    private boolean editMode;
 
     private ExpandableHeightGridView gridView;
     private GridViewAdapter gridAdapter;
@@ -78,12 +82,42 @@ public class AddNoticeActivity extends AppCompatActivity implements SearchView.O
         categoriesToBeSelected = new LinkedList<>();
         categoriesSelected = new LinkedList<>();
 
-        notice = new Notice();
-        photos = new LinkedList<>();
-
         title = (EditText)findViewById(R.id.editTextTitle);
         description = (EditText)findViewById(R.id.editTextDescription);
         categoryTextView = (TextView)findViewById(R.id.categoryTextView);
+
+        if(getIntent().hasExtra("noticeId")){
+            editMode=true;
+            ParseQuery.getQuery("Notice").fromLocalDatastore().getInBackground(getIntent().getStringExtra("noticeId"), new GetCallback<ParseObject>() {
+                public void done(ParseObject noticeRetrieved, ParseException e) {
+                    if (e == null) {
+
+                        //TODO: Gestire meglio cosa succede mentre carica
+
+                        notice = (Notice)noticeRetrieved;
+                        categoriesSelected.add(notice.getCategory());
+                        categoriesToBeSelected.add(notice.getCategory());
+                        categoryTextView.setText(categoriesSelected.get(0));
+                        categoryTextView.setTextColor(getResources().getColor(R.color.myTextPrimaryColor));
+                        ((ImageView)findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(categoriesSelected.get(0)));
+                        ((ImageView)findViewById(R.id.category_icon)).setAlpha((float) 1);
+                        ((TextInputLayout)findViewById(R.id.titleWrapper)).setHintAnimationEnabled(false);
+                        title.setText(notice.getTitle());
+                        ((TextInputLayout)findViewById(R.id.titleWrapper)).setHintAnimationEnabled(true);
+                        description.setText(notice.getDescription());
+
+                        //TODO: Loading immagini
+                    }
+                }
+            });
+
+        } else {
+            notice = new Notice();
+            editMode=false;
+        }
+
+
+        photos = new LinkedList<>();
 
         gridView = (ExpandableHeightGridView) findViewById(R.id.photosGridView);
         gridAdapter = new GridViewAdapter(this, R.layout.image_grid_layout, getData());
