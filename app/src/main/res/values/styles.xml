@@ -1,19 +1,57 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/myPrimaryColor</item>
         <item name="colorPrimaryDark">@color/myPrimaryDarkColor</item>
         <item name="colorAccent">@color/myAccentColor</item>
         <item name="android:textColorPrimary">@color/myTextPrimaryColor</item>
-
-
         <item name="android:windowBackground">@color/myWindowBackground</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
+
+
+    <style name="BlueBackgroundTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/myPrimaryColor</item>
+        <item name="colorPrimaryDark">@color/myPrimaryDarkColor</item>
+        <item name="colorAccent">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:windowBackground">@color/myWindowBackground</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="WhiteBackgroundTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/myPrimaryColor</item>
+        <item name="colorPrimaryDark">@color/myPrimaryDarkColor</item>
+        <item name="colorAccent">@color/myPrimaryColor</item>
+        <item name="android:textColorPrimary">@color/grayDarkerTextColor</item>
+        <item name="colorControlNormal">#c5c5c5</item>
+        <item name="colorControlActivated">@color/myPrimaryColor</item>
+        <item name="colorControlHighlight">@color/myPrimaryColor</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="ErrorTextWhite" parent="TextAppearance.AppCompat.Small">
+        <item name="android:textColor">@color/myTextPrimaryColor</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="TextOnWhiteBackground" parent="TextAppearance.AppCompat.Small">
+        <item name="android:color">@color/myTextPrimaryColor</item>
+        <item name="android:textSize">11sp</item>
+    </style>
 
 
 </resources>

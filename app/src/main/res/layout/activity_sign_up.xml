@@ -219,4 +219,12 @@
 
 
 
+    <View
+        android:id="@+id/overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:visibility="gone"/>
+
 </android.support.design.widget.CoordinatorLayout>

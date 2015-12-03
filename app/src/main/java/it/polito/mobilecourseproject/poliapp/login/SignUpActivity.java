@@ -210,6 +210,7 @@ public class SignUpActivity extends AppCompatActivity {
                 emailText=email.getText().toString();
                 passwordText=password.getText().toString();
                 universityText=university.getText().toString();
+                SignUpActivity.this.findViewById(R.id.overlay).setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -246,6 +247,7 @@ public class SignUpActivity extends AppCompatActivity {
                             signUp(v);
                         }
                     }).show();
+                    SignUpActivity.this.findViewById(R.id.overlay).setVisibility(View.GONE);
                 }
             }
 
