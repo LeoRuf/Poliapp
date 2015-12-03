@@ -66,6 +66,9 @@ public class LoginActivity extends AppCompatActivity {
 
     public void login(View v) {
 
+
+
+
         boolean error=false;
 
         findViewById(R.id.parentView).requestFocus();
@@ -116,6 +119,7 @@ public class LoginActivity extends AppCompatActivity {
                 loginButton.setEnabled(false);
                 email=userText.getText().toString();
                 password=passText.getText().toString();
+                LoginActivity.this.findViewById(R.id.overlay).setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -143,6 +147,7 @@ public class LoginActivity extends AppCompatActivity {
                 } else {
                     loginButton.setProgress(-1);
                     Snackbar.make(findViewById(R.id.parentView), "Wrong username or password", Snackbar.LENGTH_LONG).show();
+                    LoginActivity.this.findViewById(R.id.overlay).setVisibility(View.GONE);
                 }
             }
 
