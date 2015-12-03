@@ -48,6 +48,13 @@
                 android:resource="@xml/searchable"/>
         </activity>
         <activity
+            android:name=".noticeboard.NoticeDetailActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden" >
+        </activity>
+
+        <activity
             android:name=".utils.imagezoomcrop.ImageCropActivity"
             android:label="Choose a picture" >
         </activity>

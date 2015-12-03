@@ -1,5 +1,8 @@
 package it.polito.mobilecourseproject.poliapp;
 
+import android.support.design.widget.CollapsingToolbarLayout;
+
+import java.lang.reflect.Field;
 import java.util.Random;
 
 public class MyUtils {
@@ -44,5 +47,18 @@ public class MyUtils {
             default: return R.drawable.cat_no_category;
         }
 
+    }
+
+    public static void setRefreshToolbarEnable(CollapsingToolbarLayout collapsingToolbarLayout,
+                                               boolean refreshToolbarEnable) {
+        try {
+            Field field = CollapsingToolbarLayout.class.getDeclaredField("mRefreshToolbar");
+            field.setAccessible(true);
+            field.setBoolean(collapsingToolbarLayout, refreshToolbarEnable);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 }

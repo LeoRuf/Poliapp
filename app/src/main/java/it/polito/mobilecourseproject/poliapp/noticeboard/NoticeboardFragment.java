@@ -178,7 +178,6 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
 
         //Salvo gli scrollFlags originali per poterli ripristinare nell'onDetach
         scrollFlags = params.getScrollFlags();
-
         params.setScrollFlags(0);
 
         /*
@@ -443,7 +442,9 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
             holder.cardView.findViewById(R.id.card_view).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "Item cliccato", Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(getActivity(), NoticeDetailActivity.class);
+                    intent.putExtra("noticeId", notice.getObjectId());
+                    startActivity(intent);
                 }
             });
 
