@@ -2,35 +2,25 @@ package it.polito.mobilecourseproject.poliapp.findaroom;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -42,31 +32,20 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import android.os.Handler;
 
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.SaveCallback;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
-import it.polito.mobilecourseproject.poliapp.ExternalIntents;
-import it.polito.mobilecourseproject.poliapp.MainActivity;
-import it.polito.mobilecourseproject.poliapp.MyUtils;
+import it.polito.mobilecourseproject.poliapp.JSONManager;
 import it.polito.mobilecourseproject.poliapp.R;
-import it.polito.mobilecourseproject.poliapp.TimeManager;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
-import it.polito.mobilecourseproject.poliapp.noticeboard.AddNoticeActivity;
-import it.polito.mobilecourseproject.poliapp.noticeboard.CategoriesAdapter;
-
-
+import it.polito.mobilecourseproject.poliapp.model.Room;
 
 
 public class FindARoomFragment extends android.support.v4.app.Fragment implements SearchView.OnQueryTextListener {
@@ -76,11 +55,15 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
     private GoogleMap gMap;
     private SupportMapFragment fragmentMap;
     private LatLng centerOfCamera=null;
-    private BitmapDescriptor markerIcon;
+
     private HashMap<String,String> objectIDs=new HashMap<String,String>();
+
+    boolean firstTime=true;
+    private HashMap<Marker,Room> markers=new HashMap<Marker,Room>();
 
     CoordinatorLayout.Behavior behavior;
     int scrollFlags;
+    List<Room> rooms=null;
 
 
 
@@ -107,9 +90,8 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
 
 
     public void setMap(){
-        //int size=(int)getActivity().getResources().getDimension(R.dimen.marker_height);
-        //Bitmap x=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.blue_train), size, size, false);
-        //markerIcon= BitmapDescriptorFactory.fromBitmap(x);
+
+
 
         MapsInitializer.initialize(getActivity().getApplicationContext());
         fragmentMap = new SupportMapFragment();
@@ -121,6 +103,12 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
             public void onMapReady(GoogleMap googleMap) {
                 gMap = googleMap;
 
+                gMap.getUiSettings().setRotateGesturesEnabled(false);
+                gMap.getUiSettings().setCompassEnabled(false);
+                gMap.setMyLocationEnabled(true);
+
+
+
                 //default location
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 builder.include(new LatLng(45.062759, 7.654563));
@@ -131,25 +119,209 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
 
                 LatLngBounds bounds = builder.build();
 
-                int padding = 0; // offset from edges of the map in pixels
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-               // gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16f));
-                gMap.moveCamera(cu);
-
-                gMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                        .target(gMap.getCameraPosition().target)
-                        .zoom(gMap.getCameraPosition().zoom+0.2f)
-                        .bearing(-61)
-                        .build()));
+                int width=getActivity().findViewById(R.id.map).getWidth();
+                int height=getActivity().findViewById(R.id.map).getHeight();
+                if(getActivity().findViewById(R.id.map).getWidth()==0 || getActivity().findViewById(R.id.map).getHeight()==0){
+                    Point size = new Point();
+                    getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+                    width = (int)size.x;
+                    height = (int)size.y;
+                }
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, 0);
 
 
+                gMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                    @Override
+                    public void onCameraChange(CameraPosition cameraPosition) {
+
+                        gMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                            @Override
+                            public void onCameraChange(CameraPosition cameraPosition) {
+                                if(firstTime) {
+                                    setDetailMap();
+                                    firstTime=false;
+                                }
+                            }
+                        });
+
+                        gMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                                .target(gMap.getCameraPosition().target)
+                                .zoom(gMap.getCameraPosition().zoom)
+                                .bearing(-61)
+                                .build()));
 
 
 
+                    }
+                });
+                gMap.animateCamera(cu);
+
+
+
+
+
+
+
+            }});
+
+
+
+
+
+
+    }
+
+
+    public void setDetailMap(){
+        //entrance
+        int size=(int)getResources().getDimension(R.dimen.marker_height);
+        Bitmap up=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.up), size, size, false);
+        BitmapDescriptor markerIcon=BitmapDescriptorFactory.fromBitmap(up);
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.062337, 7.662696)).icon(markerIcon).title("Corso Duca degli Abruzzi"));
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.064598, 7.660029)).icon(markerIcon).title("Corso Castelfidardo, 32") );
+        Bitmap down=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.down), size, size, false);
+        markerIcon=BitmapDescriptorFactory.fromBitmap(down);
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.062158, 7.658967)).icon(markerIcon).title("Corso Castelfidardo, 39"));
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.063302, 7.659707)).icon(markerIcon).title("Corso Castelfidardo, 39"));
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.065291, 7.656681)).icon(markerIcon).title("Via Pier Carlo Boggio, 36-40"));
+        Bitmap right=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.right), size, size, false);
+        markerIcon=BitmapDescriptorFactory.fromBitmap(right);
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.060683, 7.659806)).icon(markerIcon).title("Corso Luigi Einaudi, 44"));
+        Bitmap left=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.left), size, size, false);
+        markerIcon=BitmapDescriptorFactory.fromBitmap(left);
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.064874, 7.661617)).icon(markerIcon).title("Corso Rodolfo Montevecchio, 66"));
+
+
+
+
+        PolylineOptions polylineOptions= getPolyline(new LatLng(45.062599, 7.661781), new LatLng(45.062404, 7.662301));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062037, 7.661370),new LatLng(45.063249, 7.662247));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062802, 7.661928),new LatLng(45.063128, 7.661051));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062431, 7.661662),new LatLng(45.062755, 7.660780));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.062755, 7.660780),new LatLng(45.063128, 7.661051));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.061017, 7.659941),new LatLng(45.062635, 7.661094));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.064371, 7.661984),new LatLng(45.063128, 7.661051));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062417, 7.660936),new LatLng(45.062872, 7.659670));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062630, 7.659520),new LatLng(45.063995, 7.660475));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062629, 7.659509),new LatLng(45.063342, 7.657481));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.064715, 7.658442),new LatLng(45.063342, 7.657481));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.065302, 7.656747),new LatLng(45.063995, 7.660491));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        polylineOptions= getPolyline(new LatLng(45.062963, 7.658549),new LatLng(45.061735, 7.657712));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.061735, 7.657712),new LatLng(45.062344, 7.656108));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062344, 7.656108),new LatLng(45.063704, 7.655792));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        polylineOptions= getPolyline(new LatLng(45.063704, 7.655792),new LatLng(45.063766, 7.656414));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        polylineOptions= getPolyline(new LatLng(45.063766, 7.656414),new LatLng( 45.064925, 7.657246));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.064925, 7.657246),new LatLng( 45.065302, 7.656747));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        polylineOptions= getPolyline(new LatLng(45.064342, 7.659504),new LatLng( 45.065562, 7.660384 ));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.065562, 7.660384), new LatLng(45.066517, 7.657648));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        rooms=(new JSONManager(getActivity())).jsonTORooms();
+        for(Room room : rooms){
+            markers.put(
+                    gMap.addMarker(new MarkerOptions().position(room.getLocation()).title(room.getName()).icon(BitmapDescriptorFactory.defaultMarker(room.getMarkerColor()))),
+                    room
+            );
+
+        }
+        gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                final Room room=markers.get(marker);
+                if(room==null) return false;
+                View descrLayout=getActivity().findViewById(R.id.description);
+                TextView nameV=(TextView)getActivity().findViewById(R.id.nameV);
+                TextView floorV=(TextView)getActivity().findViewById(R.id.floorV);
+                TextView detailsV=(TextView)getActivity().findViewById(R.id.detailsV);
+                View labelV=getActivity().findViewById(R.id.labelV);
+
+                nameV.setText(room.getName());
+                floorV.setText(room.getFloor());
+                String text=room.getType();
+                if(room.getSeats()!=0)text=text+", "+room.getSeats()+" seats";
+                detailsV.setText(text);
+                labelV.setBackgroundColor(room.getColor());
+
+                descrLayout.setVisibility(View.VISIBLE);
+                gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(room.getLocation(), 18f));
+                return true;
             }
         });
+
+
+        gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                View descrLayout=getActivity().findViewById(R.id.description);
+                descrLayout.setVisibility(View.GONE);
+            }
+        });
+
+
+
+
     }
+
+
+
 
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -232,7 +404,10 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
         super.onActivityCreated(savedInstanceState);
 
          myOnAttach(getActivity());
-         setMap();
+
+            setMap();
+
+
 
 
     }
@@ -314,10 +489,29 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
         switch (item.getItemId()) {
             case R.id.filter:
 
-                if(getActivity().findViewById(R.id.description).getVisibility()==View.GONE)
-                    getActivity().findViewById(R.id.description).setVisibility(View.VISIBLE);
-                else
+                if(getActivity().findViewById(R.id.description).getVisibility()==View.GONE) {
+                    gMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                        @Override
+                        public void onCameraChange(CameraPosition cameraPosition) {
+                            getActivity().findViewById(R.id.description).setVisibility(View.VISIBLE);
+                        }
+                    });
+                    gMap.animateCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
+                            .target(gMap.getCameraPosition().target)
+                            .zoom(gMap.getCameraPosition().zoom + (float) 0.5)
+                            .bearing(-61)
+                            .build()));
+                }else
                     getActivity().findViewById(R.id.description).setVisibility(View.GONE);
+
+
+
+
+
+
+
+
+
 
                 /*categoriesToBeFiltered.clear();
                 categoriesToBeFiltered.addAll(categoriesFiltered);
@@ -396,6 +590,31 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
             }
         });*/
     }
+
+
+
+
+    public PolylineOptions getPolyline(LatLng a,LatLng b){
+        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.color(Color.BLUE);
+        polylineOptions.width(5);
+        polylineOptions.add(a);
+        polylineOptions.add(b);
+        return  polylineOptions;
+    }
+
+
+
+
+    public boolean onBackPressed(){
+        View descrLayout=getActivity().findViewById(R.id.description);
+        if(descrLayout.getVisibility()==View.VISIBLE){
+            descrLayout.setVisibility(View.GONE);
+            return false;
+        }
+        return true;
+    }
+
 
 
 

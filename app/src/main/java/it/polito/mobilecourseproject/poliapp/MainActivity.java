@@ -193,11 +193,25 @@ public class MainActivity extends AppCompatActivity {
             public void onDrawerOpened(View drawerView) {}
             @Override
             public void onDrawerClosed(View drawerView) {
-                fragmentTransaction.commit();}
+                try{fragmentTransaction.commit();}catch(Exception e){e.printStackTrace();}}
             @Override
             public void onDrawerStateChanged(int newState) {}
         });
       drawerLayout.closeDrawers();
     }
 
+
+
+    @Override
+    public void onBackPressed(){
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.frame);
+        if (f instanceof FindARoomFragment){
+            if(!((FindARoomFragment)f).onBackPressed())return;
+        }
+        super.onBackPressed();
+    }
+
+
 }
+
+

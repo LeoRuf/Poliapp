@@ -3,6 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
+
     <dimen name="detail_backdrop_height">256dp</dimen>
     <dimen name="card_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
@@ -17,8 +18,11 @@
     <dimen name="button_height">42dp</dimen>
     <dimen name="button_width">190dp</dimen>
 
-    <dimen name="footer_height">60dp</dimen>
+    <dimen name="footer_height">35dp</dimen>
+    <dimen name="description_height">120dp</dimen>
+    <dimen name="description_margin">5dp</dimen>
+    <dimen name="label_height">5dp</dimen>
 
-    <dimen name="marker_height">35dp</dimen>
+    <dimen name="marker_height">25dp</dimen>
 
 </resources>
