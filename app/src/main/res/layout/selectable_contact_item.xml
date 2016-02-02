@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/category_item"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="?android:attr/selectableItemBackground"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:focusable="true"
+    android:clickable="true"
+    android:paddingRight="8dp"
+    android:paddingLeft="8dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+
+        <LinearLayout
+            android:id="@+id/background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imgAvatar"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:layout_margin="5dp"
+                android:clickable="true"
+                android:src="@drawable/my_photo" />
+
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/nameV"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="Enrico Di Fazio"
+            android:gravity="center_vertical"
+            android:paddingLeft="20dp"
+            android:textColor="@color/myTextPrimaryColor"
+            android:layout_weight="1"/>
+
+
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"/>
+
+
+
+
+
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/ultra_dark_overlay" />
+
+
+
+
+
+
+
+    </LinearLayout>

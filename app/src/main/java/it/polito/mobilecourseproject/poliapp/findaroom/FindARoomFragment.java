@@ -14,15 +14,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -355,7 +358,7 @@ public class FindARoomFragment extends android.support.v4.app.Fragment   {
     /*
      * Called when the fragment attaches to the context
      */
-    String previousTitle="";
+
     protected void myOnAttach(Context context) {
 
         android.support.v7.widget.Toolbar toolbar =(android.support.v7.widget.Toolbar) getActivity().findViewById(R.id.toolbar);
@@ -368,7 +371,7 @@ public class FindARoomFragment extends android.support.v4.app.Fragment   {
 
         params.setScrollFlags(0);
 
-        previousTitle=  ((AppCompatActivity) getActivity()).getSupportActionBar().getTitle().toString();
+
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Find a room");
 
         /*
@@ -439,7 +442,6 @@ public class FindARoomFragment extends android.support.v4.app.Fragment   {
 
         //Ripristina gli scrollFlags originali
         params.setScrollFlags(scrollFlags);
-        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(previousTitle);
 
 
         hideSoftKeyboard();
@@ -587,7 +589,42 @@ public class FindARoomFragment extends android.support.v4.app.Fragment   {
             case R.id.filter:
 
 
+                DialogFragment f=new DialogFragment() {
+                RecyclerView mRecyclerView;
+                @Override
+                public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+                    //inflate layout with recycler view
+                    View v = inflater.inflate(R.layout.dialog_room_types, container, false);
+                    mRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    //setadapter
+                    mRecyclerView.setAdapter(new RoomTypesAdapter(this.getDialog(), (new JSONManager(getActivity())).jsonTORoomTypes(), getActivity()));
 
+                    getDialog().setCanceledOnTouchOutside(true);
+                    getDialog().setTitle("Room categories");
+                    getDialog().setCancelable(true);
+                    return v;
+                }
+                    public void onResume()
+                    {
+                        super.onResume();
+                        mRecyclerView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Window window = getDialog().getWindow();
+                                int w=mRecyclerView.getWidth();int h= mRecyclerView.getHeight();
+                                window.setLayout(w,h);
+                            }
+                        });
+
+                    }
+                };
+
+                f.show(getActivity().getSupportFragmentManager(), "some tag");
+
+
+
+/*
                 final Dialog dialog = new Dialog(getActivity());
                 dialog.setContentView(R.layout.dialog_room_types);
                 dialog.setCanceledOnTouchOutside(true);
@@ -604,7 +641,7 @@ public class FindARoomFragment extends android.support.v4.app.Fragment   {
                 //dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
 
-                dialog.show();
+                dialog.show();*/
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

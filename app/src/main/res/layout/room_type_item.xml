@@ -12,25 +12,30 @@
     android:padding="8dp">
 
     <LinearLayout
-        android:id="@+id/background"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    android:id="@+id/background"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <ImageView
+        android:padding="4dp"
         android:id="@+id/category_icon"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/button_height"
+        android:layout_height="@dimen/button_height"
         android:src="@drawable/blue_train_2"
         />
-    </LinearLayout>
+</LinearLayout>
 
     <TextView
         android:id="@+id/category_name"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/button_height"
         android:text="Cerco biglietto treno"
         android:gravity="center_vertical"
         android:paddingLeft="20dp"
         android:textColor="@color/myTextPrimaryColor"
         android:layout_weight="1"/>
+
+
+
+
 
     </LinearLayout>

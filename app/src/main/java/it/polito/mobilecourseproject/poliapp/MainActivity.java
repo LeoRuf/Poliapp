@@ -18,6 +18,7 @@ import android.widget.Toast;
 import java.lang.reflect.Constructor;
 
 import it.polito.mobilecourseproject.poliapp.findaroom.FindARoomFragment;
+import it.polito.mobilecourseproject.poliapp.messages.MessagesFragment;
 import it.polito.mobilecourseproject.poliapp.noticeboard.NoticeboardFragment;
 import it.polito.mobilecourseproject.poliapp.time_schedule.TimeScheduleFragment;
 
@@ -138,7 +139,18 @@ public class MainActivity extends AppCompatActivity {
 
 
                             case R.id.nav_messages:
-                                Toast.makeText(getApplicationContext(), "Messages Selected", Toast.LENGTH_SHORT).show();
+
+                                MessagesFragment messagesFragment = (MessagesFragment)getSupportFragmentManager().findFragmentByTag(MessagesFragment.class.getName());
+                                if(messagesFragment==null)
+                                    messagesFragment = new MessagesFragment();
+
+                                if (!messagesFragment.isVisible()) {
+                                    final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                                    fragmentTransaction.replace(R.id.frame, messagesFragment, MessagesFragment.class.getName());
+                                    startFragment(fragmentTransaction);
+                                }
+                                currentFragment=messagesFragment.getClass().getName();
                                 return true;
 
                             case R.id.nav_findaroom:
