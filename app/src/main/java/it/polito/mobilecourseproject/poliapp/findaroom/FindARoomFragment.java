@@ -702,6 +702,7 @@ public class FindARoomFragment extends android.support.v4.app.Fragment   {
                 public void onClick(View v) {
                     for (Marker marker : markers.keySet()) {
                         marker.remove();
+
                     }
                     getActivity().findViewById(R.id.description).setVisibility(View.GONE);
 
