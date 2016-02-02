@@ -1,0 +1,7 @@
+{
+  "roomTypes":
+  [
+    "Bar","Library","Laboratory","Computer Room","Classroom"
+
+  ]
+}
