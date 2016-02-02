@@ -1,52 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
-    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/AccountManager.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/AsyncTaskWithoutProgressBar.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/Connectivity.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/JSONManager.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/model/Notice.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/java/it/polito/mobilecourseproject/poliapp/model/User.java" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_account_box.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_add.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_filter_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_search_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_settings.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_action_trending_up.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-hdpi/ic_menu_check.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_action_account_box.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_action_add.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_action_filter_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_action_search_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_action_settings.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_action_trending_up.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/ic_menu_check.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/map_icon.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/noticeboard_icon.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-mdpi/timetable_icon.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_action_account_box.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_action_add.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_action_filter_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_action_search_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_action_settings.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_action_trending_up.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xhdpi/ic_menu_check.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_action_account_box.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_action_add.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_action_filter_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_action_search_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_action_settings.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_action_trending_up.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxhdpi/ic_menu_check.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/ic_action_account_box.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/ic_action_add.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/ic_action_filter_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/ic_action_search_white.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/ic_action_settings.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable-xxxhdpi/ic_action_trending_up.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/default_avatar.png" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/my_photo.jpg" charset="windows-1252" />
-    <file url="file://$PROJECT_DIR$/app/src/main/res/drawable/sample_logo.png" charset="windows-1252" />
     <file url="PROJECT" charset="UTF-8" />
   </component>
 </project>

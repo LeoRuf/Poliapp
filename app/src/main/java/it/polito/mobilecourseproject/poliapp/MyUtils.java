@@ -49,6 +49,35 @@ public class MyUtils {
 
     }
 
+
+    public static int getIconForRoomType(String roomType){
+
+        if(roomType==null)
+            return R.drawable.cat_no_category;
+
+        int imageId=-1;
+        switch(roomType){
+            case "Bar":
+                imageId=R.drawable.bar;
+                break;
+            case "Library":
+                imageId=R.drawable.library;
+                break;
+            case "Laboratory":
+                imageId=R.drawable.laboratory;
+                break;
+            case "Computer Room":
+                imageId=R.drawable.computer;
+                break;
+            case "Classroom":
+                imageId=R.drawable.classroom;
+                break;
+        }
+        return imageId;
+
+    }
+
+
     public static void setRefreshToolbarEnable(CollapsingToolbarLayout collapsingToolbarLayout,
                                                boolean refreshToolbarEnable) {
         try {

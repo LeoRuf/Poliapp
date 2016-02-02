@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
                 Class<?> c = Class.forName(savedInstanceState.getString("currentFragment"));
                 Constructor<?> cons = c.getConstructor(String.class);
                 Fragment fragment =(Fragment) cons.newInstance();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, savedInstanceState.getString("currentFragment"));
                 fragmentTransaction.commit();
             } catch ( Exception e) {
@@ -84,6 +85,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }else{
             HomeFragment homeFragment=new HomeFragment();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
             fragmentTransaction.replace(R.id.frame, homeFragment, homeFragment.getClass().getName());
             fragmentTransaction.commit();
             navigationView.getMenu().getItem(0).setChecked(true);
@@ -112,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (!homeFragment.isVisible()) {
                                      final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                      fragmentTransaction.replace(R.id.frame, homeFragment, HomeFragment.class.getName());
                                     startFragment( fragmentTransaction);
                                 }
@@ -126,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (!noticeboardFragment.isVisible()) {
                                     final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                      fragmentTransaction.replace(R.id.frame, noticeboardFragment, NoticeboardFragment.class.getName());
                                     startFragment(fragmentTransaction);
                                 }
@@ -148,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (! findARoomFragment.isVisible()) {
                                    final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, findARoomFragment, FindARoomFragment.class.getName());
                                     startFragment( fragmentTransaction);
                                 }
@@ -161,6 +166,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (!timeScheduleFragment.isVisible()) {
                                     final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, timeScheduleFragment, TimeScheduleFragment.class.getName());
                                     startFragment( fragmentTransaction);
                                 }

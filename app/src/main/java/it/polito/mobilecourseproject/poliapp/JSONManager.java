@@ -7,7 +7,9 @@ import it.polito.mobilecourseproject.poliapp.model.Room;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream; 
-import java.util.ArrayList; 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,21 +81,52 @@ public class JSONManager {
 		
 		return allRooms;
 	}
-	
-	
-
-
-	
 
 
 
+	/*
+	 * Returns the list of lectures
+	 *
+	 */
+	public List<String> jsonTORoomTypes() {
+		JSONArray jsonRoomTypesArray=null;
+		try {
+			loadFromFile("roomTypes.json");
+			jsonRoomTypesArray = jsonRootObject.getJSONArray("roomTypes");
+		}catch (Exception e){
+			return  null;
+		}
 
-	
-	 
- 
-	
-	
-	
+		List<String> allRoomTypes = new ArrayList<String>();
+		for (int i=0; i<jsonRoomTypesArray.length(); i++) {
+			try {
+				String s = jsonRoomTypesArray.getString(i);
+				allRoomTypes.add(s);
+			}catch (Exception e){
+				e.printStackTrace();
+
+			}
+		}
+
+		if(allRoomTypes!=null)
+			Collections.sort(allRoomTypes);
+
+		return allRoomTypes;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	//Returns a string from a text file in assets folder
     public static String getJsonFile(Context ctx, String nomeFile) {
 			String JsonString = "";

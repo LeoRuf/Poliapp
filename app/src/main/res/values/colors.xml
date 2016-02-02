@@ -17,7 +17,7 @@
 
 
     <color name="primaryColor">#1e7daa</color>
-    <color name="tranPrimaryColor">#aaffffff</color>
+    <color name="tranPrimaryColor">#ddffffff</color>
     <color name="secondaryColor">#0c5d88</color>
     <color name="primaryColorTransparent">#000c5d88</color>
     <color name="primaryColorSemiTransparent">#bb0c5d88</color>

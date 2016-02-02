@@ -5,6 +5,8 @@
     android:orientation="vertical" >
 
 
+
+
     <LinearLayout
         android:id="@+id/footer"
         android:orientation="vertical"
@@ -21,7 +23,6 @@
             android:textColor="@android:color/white"
             android:textSize="14dp"
             android:gravity="center"
-            android:textStyle="bold"
             android:padding="5dp"/>
 
         </LinearLayout>
@@ -54,7 +55,7 @@
         <View
             android:id="@+id/labelV"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/label_height"
+            android:layout_height="@dimen/label_height2"
             android:background="@android:color/black"
             android:layout_alignParentBottom="true"/>
 
@@ -63,6 +64,9 @@
             android:layout_height="match_parent"
             android:orientation="vertical"
             android:layout_margin="@dimen/description_margin">
+
+
+
 
             <TextView
                 android:id="@+id/nameV"
@@ -143,16 +147,36 @@
                     android:shadowRadius="1"/>
 
             </LinearLayout>
+            </LinearLayout>
 
 
+
+        <LinearLayout
+            android:layout_alignParentRight="true"
+            android:id="@+id/background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_margin="5dp"
+                android:id="@+id/category_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/blue_train_2"
+                />
         </LinearLayout>
 
-
-
-
-
-
 </RelativeLayout>
+
+
+    <ListView
+        android:visibility="visible"
+        android:background="@color/white"
+        android:id="@+id/listView"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+
 
 
 
