@@ -1,6 +1,7 @@
 package it.polito.mobilecourseproject.poliapp;
 
 
+import android.content.Intent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -20,6 +21,7 @@ import java.lang.reflect.Constructor;
 import it.polito.mobilecourseproject.poliapp.findaroom.FindARoomFragment;
 import it.polito.mobilecourseproject.poliapp.messages.MessagesFragment;
 import it.polito.mobilecourseproject.poliapp.noticeboard.NoticeboardFragment;
+import it.polito.mobilecourseproject.poliapp.profile.ProfileActivity;
 import it.polito.mobilecourseproject.poliapp.time_schedule.TimeScheduleFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -183,6 +185,12 @@ public class MainActivity extends AppCompatActivity {
                                     startFragment( fragmentTransaction);
                                 }
                                 currentFragment=timeScheduleFragment.getClass().getName();
+                                return true;
+
+                            case R.id.nav_profile:
+
+                                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+                                startActivity(i);
                                 return true;
 
                             default:
