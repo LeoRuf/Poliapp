@@ -18,6 +18,7 @@ import android.widget.Toast;
 import java.lang.reflect.Constructor;
 
 import it.polito.mobilecourseproject.poliapp.findaroom.FindARoomFragment;
+import it.polito.mobilecourseproject.poliapp.messages.MessagesFragment;
 import it.polito.mobilecourseproject.poliapp.noticeboard.NoticeboardFragment;
 import it.polito.mobilecourseproject.poliapp.time_schedule.TimeScheduleFragment;
 
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
                 Class<?> c = Class.forName(savedInstanceState.getString("currentFragment"));
                 Constructor<?> cons = c.getConstructor(String.class);
                 Fragment fragment =(Fragment) cons.newInstance();
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame, fragment, savedInstanceState.getString("currentFragment"));
                 fragmentTransaction.commit();
             } catch ( Exception e) {
@@ -84,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }else{
             HomeFragment homeFragment=new HomeFragment();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
             fragmentTransaction.replace(R.id.frame, homeFragment, homeFragment.getClass().getName());
             fragmentTransaction.commit();
             navigationView.getMenu().getItem(0).setChecked(true);
@@ -112,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (!homeFragment.isVisible()) {
                                      final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                      fragmentTransaction.replace(R.id.frame, homeFragment, HomeFragment.class.getName());
                                     startFragment( fragmentTransaction);
                                 }
@@ -126,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (!noticeboardFragment.isVisible()) {
                                     final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                      fragmentTransaction.replace(R.id.frame, noticeboardFragment, NoticeboardFragment.class.getName());
                                     startFragment(fragmentTransaction);
                                 }
@@ -134,7 +139,18 @@ public class MainActivity extends AppCompatActivity {
 
 
                             case R.id.nav_messages:
-                                Toast.makeText(getApplicationContext(), "Messages Selected", Toast.LENGTH_SHORT).show();
+
+                                MessagesFragment messagesFragment = (MessagesFragment)getSupportFragmentManager().findFragmentByTag(MessagesFragment.class.getName());
+                                if(messagesFragment==null)
+                                    messagesFragment = new MessagesFragment();
+
+                                if (!messagesFragment.isVisible()) {
+                                    final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                                    fragmentTransaction.replace(R.id.frame, messagesFragment, MessagesFragment.class.getName());
+                                    startFragment(fragmentTransaction);
+                                }
+                                currentFragment=messagesFragment.getClass().getName();
                                 return true;
 
                             case R.id.nav_findaroom:
@@ -148,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (! findARoomFragment.isVisible()) {
                                    final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, findARoomFragment, FindARoomFragment.class.getName());
                                     startFragment( fragmentTransaction);
                                 }
@@ -161,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
 
                                 if (!timeScheduleFragment.isVisible()) {
                                     final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, timeScheduleFragment, TimeScheduleFragment.class.getName());
                                     startFragment( fragmentTransaction);
                                 }
@@ -193,11 +211,25 @@ public class MainActivity extends AppCompatActivity {
             public void onDrawerOpened(View drawerView) {}
             @Override
             public void onDrawerClosed(View drawerView) {
-                fragmentTransaction.commit();}
+                try{fragmentTransaction.commit();}catch(Exception e){e.printStackTrace();}}
             @Override
             public void onDrawerStateChanged(int newState) {}
         });
       drawerLayout.closeDrawers();
     }
 
+
+
+    @Override
+    public void onBackPressed(){
+        Fragment f = getSupportFragmentManager().findFragmentById(R.id.frame);
+        if (f instanceof FindARoomFragment){
+            if(!((FindARoomFragment)f).onBackPressed())return;
+        }
+        super.onBackPressed();
+    }
+
+
 }
+
+

@@ -4,30 +4,35 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,45 +47,43 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import android.os.Handler;
 
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.SaveCallback;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
-import it.polito.mobilecourseproject.poliapp.ExternalIntents;
-import it.polito.mobilecourseproject.poliapp.MainActivity;
+import it.polito.mobilecourseproject.poliapp.JSONManager;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
 import it.polito.mobilecourseproject.poliapp.R;
-import it.polito.mobilecourseproject.poliapp.TimeManager;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
-import it.polito.mobilecourseproject.poliapp.noticeboard.AddNoticeActivity;
-import it.polito.mobilecourseproject.poliapp.noticeboard.CategoriesAdapter;
+import it.polito.mobilecourseproject.poliapp.model.Room;
 
 
+public class FindARoomFragment extends android.support.v4.app.Fragment   {
 
+    private CameraUpdate cu;
 
-public class FindARoomFragment extends android.support.v4.app.Fragment implements SearchView.OnQueryTextListener {
-
-    private OnFragmentInteractionListener mListener;
     ArrayList<Notice> outputNotices;
     private GoogleMap gMap;
     private SupportMapFragment fragmentMap;
     private LatLng centerOfCamera=null;
-    private BitmapDescriptor markerIcon;
+
     private HashMap<String,String> objectIDs=new HashMap<String,String>();
+
+    boolean firstTime=true;
+    private HashMap<Marker,Room> markers=new HashMap<Marker,Room>();
 
     CoordinatorLayout.Behavior behavior;
     int scrollFlags;
+    List<Room> rooms=null;
+
+    ArrayAdapter<String> searchAdapter;
 
 
 
@@ -107,9 +110,8 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
 
 
     public void setMap(){
-        //int size=(int)getActivity().getResources().getDimension(R.dimen.marker_height);
-        //Bitmap x=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.blue_train), size, size, false);
-        //markerIcon= BitmapDescriptorFactory.fromBitmap(x);
+
+
 
         MapsInitializer.initialize(getActivity().getApplicationContext());
         fragmentMap = new SupportMapFragment();
@@ -121,6 +123,11 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
             public void onMapReady(GoogleMap googleMap) {
                 gMap = googleMap;
 
+                gMap.getUiSettings().setRotateGesturesEnabled(false);
+                gMap.getUiSettings().setCompassEnabled(false);
+                gMap.setMyLocationEnabled(true);
+
+
                 //default location
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
                 builder.include(new LatLng(45.062759, 7.654563));
@@ -131,33 +138,197 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
 
                 LatLngBounds bounds = builder.build();
 
-                int padding = 0; // offset from edges of the map in pixels
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-
-               // gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 16f));
-                gMap.moveCamera(cu);
-
-                gMap.moveCamera(CameraUpdateFactory.newCameraPosition(new CameraPosition.Builder()
-                        .target(gMap.getCameraPosition().target)
-                        .zoom(gMap.getCameraPosition().zoom+0.2f)
-                        .bearing(-61)
-                        .build()));
+                int width = getActivity().findViewById(R.id.map).getWidth();
+                int height = getActivity().findViewById(R.id.map).getHeight();
+                if (getActivity().findViewById(R.id.map).getWidth() == 0 || getActivity().findViewById(R.id.map).getHeight() == 0) {
+                    Point size = new Point();
+                    getActivity().getWindowManager().getDefaultDisplay().getSize(size);
+                    width = (int) size.x;
+                    height = (int) size.y;
+                }
+                cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, 0);
 
 
+                gMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                    @Override
+                    public void onCameraChange(CameraPosition cameraPosition) {
+                        if (firstTime) {
+                            setDetailMap();
+                            gMap.setOnCameraChangeListener(null);
+                            firstTime = false;
+                        }
 
+                    }
+                });
+                gMap.animateCamera(cu);
 
 
             }
         });
+
+
+
+
+
+
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+    public void setDetailMap(){
+        //entrance
+        int size=(int)getResources().getDimension(R.dimen.marker_height);
+        Bitmap up=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.entrance), size, size, false);
+        BitmapDescriptor markerIcon=BitmapDescriptorFactory.fromBitmap(up);
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.062337, 7.662696)).icon(markerIcon).title("Corso Duca degli Abruzzi"));
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.064598, 7.660029)).icon(markerIcon).title("Corso Castelfidardo, 32") );
+        Bitmap down=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.entrance), size, size, false);
+        markerIcon=BitmapDescriptorFactory.fromBitmap(down);
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.062158, 7.658967)).icon(markerIcon).title("Corso Castelfidardo, 39"));
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.063302, 7.659707)).icon(markerIcon).title("Corso Castelfidardo, 39"));
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.065291, 7.656681)).icon(markerIcon).title("Via Pier Carlo Boggio, 36-40"));
+        Bitmap right=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.entrance), size, size, false);
+        markerIcon=BitmapDescriptorFactory.fromBitmap(right);
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.060683, 7.659806)).icon(markerIcon).title("Corso Luigi Einaudi, 44"));
+        Bitmap left=Bitmap.createScaledBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.entrance), size, size, false);
+        markerIcon=BitmapDescriptorFactory.fromBitmap(left);
+        gMap.addMarker(new MarkerOptions().position(new LatLng(45.064874, 7.661617)).icon(markerIcon).title("Corso Rodolfo Montevecchio, 66"));
+
+
+
+
+        PolylineOptions polylineOptions= getPolyline(new LatLng(45.062599, 7.661781), new LatLng(45.062404, 7.662301));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062037, 7.661370),new LatLng(45.063249, 7.662247));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062802, 7.661928),new LatLng(45.063128, 7.661051));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062431, 7.661662),new LatLng(45.062755, 7.660780));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.062755, 7.660780),new LatLng(45.063128, 7.661051));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.061017, 7.659941),new LatLng(45.062635, 7.661094));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.064371, 7.661984),new LatLng(45.063128, 7.661051));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062417, 7.660936),new LatLng(45.062872, 7.659670));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062630, 7.659520),new LatLng(45.063995, 7.660475));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062629, 7.659509),new LatLng(45.063342, 7.657481));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.064715, 7.658442),new LatLng(45.063342, 7.657481));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.065302, 7.656747),new LatLng(45.063995, 7.660491));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        polylineOptions= getPolyline(new LatLng(45.062963, 7.658549),new LatLng(45.061735, 7.657712));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.061735, 7.657712),new LatLng(45.062344, 7.656108));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.062344, 7.656108),new LatLng(45.063704, 7.655792));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        polylineOptions= getPolyline(new LatLng(45.063704, 7.655792),new LatLng(45.063766, 7.656414));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        polylineOptions= getPolyline(new LatLng(45.063766, 7.656414),new LatLng( 45.064925, 7.657246));
+        gMap.addPolyline(polylineOptions);
+
+
+        polylineOptions= getPolyline(new LatLng(45.064925, 7.657246),new LatLng( 45.065302, 7.656747));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        polylineOptions= getPolyline(new LatLng(45.064342, 7.659504),new LatLng( 45.065562, 7.660384 ));
+        gMap.addPolyline(polylineOptions);
+
+        polylineOptions= getPolyline(new LatLng(45.065562, 7.660384), new LatLng(45.066517, 7.657648));
+        gMap.addPolyline(polylineOptions);
+
+
+
+        rooms=(new JSONManager(getActivity())).jsonTORooms();
+
+
+        gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                final Room room=markers.get(marker);
+                if(room==null) return false;
+                View descrLayout=getActivity().findViewById(R.id.description);
+                TextView nameV=(TextView)getActivity().findViewById(R.id.nameV);
+                TextView floorV=(TextView)getActivity().findViewById(R.id.floorV);
+                TextView detailsV=(TextView)getActivity().findViewById(R.id.detailsV);
+                View labelV=getActivity().findViewById(R.id.labelV);
+                ImageView img=(ImageView)getActivity().findViewById(R.id.category_icon);
+
+                img.setImageResource(MyUtils.getIconForRoomType(room.getType()));
+
+
+                nameV.setText(room.getName());
+                floorV.setText(room.getFloor());
+                String text=room.getType();
+                if(room.getSeats()!=0)text=text+", "+room.getSeats()+" seats";
+                detailsV.setText(text);
+                labelV.setBackgroundColor(room.getColor());
+
+
+                descrLayout.setVisibility(View.VISIBLE);
+                gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(room.getLocation(), 18f));
+
+
+                return true;
+            }
+        });
+
+
+        gMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                View descrLayout=getActivity().findViewById(R.id.description);
+                descrLayout.setVisibility(View.GONE);
+            }
+        });
+
+
+
+
     }
+
+
+
+
+
+
 
 
     /*
@@ -168,7 +339,7 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-       // myOnAttach(context);
+        // myOnAttach(context);
     }
 
     /*
@@ -180,13 +351,14 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-           // myOnAttach(activity);
+            // myOnAttach(activity);
         }
     }
 
     /*
      * Called when the fragment attaches to the context
      */
+
     protected void myOnAttach(Context context) {
 
         android.support.v7.widget.Toolbar toolbar =(android.support.v7.widget.Toolbar) getActivity().findViewById(R.id.toolbar);
@@ -198,6 +370,9 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
         scrollFlags = params.getScrollFlags();
 
         params.setScrollFlags(0);
+
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Find a room");
 
         /*
         //SE SI VUOLE MOSTRARE IL TABLAYOUT
@@ -231,10 +406,31 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-         myOnAttach(getActivity());
-         setMap();
+        myOnAttach(getActivity());
+
+        setMap();
+
+        searchAdapter= new ArrayAdapter<String>(getContext(),android.R.layout.simple_list_item_1,android.R.id.text1);
+        ListView listView=(ListView)getActivity().findViewById(R.id.listView);
+        listView.setAdapter(searchAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String value=searchAdapter.getItem(position);
+                onQueryTextListener.onQueryTextSubmit(value);
+            }
+        });
 
 
+
+
+    }
+
+    public void hideSoftKeyboard() {
+        if(getActivity().getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
     @Override
@@ -246,6 +442,10 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
 
         //Ripristina gli scrollFlags originali
         params.setScrollFlags(scrollFlags);
+
+
+        hideSoftKeyboard();
+
 
         //FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
         //fab.setVisibility(View.GONE);
@@ -285,26 +485,100 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+
+    SearchView searchView;
+    SearchView.OnQueryTextListener onQueryTextListener;
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.noticeboard_menu, menu);
+        inflater.inflate(R.menu.findaroom_menu, menu);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setQueryHint("Search");
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
+        onQueryTextListener=new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //TODO: Aggiungere search
+
+                getActivity().findViewById(R.id.description).setVisibility(View.GONE);
+
+                searchAdapter.clear();
+                searchAdapter.notifyDataSetChanged();
+
+                for (Room room : rooms) {
+                    if (room.getName().toLowerCase().equals(s.toLowerCase().trim())) {
+                        MarkerOptions mo = new MarkerOptions().position(room.getLocation()).title(room.getName()).icon(BitmapDescriptorFactory.defaultMarker(room.getMarkerColor()));
+
+                        for(Marker marker : markers.keySet()){
+                            marker.remove();
+                        }
+
+                        markers.put(gMap.addMarker(mo), room);
+
+
+
+                        final View descrLayout=getActivity().findViewById(R.id.description);
+                        TextView nameV=(TextView)getActivity().findViewById(R.id.nameV);
+                        TextView floorV=(TextView)getActivity().findViewById(R.id.floorV);
+                        TextView detailsV=(TextView)getActivity().findViewById(R.id.detailsV);
+                        View labelV=getActivity().findViewById(R.id.labelV);
+                        nameV.setText(room.getName());
+                        floorV.setText(room.getFloor());
+                        String text=room.getType();
+                        ImageView img=(ImageView)getActivity().findViewById(R.id.category_icon);
+                        img.setImageResource(MyUtils.getIconForRoomType(room.getType()));
+                        if(room.getSeats()!=0)text=text+", "+room.getSeats()+" seats";
+                        detailsV.setText(text);
+
+                        hideSoftKeyboard();
+
+                        labelV.setBackgroundColor(room.getColor());
+
+
+
+                        gMap.animateCamera(CameraUpdateFactory.newLatLngZoom(room.getLocation(), 18f));
+                        (new Handler()).postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                descrLayout.setVisibility(View.VISIBLE);
+                            }
+                        },200);
+
+                        return false;
+                    }
+                }
+
+                Toast.makeText(getContext(), "No room found", Toast.LENGTH_LONG).show();
 
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
+                searchAdapter.clear();
+                searchAdapter.notifyDataSetChanged();
+
+                if (s.trim().equals("") || (s.trim().length() < 2 && !isNumeric(s.trim()))) {
+                    return false;
+                }
+
+                for (Room room : rooms) {
+                    List<String> words = Arrays.asList(s.toLowerCase().trim().split(" "));
+                    for (String w : words) {
+                        if (room.getName().toLowerCase().contains(w)) {
+                            searchAdapter.add(room.getName());
+                            break;
+                        }
+                    }
+                }
+                searchAdapter.notifyDataSetChanged();
+
+
                 return false;
             }
-        });
+        };
+        searchView.setOnQueryTextListener(onQueryTextListener);
+
+
     }
 
 
@@ -314,50 +588,59 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
         switch (item.getItemId()) {
             case R.id.filter:
 
-                if(getActivity().findViewById(R.id.description).getVisibility()==View.GONE)
-                    getActivity().findViewById(R.id.description).setVisibility(View.VISIBLE);
-                else
-                    getActivity().findViewById(R.id.description).setVisibility(View.GONE);
 
-                /*categoriesToBeFiltered.clear();
-                categoriesToBeFiltered.addAll(categoriesFiltered);
+                DialogFragment f=new DialogFragment() {
+                RecyclerView mRecyclerView;
+                @Override
+                public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+                    //inflate layout with recycler view
+                    View v = inflater.inflate(R.layout.dialog_room_types, container, false);
+                    mRecyclerView = (RecyclerView) v.findViewById(R.id.recyclerView);
+                    mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                    //setadapter
+                    mRecyclerView.setAdapter(new RoomTypesAdapter(this.getDialog(), (new JSONManager(getActivity())).jsonTORoomTypes(), getActivity()));
 
+                    getDialog().setCanceledOnTouchOutside(true);
+                    getDialog().setTitle("Room categories");
+                    getDialog().setCancelable(true);
+                    return v;
+                }
+                    public void onResume()
+                    {
+                        super.onResume();
+                        mRecyclerView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Window window = getDialog().getWindow();
+                                int w=mRecyclerView.getWidth();int h= mRecyclerView.getHeight();
+                                window.setLayout(w,h);
+                            }
+                        });
+
+                    }
+                };
+
+                f.show(getActivity().getSupportFragmentManager(), "some tag");
+
+
+
+/*
                 final Dialog dialog = new Dialog(getActivity());
-                dialog.setContentView(R.layout.dialog_categories);
+                dialog.setContentView(R.layout.dialog_room_types);
                 dialog.setCanceledOnTouchOutside(true);
-                dialog.setTitle("Filter categories");
+                dialog.setTitle("Room categories");
                 dialog.setCancelable(true);
-                SearchView searchView= (SearchView)dialog.findViewById(R.id.searchView);
-                searchView.setOnQueryTextListener(this);
 
                 RecyclerView recyclerView = (RecyclerView)dialog.findViewById(R.id.recyclerView);
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setAdapter(new CategoriesAdapter(categoriesToBeFiltered, false, getActivity()));
+               // RecyclerView.LayoutParams layoutParams=new RecyclerView.LayoutParams(RecyclerView.LayoutParams.WRAP_CONTENT,RecyclerView.LayoutParams.WRAP_CONTENT);
+               // recyclerView.setLayoutParams(layoutParams);
+                recyclerView.setAdapter(new RoomTypesAdapter(dialog, (new JSONManager(getActivity())).jsonTORoomTypes(), getActivity()));
 
-                Button okButton = (Button)dialog.findViewById(R.id.ok_button);
-                Button cancelButton = (Button)dialog.findViewById(R.id.cancel_button);
+                //dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        categoriesFiltered.clear();
-                        categoriesFiltered.addAll(categoriesToBeFiltered);
-                        search();
-                        dialog.dismiss();
-                    }
-                });
 
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                //recyclerView..setTextFilterEnabled(true);
-                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                //dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
                 dialog.show();*/
                 return true;
             default:
@@ -365,37 +648,130 @@ public class FindARoomFragment extends android.support.v4.app.Fragment implement
         }
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
+
+
+
+
+
+    public PolylineOptions getPolyline(LatLng a,LatLng b){
+        PolylineOptions polylineOptions = new PolylineOptions();
+        polylineOptions.color(Color.BLUE);
+        polylineOptions.width(5);
+        polylineOptions.add(a);
+        polylineOptions.add(b);
+        return  polylineOptions;
     }
 
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        return false;
+
+    public static boolean isNumeric(String str) {
+        for (char c : str.toCharArray())
+        {
+            if (!Character.isDigit(c)) return false;
+        }
+        return true;
     }
 
 
 
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+    public boolean onBackPressed(){
+        View descrLayout=getActivity().findViewById(R.id.description);
+        if(descrLayout.getVisibility()==View.VISIBLE){
+            descrLayout.setVisibility(View.GONE);
+            return false;
+        }
+        return true;
     }
 
-    public void search(){
-        /*ParseQuery<Notice> query = ParseQuery.getQuery("Notice");
-        query.fromLocalDatastore();
-        query.orderByDescending("createdAt");
-        query.setLimit(1000);
-        query.findInBackground(new FindCallback<Notice>() {
-            @Override
-            public void done(List<Notice> objects, ParseException e) {
-                noticesAdapter.setNotices(objects);
-                noticesAdapter.notifyDataSetChanged();
-                swypeRefreshLayout.setRefreshing(false);
+
+
+    public class RoomTypesAdapter extends RecyclerView.Adapter<RoomTypesAdapter.ViewHolder> {
+
+        private List<String> roomTypes;
+        private Context context;
+        private Dialog dialog;
+
+        // Provide a reference to the views for each data item
+        // Complex data items may need more than one view per item, and
+        // you provide access to all the views for a data item in a view holder
+        public class ViewHolder extends RecyclerView.ViewHolder {
+            // each data item is just a string in this case
+            public LinearLayout linearLayout;
+
+            public ViewHolder(LinearLayout ll) {
+                super(ll);
+                linearLayout = ll;
             }
-        });*/
+        }
+
+        // Provide a suitable constructor (depends on the kind of dataset)
+        public RoomTypesAdapter(Dialog dialog,List<String> roomTypes, Context ctx) {
+            this.roomTypes = roomTypes;
+            this.context=ctx;
+            this.dialog=dialog;
+
+        }
+
+        // Create new views (invoked by the layout manager)
+        @Override
+        public RoomTypesAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,int viewType) {
+            // create a new view
+            LinearLayout ll = (LinearLayout) LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.room_type_item, parent, false);
+
+            ViewHolder vh = new ViewHolder(ll);
+            return vh;
+        }
+
+        // Replace the contents of a view (invoked by the layout manager)
+        @Override
+        public void onBindViewHolder(ViewHolder holder, final int position) {
+            final String roomType=roomTypes.get(position);
+            ((TextView)holder.linearLayout.findViewById(R.id.category_name)).setText(roomType);
+
+            int imageId=MyUtils.getIconForRoomType(roomType);
+            ((ImageView)holder.linearLayout.findViewById(R.id.category_icon)).setImageResource(imageId);
+
+
+
+
+            holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    for (Marker marker : markers.keySet()) {
+                        marker.remove();
+
+                    }
+                    getActivity().findViewById(R.id.description).setVisibility(View.GONE);
+
+                    for (Room room : rooms) {
+                        if (room.getType().equals(roomType)) {
+                            MarkerOptions mo = new MarkerOptions().position(room.getLocation()).title(room.getName()).icon(BitmapDescriptorFactory.defaultMarker(room.getMarkerColor()));
+                            markers.put(gMap.addMarker(mo), room);
+                        }
+                    }
+
+                    dialog.dismiss();
+                    gMap.animateCamera(cu);
+                }
+            });
+
+
+
+
+        }
+
+        // Return the size of your dataset (invoked by the layout manager)
+        @Override
+        public int getItemCount() {
+
+            return roomTypes.size();
+        }
+
     }
+
+
+
+
 
 
 

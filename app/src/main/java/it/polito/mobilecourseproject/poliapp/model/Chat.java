@@ -1,64 +1,121 @@
 package it.polito.mobilecourseproject.poliapp.model;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 
 import com.parse.ParseClassName;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
 import com.parse.ParseUser;
-import com.parse.SaveCallback;
 
-import java.io.ByteArrayOutputStream;
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import it.polito.mobilecourseproject.poliapp.AccountManager;
+import it.polito.mobilecourseproject.poliapp.TimeManager;
 
 /**
  * Created by Enrico on 19/06/15.
  */
-@ParseClassName("_User")
-public class User extends ParseUser {
+@ParseClassName("Chat")
+public class Chat extends ParseObject {
 
+    public String getTitle() {
+        String title=getString("title");
+        if(title==null)title="";
+        if(title.trim().equals("")){
+           for(String user : getUsers()){
+               try {
+                   String userId= user.split(";;;")[0];
+                   String name=user.split(";;;")[1];
+                   if(!userId.equals(AccountManager.getCurrentUser().getObjectId())){
+                       return name;
+                   }
+               } catch (Exception e) {
+                  return title;
+               }
+           }
 
-    public String getFirstName() {
-        return getString("firstName");
+        }
+
+        return title;
     }
 
-    public void setFirstName(String value) {
-        put("firstName", value);
-    }
-
-    public String getLastName() {
-        return getString("lastName");
-    }
-
-    public void setLastName(String value) {
-        put("lastName", value);
-    }
-
-    public String getUniversity() {
-        return getString("university");
-    }
-
-    public void setUniversity(String value) {
-        put("university", value);
-    }
-
-
-
-
-    public static User createUser(String firstName,String lastName, String university){
-        User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setUniversity(university);
-        return user;
-
+    public void setTitle(String value) {
+        put("title", value);
     }
 
 
+    public ArrayList<String> getUsers() {
+        ArrayList<String> userIds=new ArrayList<String>();
+        try{
+            JSONArray ja=getJSONArray("users");
+            for(int i=0;i< ja.length();i++){
+                userIds.add(ja.get(i).toString());
+            }
+            return userIds;
+        }catch (Exception e){
+            return new ArrayList<String>();
+        }
+
+    }
+    public void setUsers(List<String> users) {
+        put("users", new JSONArray(users));
+    }
+
+
+
+    public String getLastMessageDate() {
+        Date date=getDate("date");
+        if(date!=null) return TimeManager.getFormattedDate(date, "");
+        else return "";
+
+    }
+
+    public void setLastMessageDate(Date value) {
+        put("date", value);
+    }
+
+
+    public String getPreview() {
+        String preview=getString("description");
+        if(preview==null)preview="";
+        return  preview;
+    }
+
+    public void setPreview(String value) {
+        put("description", value);
+    }
+
+
+
+
+    public List<ParseObject> getPhotos(boolean fromLocalDatastore) throws com.parse.ParseException {
+        ParseRelation<ParseObject> relation = getRelation("photos");
+        ParseQuery<ParseObject> query = relation.getQuery();
+
+        if(fromLocalDatastore)
+            query = query.fromLocalDatastore();
+
+        return query.find();
+    }
+
+
+
+    public static Chat createChat(String title, List<String> users, String preview, Date date, Bitmap bitmap){
+        Chat chat =new Chat();
+        if(title!=null) chat.setTitle(title);
+        if(users!=null) chat.setUsers(users);
+        if(preview!=null)chat.setPreview(preview);
+        if(date!=null)chat.setLastMessageDate(date);
+        //chat.bitmap
+        return chat;
+
+    }
 
 
     /*

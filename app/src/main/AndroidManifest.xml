@@ -35,16 +35,10 @@
             android:parentActivityName=".login.LoginActivity"
             android:theme="@style/WhiteBackgroundTheme"
             android:windowSoftInputMode="stateHidden" />
-
-
-
-        <activity android:name=".MainActivity"
-            android:windowSoftInputMode="stateHidden"
-            />
-
-
-
-
+        <activity
+            android:name=".MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".noticeboard.AddNoticeActivity"
             android:configChanges="orientation|screenSize"
@@ -62,9 +56,7 @@
             android:name=".noticeboard.NoticeDetailActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="stateHidden" >
-        </activity>
-
+            android:windowSoftInputMode="stateHidden"></activity>
         <activity
             android:name=".utils.imagezoomcrop.ImageCropActivity"
             android:label="Choose a picture" />
@@ -84,6 +76,18 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <activity
+            android:name=".messages.AddChatActivity"
+            android:label="@string/title_activity_add_chat"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden"></activity>
+        <activity
+            android:name=".messages.AddGroupActivity"
+            android:label="@string/title_activity_add_group"
+            android:theme="@style/AppTheme"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden"></activity>
     </application>
 
 </manifest>

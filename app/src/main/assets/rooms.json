@@ -1,0 +1,164 @@
+{
+  "rooms":
+  [
+  {
+  "name": "Bar Ambrogio",
+  "type": "Bar",
+  "latitude": 45.062142,
+  "longitude": 7.661499,
+  "floor": "Ground Floor",
+  "seats": 0
+  }
+  ,
+  {
+  "name": "Bar Katia",
+  "type": "Bar",
+  "latitude": 45.061968,
+  "longitude": 7.660802,
+  "floor": "Ground Floor",
+  "seats": 0
+
+  },
+  {
+  "name": "Engineering central library",
+  "type": "Library",
+  "latitude": 45.063135,
+  "longitude": 7.662250,
+  "floor": "Ground Floor",
+  "seats": 0
+  }
+  ,
+  {
+  "name": "Former DISMIC library",
+  "type": "Library",
+  "latitude": 45.063991,
+  "longitude": 7.660770,
+  "floor": "Ground Floor",
+  "seats": 0
+  }
+  ,
+  {
+  "name": "LAB DIMEC",
+  "type": "Laboratory",
+  "latitude": 45.061725,
+  "longitude": 7.660212,
+  "floor": "First Floor",
+  "seats": 0
+  }
+  ,
+
+
+  {
+  "name": "LADISPE",
+  "type": "Laboratory",
+  "latitude": 45.064529,
+  "longitude": 7.661596,
+  "floor": "Ground Floor",
+  "seats": 0
+  }
+  ,
+  {
+  "name": "LAIB 1D",
+  "type": "Computer Room",
+  "latitude": 45.062640,
+  "longitude": 7.661781,
+  "floor": "Second Floor",
+  "seats": 160
+
+  },
+  {
+  "name": "LEP A",
+  "type": "Computer Room",
+  "latitude": 45.062045,
+  "longitude": 7.659191,
+  "floor": "First Floor",
+  "seats": 100
+  }
+  ,
+  {
+  "name": "Classroom 1",
+  "type": "Classroom",
+  "latitude": 45.062456,
+  "longitude": 7.661536,
+  "floor": "Ground Floor",
+  "seats": 200
+  }
+  ,
+  {
+  "name": "Classroom 3",
+  "type": "Classroom",
+  "latitude": 45.062532,
+  "longitude": 7.661343,
+  "floor": "Ground Floor",
+  "seats": 200
+  }
+  ,
+
+
+  {
+  "name": "Classroom 2",
+  "type": "Classroom",
+  "latitude": 45.062960,
+  "longitude": 7.661530,
+  "floor": "Ground Floor",
+  "seats": 200
+  }
+  ,
+  {
+  "name": "Classroom 4",
+  "type": "Classroom",
+  "latitude": 45.062865,
+  "longitude": 7.661815,
+  "floor": "Ground Floor",
+  "seats": 200
+
+  },
+
+  {
+  "name": "Classroom 1D",
+  "type": "Classroom",
+  "latitude": 45.063403,
+  "longitude": 7.662008,
+  "floor": "First Floor",
+  "seats": 90
+  }
+  ,
+
+
+  {
+  "name": "Classroom 2D",
+  "type": "Classroom",
+  "latitude": 45.063157,
+  "longitude": 7.662732,
+  "floor": "First Floor",
+  "seats": 80
+  }
+  ,
+  {
+  "name": "Classroom 1S",
+  "type": "Classroom",
+  "latitude": 45.063047,
+  "longitude": 7.660817,
+  "floor": "Lower Ground Floor",
+  "seats": 80
+
+  },
+  {
+  "name": "Classroom 2S",
+  "type": "Classroom",
+  "latitude": 45.063108,
+  "longitude": 7.660592,
+  "floor": "Lower Ground Floor",
+  "seats": 150
+  }
+  ,
+  {
+  "name": "Classroom 3S",
+  "type": "Classroom",
+  "latitude": 45.063161,
+  "longitude": 7.660361,
+  "floor": "Lower Ground Floor",
+  "seats": 120
+  }
+  ]
+}

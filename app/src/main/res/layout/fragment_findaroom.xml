@@ -5,27 +5,35 @@
     android:orientation="vertical" >
 
 
+
+
     <LinearLayout
         android:id="@+id/footer"
         android:orientation="vertical"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="@dimen/footer_height"
-        android:background="#ffff00"
-        android:visibility="visible"/>
+        android:background="@color/myPrimaryColor"
+        android:visibility="visible">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="The blue paths in the map are wheelchair accessible"
+            android:textColor="@android:color/white"
+            android:textSize="14dp"
+            android:gravity="center"
+            android:padding="5dp"/>
+
+        </LinearLayout>
 
 
 
 
-    <LinearLayout
-        android:id="@+id/content"
-        android:layout_above="@+id/footer"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+
 
     <FrameLayout
-        android:layout_weight="1"
+        android:layout_above="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/map"
@@ -33,15 +41,141 @@
         android:visibility="visible"/>
 
 
-    <FrameLayout
-        android:layout_weight="1"
-        android:id="@+id/description"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#000000"
-        android:visibility="gone"/>
 
-    </LinearLayout>
+
+    <RelativeLayout
+
+        android:id="@+id/description"
+        android:layout_above="@id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/description_height"
+        android:background="@color/tranPrimaryColor"
+        android:visibility="gone">
+
+        <View
+            android:id="@+id/labelV"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/label_height2"
+            android:background="@android:color/black"
+            android:layout_alignParentBottom="true"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_margin="@dimen/description_margin">
+
+
+
+
+            <TextView
+                android:id="@+id/nameV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Engineering central library"
+                android:textSize="17dp"
+                android:textColor="@color/labelTextColor"
+                android:textStyle="bold"
+                android:shadowColor="@color/grayDarkerTextColor"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/description_margin"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Floor:"
+                    android:textColor="@color/myTextPrimaryColor"
+                    android:shadowColor="@color/grayDarkerTextColor"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:textStyle="bold"
+                    android:shadowRadius="1"/>
+
+                <TextView
+                    android:id="@+id/floorV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:text="Ground Floor"
+                    android:textColor="@color/myPrimaryColor"
+                    android:shadowColor="@color/grayDarkerTextColor"
+                    android:textStyle="normal"
+
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"/>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/description_margin"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Details:"
+                    android:textColor="@color/myTextPrimaryColor"
+                    android:shadowColor="@color/grayDarkerTextColor"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:textStyle="bold"
+                    android:shadowRadius="1"/>
+
+                <TextView
+                    android:id="@+id/detailsV"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:text="Library, 120 seats"
+                    android:textColor="@color/myPrimaryColor"
+                    android:shadowColor="@color/grayDarkerTextColor"
+                    android:textStyle="normal"
+
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"/>
+
+            </LinearLayout>
+            </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_alignParentRight="true"
+            android:id="@+id/background"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:layout_margin="5dp"
+                android:id="@+id/category_icon"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/blue_train_2"
+                />
+        </LinearLayout>
+
+</RelativeLayout>
+
+
+    <ListView
+        android:visibility="visible"
+        android:background="@color/white"
+        android:id="@+id/listView"
+        android:layout_alignParentTop="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
 
 
 

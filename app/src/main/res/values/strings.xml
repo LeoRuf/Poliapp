@@ -9,6 +9,8 @@
         <item>@drawable/loading_photo</item>
     </string-array>
     <string name="title_activity_maps">Map</string>
+    <string name="title_activity_add_chat">Add chat</string>
+    <string name="title_activity_add_group">Add group</string>
 
 
 </resources>
