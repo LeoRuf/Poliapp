@@ -41,14 +41,14 @@
             android:id="@+id/nav_time_schedule"
             android:icon="@drawable/timetable_icon"
             android:title="Time schedule" />
-    <!--   <item
-            android:id="@+id/nav_consulting_hours"
-            android:icon="@drawable/ic_headset"
-            android:title="Consulting hours" /> -->
         <item
             android:id="@+id/nav_findaroom"
             android:icon="@drawable/map_icon"
             android:title="Find a room" />
+        <item
+            android:id="@+id/nav_joboffers"
+            android:icon="@drawable/ic_action_trending_up"
+            android:title="Job offers" />
     </group>
     <group android:checkableBehavior="single"
         android:id="@+id/nav_settings_section">
@@ -57,9 +57,9 @@
             android:icon="@drawable/ic_action_account_box"
             android:title="My profile" />
         <item
-            android:id="@+id/nav_settings"
+            android:id="@+id/nav_logout"
             android:icon="@drawable/ic_action_settings"
-            android:title="Settings" />
+            android:title="Log out" />
     </group>
 
 

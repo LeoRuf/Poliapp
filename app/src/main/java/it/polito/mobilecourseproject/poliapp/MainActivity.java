@@ -19,6 +19,7 @@ import android.widget.Toast;
 import java.lang.reflect.Constructor;
 
 import it.polito.mobilecourseproject.poliapp.findaroom.FindARoomFragment;
+import it.polito.mobilecourseproject.poliapp.jobs.JobOffersFragment;
 import it.polito.mobilecourseproject.poliapp.messages.MessagesFragment;
 import it.polito.mobilecourseproject.poliapp.noticeboard.NoticeboardFragment;
 import it.polito.mobilecourseproject.poliapp.profile.ProfileActivity;
@@ -192,6 +193,22 @@ public class MainActivity extends AppCompatActivity {
                                 Intent i = new Intent(MainActivity.this, ProfileActivity.class);
                                 startActivity(i);
                                 return true;
+
+                            case R.id.nav_joboffers:
+
+                                JobOffersFragment jobOffersFragment = (JobOffersFragment)getSupportFragmentManager().findFragmentByTag(JobOffersFragment.class.getName());
+                                if(jobOffersFragment==null)
+                                    jobOffersFragment = new JobOffersFragment();
+
+                                if (!jobOffersFragment.isVisible()) {
+                                    final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                                    fragmentTransaction.replace(R.id.frame, jobOffersFragment, JobOffersFragment.class.getName());
+                                    startFragment(fragmentTransaction);
+                                }
+                                currentFragment=jobOffersFragment.getClass().getName();
+                                return true;
+
 
                             default:
                                 Toast.makeText(getApplicationContext(),"Somethings Wrong",Toast.LENGTH_SHORT).show();

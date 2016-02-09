@@ -4,9 +4,11 @@ import android.app.Application;
 import android.content.Context;
 
 import com.parse.Parse;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import it.polito.mobilecourseproject.poliapp.model.Chat;
+import it.polito.mobilecourseproject.poliapp.model.JobOffer;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
 import it.polito.mobilecourseproject.poliapp.model.User;
 
@@ -23,8 +25,9 @@ public class PoliApp extends Application {
 
         Parse.enableLocalDatastore(getApplicationContext());
         ParseUser.registerSubclass(User.class);
-        ParseUser.registerSubclass(Notice.class);
-        ParseUser.registerSubclass(Chat.class);
+        ParseObject.registerSubclass(Notice.class);
+        ParseObject.registerSubclass(JobOffer.class);
+        ParseObject.registerSubclass(Chat.class);
 
         Parse.initialize(getApplicationContext(), "WY7akYTncIqmxnem30lY0YxNljh6PkYqUtbsVx6L", "VydnpHbUe5vMtLbvY3P79iByFRilB5KFipYp2jeq");
 

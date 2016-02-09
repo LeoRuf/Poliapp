@@ -60,6 +60,13 @@
             android:theme="@style/AppThemeBlueStatusBar"
             />
         <activity
+            android:name=".jobs.JobOfferDetailActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".MainActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppThemeBlueStatusBar"
+            />
+        <activity
             android:name=".noticeboard.NoticeDetailActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".MainActivity"
