@@ -1,18 +1,18 @@
 package it.polito.mobilecourseproject.poliapp.model;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.preference.PreferenceManager;
 
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
-import com.parse.ParseFile;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-import com.parse.ParseRelation;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,6 +20,18 @@ import java.util.List;
  */
 @ParseClassName("_User")
 public class User extends ParseUser {
+
+
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof User){
+            return getObjectId().equals(((User)o).getObjectId());
+        }else{
+            return false;
+        }
+
+    }
+
 
 
     public String getFirstName() {
@@ -55,6 +67,62 @@ public class User extends ParseUser {
         user.setLastName(lastName);
         user.setUniversity(university);
         return user;
+
+    }
+
+
+    public interface OnUsersDownloadedCallback {
+       void onUsersDownloaded(List<User> users);
+    }
+
+
+    public static void downloadAllUsers(final Context ctx,final OnUsersDownloadedCallback callback){
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+         //query.orderByDescending("updatedAt");
+        // query.whereGreaterThan("updatedAt", new Date(PreferenceManager.getDefaultSharedPreferences(ctx).getLong("Users_timestamp", 0)));
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(final List<ParseUser> objects, ParseException e) {
+                ArrayList<User> users= new ArrayList<User>();
+                if(objects==null || objects.size()==0){
+                    callback.onUsersDownloaded(users);
+                }else{
+                    ParseObject.pinAllInBackground(objects, new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            //PreferenceManager.getDefaultSharedPreferences(ctx).edit().putLong("Users_timestamp", objects.get(0).getUpdatedAt().getTime()).commit();
+                        }
+                    });
+                    for(ParseUser pu : objects){
+                        users.add((User)pu);
+                    }
+                    callback.onUsersDownloaded((users));
+                }
+
+            }
+        });
+
+    }
+
+
+    public static void getFromLocalStorageAllUsers(final Context ctx,final OnUsersDownloadedCallback callback){
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.fromLocalDatastore();
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(final List<ParseUser> objects, ParseException e) {
+                ArrayList<User> users= new ArrayList<User>();
+                if(objects==null || objects.size()==0){
+                    callback.onUsersDownloaded(users);
+                }else{
+                    for(ParseUser pu : objects){
+                        users.add((User) pu);
+                    }
+                    callback.onUsersDownloaded((users));
+                }
+
+            }
+        });
 
     }
 

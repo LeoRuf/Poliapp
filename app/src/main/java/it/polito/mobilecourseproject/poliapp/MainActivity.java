@@ -1,6 +1,10 @@
 package it.polito.mobilecourseproject.poliapp;
 
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -13,12 +17,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 
 import it.polito.mobilecourseproject.poliapp.findaroom.FindARoomFragment;
+import it.polito.mobilecourseproject.poliapp.messages.MessageService;
 import it.polito.mobilecourseproject.poliapp.messages.MessagesFragment;
+import it.polito.mobilecourseproject.poliapp.model.Chat;
+import it.polito.mobilecourseproject.poliapp.model.User;
 import it.polito.mobilecourseproject.poliapp.noticeboard.NoticeboardFragment;
 import it.polito.mobilecourseproject.poliapp.time_schedule.TimeScheduleFragment;
 
@@ -26,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private String currentFragment;
+    private User thisUser;
+    private NavigationView navigationView;
 
 
 
@@ -50,14 +61,82 @@ public class MainActivity extends AppCompatActivity {
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
 
+
+        try{
+            thisUser=AccountManager.getCurrentUser();
+        }catch (Exception e){
+            e.printStackTrace();
+            this.onBackPressed();
+            return;
+
+        }
+
+
+
+
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+         navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (navigationView != null) {
             setupDrawerContent(navigationView,savedInstanceState);
         }
 
     }
+
+
+    public void setChatItemInfo(){
+        ArrayList<Chat> chats=Chat.getChatsFromLocal();
+        int count=0;
+        for(Chat c : chats){
+            if(c.getSeen(getApplicationContext())==false){
+                count++;
+            }
+        }
+        MenuItem chatItem=(MenuItem)navigationView.getMenu().findItem(R.id.nav_messages);
+        String s="";
+        if(count!=0)s=" ("+count+")";
+        chatItem.setTitle("Chat" + s);
+    }
+
+    BroadcastReceiver broadcastReceiver;
+    @Override
+    public void onResume(){
+        super.onResume();
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_name)).setText(thisUser.getFirstName() + " " + thisUser.getLastName());
+        setChatItemInfo();
+        try{
+            IntentFilter intentFilter = new IntentFilter(MessageService.SERVICE_INTENT_BROADCAST);
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                   MainActivity.this.setChatItemInfo();
+                }
+            };
+            //registering our receiver
+            this.registerReceiver(broadcastReceiver, intentFilter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        //unregister our receiver
+        try{
+            this.unregisterReceiver(this.broadcastReceiver);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+
+
+
+
+
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -69,10 +148,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     private void setupDrawerContent(NavigationView navigationView,Bundle savedInstanceState)  {
 
-
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+           FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if(savedInstanceState != null) {
             try {
                 Class<?> c = Class.forName(savedInstanceState.getString("currentFragment"));
@@ -222,6 +301,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){
+
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawers();
+            return;
+        }
+
+
+
+
+
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.frame);
         if (f instanceof FindARoomFragment){
             if(!((FindARoomFragment)f).onBackPressed())return;

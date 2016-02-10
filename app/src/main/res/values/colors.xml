@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="myLightPrimaryColor">#A3D2FA</color>
+    <color name="myVeryLightPrimaryColor">#a3e4fa</color>
     <color name="myPrimaryColor">#03A9F4</color>
     <color name="myPrimaryDarkColor">#0288D1</color>
     <color name="myPrimaryDarkestColor">#015F92</color>

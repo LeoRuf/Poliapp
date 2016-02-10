@@ -31,15 +31,16 @@
         android:layout_height="100dp"
         android:id="@+id/imgAvatar"
         android:layout_centerInParent="true"
-        android:src="@drawable/my_photo"
+        android:src="@drawable/default_avatar"
         android:layout_marginBottom="25dp"
         android:clickable="true"
         />
 
     <TextView
+        android:id="@+id/drawer_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Enrico Di Fazio"
+        android:text=""
         android:textStyle="bold"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 

@@ -205,11 +205,11 @@ public class SignUpActivity extends AppCompatActivity {
                 signUpButton.setProgress(1);
                 signUpButton.setEnabled(false);
 
-                firstNameText=firstName.getText().toString();
-                lastNameText=lastName.getText().toString();
-                emailText=email.getText().toString();
-                passwordText=password.getText().toString();
-                universityText=university.getText().toString();
+                firstNameText=firstName.getText().toString().trim();
+                lastNameText=lastName.getText().toString().trim();
+                emailText=email.getText().toString().trim();
+                passwordText=password.getText().toString().trim();
+                universityText=university.getText().toString().trim();
                 SignUpActivity.this.findViewById(R.id.overlay).setVisibility(View.VISIBLE);
             }
 

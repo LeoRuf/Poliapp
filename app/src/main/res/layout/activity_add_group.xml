@@ -21,6 +21,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <RelativeLayout
+          android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <LinearLayout
        android:layout_marginTop="?attr/actionBarSize"
     android:layout_width="match_parent"
@@ -37,6 +41,7 @@
 
 
         <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
@@ -49,6 +54,16 @@
             android:layout_height="match_parent"
             android:background="@color/white">
         </android.support.v7.widget.RecyclerView>
+
+
+            <ProgressBar
+                android:id="@+id/loadingUnder"
+                android:visibility="gone"
+                android:clickable="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true" />
 
         </LinearLayout>
 
@@ -80,6 +95,18 @@
 
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:visibility="gone"
+        android:clickable="false"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true" />
+
+
+</RelativeLayout>
 
 
 

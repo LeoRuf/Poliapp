@@ -30,6 +30,7 @@
 
 
             <TextView
+                android:textSize="14sp"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:text="New chat"
@@ -61,6 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:text="New group"
+                android:textSize="14sp"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:textColor="@color/myTextPrimaryColor"

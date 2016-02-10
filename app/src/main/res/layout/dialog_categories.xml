@@ -8,6 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/searchView"
+        android:textSize="14sp"
         android:iconifiedByDefault="false"/>
 
     <android.support.v7.widget.RecyclerView
@@ -37,10 +38,12 @@
             android:background="?android:attr/selectableItemBackground"
             android:focusable="true"
             android:clickable="true"
+            android:textSize="14sp"
             android:padding="7dp"/>
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="14sp"
             android:id="@+id/ok_button"
             android:text="OK"
             android:background="?android:attr/selectableItemBackground"

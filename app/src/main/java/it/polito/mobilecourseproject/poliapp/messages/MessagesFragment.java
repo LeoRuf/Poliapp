@@ -3,16 +3,16 @@ package it.polito.mobilecourseproject.poliapp.messages;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,21 +23,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import java.sql.Array;
+import com.rockerhieu.emojicon.EmojiconTextView;
+
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
-import it.polito.mobilecourseproject.poliapp.AccountManager;
-import it.polito.mobilecourseproject.poliapp.MyUtils;
+import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
-import it.polito.mobilecourseproject.poliapp.TimeManager;
 import it.polito.mobilecourseproject.poliapp.model.Chat;
+import it.polito.mobilecourseproject.poliapp.model.Message;
 
 
 public class MessagesFragment extends android.support.v4.app.Fragment   {
@@ -49,6 +50,8 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
 
     ChatAdapter chatAdapter;
     RecyclerView recyclerView;
+    ArrayList<Chat> chats;
+    //SwipeRefreshLayout refreshLayout;
 
 
 
@@ -75,7 +78,74 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
     }
 
 
+    private BroadcastReceiver broadcastReceiver;
+    @Override
+    public void onResume(){
+        super.onResume();
+        loadList();
 
+        try{
+            IntentFilter intentFilter = new IntentFilter(MessageService.SERVICE_INTENT_BROADCAST);
+            broadcastReceiver = new BroadcastReceiver() {
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    MessagesFragment.this.loadList();
+                }
+            };
+            //registering our receiver
+            getActivity().registerReceiver(broadcastReceiver, intentFilter);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void onPause() {
+        super.onPause();
+        //unregister our receiver
+        try{
+           getActivity().unregisterReceiver(this.broadcastReceiver);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+
+    public void loadList(){
+
+        chats=new ArrayList<>();
+        getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
+        getActivity().findViewById(R.id.noChatAvailable).setVisibility(View.GONE);
+        PoliApp.getModel().getChats(new Chat.OnChatsDownloaded() {
+            @Override
+            public void onChatsDownloaded(List<Chat> chats) {
+                getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                if (  chats.size() == 0) {
+                    getActivity().findViewById(R.id.noChatAvailable).setVisibility(View.VISIBLE);
+                    return;
+                }
+                Collections.sort(chats, new Comparator<Chat>() {
+                    @Override
+                    public int compare(Chat lhs, Chat rhs) {
+                        if(lhs.getPureLastMessageDate(getActivity()).before(rhs.getPureLastMessageDate(getActivity())))
+                            return 1;
+                        else
+                            return -1;
+                    }
+                });
+                chatAdapter = new ChatAdapter(chats, getContext());
+                recyclerView.setAdapter(chatAdapter);
+
+
+
+                //refreshLayout.setRefreshing(false);
+            }
+        });
+
+
+
+
+
+    }
 
 
 
@@ -147,9 +217,8 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //startActivity(new Intent(getActivity(),AddChatActivity.class));
 
-                final Dialog dialog = new Dialog(getActivity());
+                final Dialog dialog = new Dialog(getActivity(),R.style.CustomDialog);
                 dialog.setContentView(R.layout.dialog_add_chat);
                 dialog.setCanceledOnTouchOutside(true);
                 dialog.setTitle("Add...");
@@ -189,38 +258,28 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
         myOnAttach(getActivity());
 
 
+
+
         recyclerView=(RecyclerView)getView().findViewById(R.id.listView);
-        ArrayList<Chat> chats=new ArrayList<>();
-        try {
-            chats.add(Chat.createChat("", Arrays.asList(new String[]{AccountManager.getCurrentUser().getObjectId()+";;;dfsf", "342432;;;Enri"}), "Hi", null,null));
-            chats.add(Chat.createChat("", Arrays.asList(new String[]{AccountManager.getCurrentUser().getObjectId()+";;;dfsf", "34e2432;;;Luca"}), "Hey", null,null));
-            chats.add(Chat.createChat("", Arrays.asList(new String[]{AccountManager.getCurrentUser().getObjectId()+";;;dfsf", "34e24e32;;;IOO"}), "laskda", null,null));
-            chats.add(Chat.createChat("", Arrays.asList(new String[]{AccountManager.getCurrentUser().getObjectId()+";;;dfsf", "342432;;;Nicolò"}), ":)", null,null));
-            chats.add(Chat.createChat("", Arrays.asList(new String[]{AccountManager.getCurrentUser().getObjectId()+";;;dfsf", "34e2e432;;;Mauro"}), ":(", null,null));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        chatAdapter=new ChatAdapter(chats,getContext());
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(chatAdapter);
 
 
-        final SwipeRefreshLayout refreshLayout=(SwipeRefreshLayout)getView().findViewById(R.id.swipeRefreshLayout);
+
+        //moved in onResume()
+        //loadList();
+
+
+      /*refreshLayout=(SwipeRefreshLayout)getView().findViewById(R.id.swipeRefreshLayout);
         refreshLayout.setRefreshing(false);
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                (new Handler()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        chatAdapter.notifyDataSetChanged();
-                        refreshLayout.setRefreshing(false);
-                    }
-                },500);
+                       loadList();
+
 
             }
-        });
+        });*/
 
 
 
@@ -410,13 +469,19 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
 
             final Chat chat=chats.get(position);
 
-            ((TextView)holder.linearLayout.findViewById(R.id.nameV)).setText(chat.getTitle());
-            if(false)((TextView)holder.linearLayout.findViewById(R.id.timeAgoView)).setText(chat.getLastMessageDate());
-            ((TextView)holder.linearLayout.findViewById(R.id.previeW)).setText(chat.getPreview());
+            ((TextView)holder.linearLayout.findViewById(R.id.nameV)).setText(chat.getDerivedTitle());
+
+            if(Message.getMessagesFromLocalByChatID(getActivity(),chat.getChatID()).size()==0){
+                ((TextView)holder.linearLayout.findViewById(R.id.previeW)).setText("New chat...");
+
+            }else{
+                ((EmojiconTextView)holder.linearLayout.findViewById(R.id.previeW)).setText(chat.getPreview(getActivity()));
+            }
+            ((TextView)holder.linearLayout.findViewById(R.id.timeAgoView)).setText(chat.getLastMessageDate(getActivity()));
 
            // ((ImageView)holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap();
 
-            if(position==1 || position ==3){
+            if(!chat.getSeen(getActivity())){
                 holder.linearLayout.findViewById(R.id.notReadV).setVisibility(View.VISIBLE);
                 ((TextView)holder.linearLayout.findViewById(R.id.previeW)).setTypeface(null, Typeface.BOLD);
             }else{
@@ -425,27 +490,23 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
             }
 
 
+            if(chat.isGroup()){
+                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.person);
+            }else{
+                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.default_avatar);
+            }
 
-           /* holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+
+            holder.linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    for (Marker marker : markers.keySet()) {
-                        marker.remove();
-
-                    }
-                    getActivity().findViewById(R.id.description).setVisibility(View.GONE);
-
-                    for (Room room : rooms) {
-                        if (room.getType().equals(roomType)) {
-                            MarkerOptions mo = new MarkerOptions().position(room.getLocation()).title(room.getName()).icon(BitmapDescriptorFactory.defaultMarker(room.getMarkerColor()));
-                            markers.put(gMap.addMarker(mo), room);
-                        }
-                    }
-
-                    dialog.dismiss();
-                    gMap.animateCamera(cu);
+                    Intent i=new Intent(getActivity(),ChatActivity.class);
+                    String chatID= chat.getChatID();
+                    i.putExtra("CHAT_ID",chatID);
+                    startActivity(i);
                 }
-            });*/
+            });
+
 
 
 

@@ -10,6 +10,7 @@
     <!-- The ACCESS_COARSE/FINE_LOCATION permissions are not required to use Google Maps Android API v2, but are recommended. -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name=".PoliApp"
@@ -57,7 +58,7 @@
             android:name=".noticeboard.NoticeDetailActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".MainActivity"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".utils.imagezoomcrop.ImageCropActivity"
             android:label="Choose a picture" />
@@ -79,16 +80,37 @@
 
         <activity
             android:name=".messages.AddChatActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_add_chat"
             android:theme="@style/AppTheme"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".messages.AddGroupActivity"
+            android:configChanges="orientation|screenSize"
             android:label="@string/title_activity_add_group"
             android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".messages.ChatActivity"
             android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateHidden"></activity>
+            android:label="@string/title_activity_chat"
+            android:theme="@style/AppTheme"
+            android:windowSoftInputMode="stateHidden" />
+
+        <service
+            android:name=".messages.MessageService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <receiver
+            android:name=".messages.OnBootCompletedReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+
+        </receiver>
     </application>
 
 </manifest>

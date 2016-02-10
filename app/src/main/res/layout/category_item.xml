@@ -20,6 +20,7 @@
 
 
     <TextView
+        android:textSize="14sp"
         android:id="@+id/category_name"
         android:layout_width="0dp"
         android:layout_height="match_parent"

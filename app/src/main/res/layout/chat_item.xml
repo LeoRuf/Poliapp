@@ -7,6 +7,7 @@
     android:focusable="true"
     android:paddingRight="8dp"
     android:paddingLeft="8dp"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
     android:foreground="?android:attr/selectableItemBackground"
     android:orientation="vertical">
 
@@ -31,7 +32,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_margin="5dp"
                 android:clickable="true"
-                android:src="@drawable/my_photo" />
+                android:src="@drawable/default_avatar" />
 
 
             <LinearLayout
@@ -58,15 +59,19 @@
                     android:textSize="17sp"
                     android:textStyle="bold" />
 
-
-                <TextView
+                <com.rockerhieu.emojicon.EmojiconTextView
+                    emojicon:emojiconSize="23sp"
+                    emojicon:emojiconAlignment="baseline"
                     android:id="@+id/previeW"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:paddingBottom="1dp"
-                    android:text="Hi, how are you?"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    android:layout_marginRight="30dp"
+                    android:text="Hi, how are ssssssssssssssssssssssssssssssssssssssyou?"
                     android:textColor="@color/grayDarkerTextColor"
                     android:textSize="@dimen/abc_text_size_small_material" />
 
@@ -77,7 +82,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="right"
                     android:padding="2dp"
-                    android:text="15 minutes ago"
+                    android:text=""
                     android:textColor="@color/grayTextColor"
                     android:textSize="12sp" />
 

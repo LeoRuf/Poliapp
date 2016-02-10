@@ -71,6 +71,23 @@ public class TimeManager {
     }
 
 
+    public static String getFormattedMessageDate(Date date) {
+
+        Date now = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm");
+
+
+        final long diff = now.getTime() - date.getTime();
+
+        if (diff > 24 * HOUR_MILLIS) {
+            return "on "+dateFormat.format(date)+" at "+hourFormat.format(date);
+        } else {
+            return hourFormat.format(date);
+        }
+    }
+
+
 
 
 

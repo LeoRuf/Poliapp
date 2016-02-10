@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:id="@+id/message_item"
+    xmlns:emojicon="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view_me"
+        android:layout_gravity="right|center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_xxxlarge"
+        android:layout_marginTop="2dp"
+        card_view:cardBackgroundColor="@color/myVeryLightPrimaryColor"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="@dimen/margin_small"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                emojicon:emojiconAlignment="baseline"
+                emojicon:emojiconSize="23sp"
+                android:id="@+id/me_messageV"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hi, how are you?"
+                android:layout_gravity="right"
+                android:textSize="16sp"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_small2"
+                android:layout_marginRight="@dimen/margin_small2"
+                android:background="@android:color/transparent"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_marginRight="@dimen/margin_small2"
+                android:layout_marginLeft="@dimen/margin_small2"
+                android:layout_gravity="right"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/me_timeV"
+                android:textColor="@color/grayDarkerTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="22:23"
+                android:layout_gravity="center_vertical"
+                android:textSize="12sp"
+                android:background="@android:color/transparent"/>
+           <ImageView
+               android:id="@+id/time"
+               android:layout_width="@dimen/time_icon"
+               android:layout_height="@dimen/time_icon"
+               android:padding="2dp"
+               android:layout_gravity="center_vertical"
+               android:src="@drawable/sent"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card_view_others"
+        android:layout_gravity="left|center_vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginRight="@dimen/margin_xxxlarge"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/otherNameV"
+                android:textColor="@color/red_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Di Fazio Enrico"
+                android:layout_gravity="left"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_small2"
+                android:layout_marginRight="@dimen/margin_small2"
+                android:background="@android:color/transparent"/>
+
+            <com.rockerhieu.emojicon.EmojiconTextView
+                emojicon:emojiconSize="23sp"
+                emojicon:emojiconAlignment="baseline"
+                android:id="@+id/otherMessageV"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hi"
+                android:textSize="16sp"
+                android:layout_gravity="left"
+                android:layout_marginTop="@dimen/margin_small"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:layout_marginLeft="@dimen/margin_small2"
+                android:layout_marginRight="@dimen/margin_medium"
+                android:background="@android:color/transparent"/>
+
+            <TextView
+                android:textColor="@color/grayDarkerTextColor"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="22:23"
+                android:id="@+id/otherTimeV"
+                android:layout_marginLeft="@dimen/margin_small2"
+                android:layout_marginRight="@dimen/margin_small2"
+                android:layout_gravity="left"
+                android:textSize="12sp"
+                android:background="@android:color/transparent"/>
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+    </LinearLayout>

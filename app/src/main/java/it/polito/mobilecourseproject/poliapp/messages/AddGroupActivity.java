@@ -1,6 +1,7 @@
 package it.polito.mobilecourseproject.poliapp.messages;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatCheckBox;
@@ -15,27 +16,31 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.polito.mobilecourseproject.poliapp.AccountManager;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
+import it.polito.mobilecourseproject.poliapp.model.Chat;
 import it.polito.mobilecourseproject.poliapp.model.User;
+import it.polito.mobilecourseproject.poliapp.model.UserInfo;
 
 public class AddGroupActivity extends AppCompatActivity {
 
     ContactAdapter contactAdapter;
     ArrayList<User> users;
+    User thisUser;
     ArrayList<User> filteredUser=new ArrayList<User>();
 
     @Override
@@ -49,29 +54,37 @@ public class AddGroupActivity extends AppCompatActivity {
 
 
 
+        try{
+            thisUser= AccountManager.getCurrentUser();
+        }catch (Exception e){
+            e.printStackTrace();
+            this.onBackPressed();
+            return;
+        }
 
+        findViewById(R.id.loadingUnder).setVisibility(View.VISIBLE);
+        PoliApp.getModel().getContacts(new User.OnUsersDownloadedCallback() {
+            @Override
+            public void onUsersDownloaded(List<User> usrs) {
+                users = new ArrayList<User>();
+                users.addAll(usrs);
+                sortUsers();
+                ArrayList<User> others=new ArrayList<User>();
+                for(User u : users){
+                  if(!u.getObjectId().equals(thisUser.getObjectId())){
+                      others.add(u);
+                  }
+                }
+                users=others;
 
-
-        users =new ArrayList<User>();
-        users.add(User.createUser("Enrico", "Di Fazio", "Polito"));
-        users.add(User.createUser("Ciccio", "Pasticcio", "Polito"));
-        users.add(User.createUser("Luca", "Angileri", "Polito"));
-        users.add(User.createUser("Pippo", "Pippino", "Polito"));
-        users.add(User.createUser("Matteo", "Mommino", "Polito"));
-        users.add(User.createUser("Mario", "Rossi", "Polito"));
-        users.add(User.createUser("Enrico", "Rosi", "Polito"));
-        users.add(User.createUser("Ciccio", "Poso", "Polito"));
-        users.add(User.createUser("Luca", "Peso", "Polito"));
-        users.add(User.createUser("Pippo", "Rasi", "Polito"));
-        users.add(User.createUser("Matteo", "Zorro", "Polito"));
-        users.add(User.createUser("Mario", "Zardy", "Polito"));
-        sortUsers();
-
-        contactAdapter=new ContactAdapter(users,this);
-        RecyclerView recyclerView=(RecyclerView)findViewById(R.id.recyclerView);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(contactAdapter);
+                contactAdapter = new ContactAdapter(users, AddGroupActivity.this);
+                RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AddGroupActivity.this);
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setAdapter(contactAdapter);
+                findViewById(R.id.loadingUnder).setVisibility(View.GONE);
+            }
+        });
 
 
 
@@ -82,43 +95,125 @@ public class AddGroupActivity extends AppCompatActivity {
         Collections.sort(users, new Comparator<User>() {
             @Override
             public int compare(User lhs, User rhs) {
-                return (lhs.getLastName()+" "+lhs.getFirstName()).compareTo(rhs.getLastName()+" "+rhs.getFirstName());
+                return (lhs.getLastName() + " " + lhs.getFirstName()).compareTo(rhs.getLastName() + " " + rhs.getFirstName());
             }
         });
     }
 
 
-
-    public void goToChat(View v){
-        AppCompatEditText grNameText=(AppCompatEditText)findViewById(R.id.groupName);
-        if(grNameText.getText().toString().trim().equals("")){
-            Toast.makeText(this,"Group name not valid",Toast.LENGTH_LONG).show();
+    public void goToChat(View v) {
+        final AppCompatEditText grNameText = (AppCompatEditText) findViewById(R.id.groupName);
+        if (grNameText.getText().toString().trim().equals("")) {
+            Toast.makeText(this, "Group name not valid", Toast.LENGTH_LONG).show();
             return;
         }
 
-        Map<User,Boolean> selections = contactAdapter.getSelections();
-        ArrayList<User> components= new ArrayList<User>();
-        for(User u : selections.keySet()){
-            if(selections.get(u)==true){
-                components.add(u);
+        Map<User, Boolean> selections = contactAdapter.getSelections();
+        final ArrayList<UserInfo> components = new ArrayList<UserInfo>();
+        for (User u : selections.keySet()) {
+            if (selections.get(u) == true) {
+                components.add(new UserInfo(u.getObjectId(), u.getLastName() + " " + u.getFirstName()));
             }
         }
-        if(components.size()==0){
-            Toast.makeText(this,"No contact selected",Toast.LENGTH_LONG).show();
+        if (components.size() == 0) {
+            Toast.makeText(this, "No contact selected", Toast.LENGTH_LONG).show();
             return;
         }
+        components.add(new UserInfo(thisUser.getObjectId(),thisUser.getLastName() + " " + thisUser.getFirstName()));
+
+        ArrayList<String> filteredUsers = new ArrayList<String>();
+        filteredUsers.add(thisUser.getObjectId());
+        AddGroupActivity.this.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+        Chat.getChatsFromRemote(filteredUsers, new Chat.OnChatsDownloaded() {
+            @Override
+            public void onChatsDownloaded(List<Chat> chats) {
+                Chat chat = null;
+                for (Chat c : Chat.getChatsFromLocal()) {
+                    if (c.getDerivedTitle().equals(grNameText.getText().toString().trim())) {
+                        chat = c;
+                    }
+                }
+
+                if (chat != null) {
+                    AddGroupActivity.this.onBackPressed();
+                    Intent i = new Intent(AddGroupActivity.this, ChatActivity.class);
+                    i.putExtra("CHAT_ID", chat.getChatID());
+                    startActivity(i);
+                } else {
+                    chat = Chat.createChat(getApplicationContext(), grNameText.getText().toString(), components, "", new Date());
+                    Chat.storeChatInLocal(chat);
+                    final Chat finalChat = chat;
+                    Chat.storeChatInRemote(chat, new Chat.OnChatUploaded() {
+                        @Override
+                        public void onChatUploaded(boolean result) {
+                            if (result) {
+                                AddGroupActivity.this.onBackPressed();
+                                Intent i = new Intent(AddGroupActivity.this, ChatActivity.class);
+                                i.putExtra("CHAT_ID", finalChat.getChatID());
+                                startActivity(i);
+                            } else {
+                                Toast.makeText(AddGroupActivity.this, "Network error occurred", Toast.LENGTH_LONG).show();
+                            }
+                            AddGroupActivity.this.findViewById(R.id.loading).setVisibility(View.GONE);
+                        }
+                    });
+                }
+
+
+            }
+        });
+
+
     }
+
+
+
+
+
+
+
+
+
+
 
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.add_chat_menu, menu);
+        getMenuInflater().inflate(R.menu.add_chat_menu, menu);
 
+        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setQueryHint("Search");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filteredUser.clear();
+                if (newText == null || newText.equals("")) {
+                    filteredUser.addAll(users);
+                    contactAdapter.setFilteredUsers(filteredUser);
+                    contactAdapter.notifyDataSetChanged();
+                    return true;
+                }
+
+                for (User user : users) {
+                    if ((user.getFirstName().toLowerCase() + " " + user.getLastName().toLowerCase()).contains(newText.trim().toLowerCase())) {
+                        filteredUser.add(user);
+                    }
+                }
+                contactAdapter.setFilteredUsers(filteredUser);
+                contactAdapter.notifyDataSetChanged();
+
+
+                return true;
+            }
+        });
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -154,7 +249,8 @@ public class AddGroupActivity extends AppCompatActivity {
     public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder> {
 
         private Map<User,Boolean> selections=new HashMap<User,Boolean>();
-        private List<User> users;
+        private List<User> users=new ArrayList<>();;
+        private List<User> filteredUsers=new ArrayList<>();
         private Context context;
 
         // Provide a reference to the views for each data item
@@ -172,7 +268,8 @@ public class AddGroupActivity extends AppCompatActivity {
 
         // Provide a suitable constructor (depends on the kind of dataset)
         public ContactAdapter( List<User> users, Context ctx) {
-            this.users = users;
+            this.users.addAll(users);
+            this.filteredUsers.addAll(users);
             this.context=ctx;
 
         }
@@ -181,8 +278,9 @@ public class AddGroupActivity extends AppCompatActivity {
             return selections;
         }
 
-        public void setUsers(ArrayList<User> users){
-            this.users = users;
+        public void setFilteredUsers(ArrayList<User> users){
+            this.filteredUsers.clear();
+            this.filteredUsers.addAll(users);
         }
 
         // Create new views (invoked by the layout manager)
@@ -202,6 +300,14 @@ public class AddGroupActivity extends AppCompatActivity {
 
             final User user= users.get(position);
 
+            if(filteredUsers.contains(user)){
+                holder.linearLayout.findViewById(R.id.hideable).setVisibility(View.VISIBLE);
+            }else{
+                holder.linearLayout.findViewById(R.id.hideable).setVisibility(View.GONE);
+                return;
+            }
+
+
             ((TextView)holder.linearLayout.findViewById(R.id.nameV)).setText(user.getLastName() + " " + user.getFirstName());
 
             //((ImageView)holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap();
@@ -215,17 +321,18 @@ public class AddGroupActivity extends AppCompatActivity {
 
 
             final AppCompatCheckBox checkBox=(AppCompatCheckBox)holder.linearLayout.findViewById(R.id.check);
-            if(selections.get(user)==null || selections.get(user)==false){
-                checkBox.setChecked(false);
-            }else{
-                checkBox.setChecked(true);
-            }
             checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                     selections.put(user, isChecked);
                 }
             });
+            if(selections.get(user)==null || selections.get(user)==false){
+                checkBox.setChecked(false);
+            }else{
+                checkBox.setChecked(true);
+            }
+
 
             holder.linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

@@ -7,8 +7,10 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 
@@ -17,6 +19,8 @@ import it.polito.mobilecourseproject.poliapp.AsyncTaskWithoutProgressBar;
 import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.MainActivity;
 import it.polito.mobilecourseproject.poliapp.R;
+import it.polito.mobilecourseproject.poliapp.messages.ChatActivity;
+import it.polito.mobilecourseproject.poliapp.messages.MessageService;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -26,7 +30,38 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        //FROM NOTIFICATION
+        String chatID=getIntent().getStringExtra("CHAT_ID");
+        if(chatID!=null && AccountManager.checkIfLoggedIn()){
+            Intent i1=new Intent(LoginActivity.this, MainActivity.class);
+            i1.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(i1);
+            Intent i=new Intent(LoginActivity.this, ChatActivity.class);
+            i.putExtra("CHAT_ID", chatID);
+            startActivity(i);
+            finish();
+            return;
+        }
+
+
+
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        if(AccountManager.checkIfLoggedIn()){
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_login);
+
 
         userText = (EditText)findViewById(R.id.editTextUser);
         passText = (EditText)findViewById(R.id.editTextPass);
@@ -79,14 +114,16 @@ public class LoginActivity extends AppCompatActivity {
 
 
         if(!Connectivity.hasNetworkConnection(getApplicationContext())){
-            Snackbar.make(findViewById(R.id.parentView), "No network connection", Snackbar.LENGTH_LONG)
+             Snackbar sb=Snackbar.make(findViewById(R.id.parentView), "No network connection", Snackbar.LENGTH_LONG)
                     .setAction("Retry", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             login(v);
                         }
-                    })
-                    .show();
+                    });
+            ((TextView)((ViewGroup)sb.getView()).findViewById(android.support.design.R.id.snackbar_text)).setBackgroundColor(0);
+            sb.show();
+
 
             return;
         }
@@ -146,7 +183,9 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 } else {
                     loginButton.setProgress(-1);
-                    Snackbar.make(findViewById(R.id.parentView), "Wrong username or password", Snackbar.LENGTH_LONG).show();
+                    Snackbar sb=Snackbar.make(findViewById(R.id.parentView), "Wrong username or password", Snackbar.LENGTH_LONG);
+                    ((TextView)((ViewGroup)sb.getView()).findViewById(android.support.design.R.id.snackbar_text)).setBackgroundColor(0);
+                    sb.show();
                     LoginActivity.this.findViewById(R.id.overlay).setVisibility(View.GONE);
                 }
             }

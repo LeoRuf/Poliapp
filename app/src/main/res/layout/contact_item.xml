@@ -30,7 +30,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_margin="5dp"
                 android:clickable="true"
-                android:src="@drawable/my_photo" />
+                android:src="@drawable/default_avatar" />
 
 
         </LinearLayout>

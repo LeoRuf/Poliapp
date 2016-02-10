@@ -1,6 +1,7 @@
 package it.polito.mobilecourseproject.poliapp.messages;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,18 +30,24 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
+import it.polito.mobilecourseproject.poliapp.AccountManager;
+import it.polito.mobilecourseproject.poliapp.MainActivity;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.model.Chat;
 import it.polito.mobilecourseproject.poliapp.model.Room;
 import it.polito.mobilecourseproject.poliapp.model.User;
+import it.polito.mobilecourseproject.poliapp.model.UserInfo;
 
 public class AddChatActivity extends AppCompatActivity {
 
     ContactAdapter contactAdapter;
     ArrayList<User> users;
+    User thisUser=null;
     ArrayList<User> filteredUser=new ArrayList<User>();
 
     @Override
@@ -53,30 +60,42 @@ public class AddChatActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
 
+        try{
+            thisUser= AccountManager.getCurrentUser();
+        }catch (Exception e){
+            e.printStackTrace();
+            this.onBackPressed();
+            return;
+        }
 
 
 
+        findViewById(R.id.loadingUnder).setVisibility(View.VISIBLE);
+        PoliApp.getModel().getContacts(new User.OnUsersDownloadedCallback() {
+            @Override
+            public void onUsersDownloaded(List<User> usrs) {
+                users = new ArrayList<User>();
+                users.addAll(usrs);
+                sortUsers();
 
-        users =new ArrayList<User>();
-        users.add(User.createUser("Enrico", "Di Fazio", "Polito"));
-        users.add(User.createUser("Ciccio", "Pasticcio", "Polito"));
-        users.add(User.createUser("Luca", "Angileri", "Polito"));
-        users.add(User.createUser("Pippo", "Pippino", "Polito"));
-        users.add(User.createUser("Matteo", "Mommino", "Polito"));
-        users.add(User.createUser("Mario", "Rossi", "Polito"));
-        users.add(User.createUser("Enrico", "Rosi", "Polito"));
-        users.add(User.createUser("Ciccio", "Poso", "Polito"));
-        users.add(User.createUser("Luca", "Peso", "Polito"));
-        users.add(User.createUser("Pippo", "Rasi", "Polito"));
-        users.add(User.createUser("Matteo", "Zorro", "Polito"));
-        users.add(User.createUser("Mario", "Zardy", "Polito"));
-        sortUsers();
+                ArrayList<User> others=new ArrayList<User>();
+                for(User u : users){
+                    if(!u.getObjectId().equals(thisUser.getObjectId())){
+                        others.add(u);
+                    }
+                }
+                users=others;
 
-        contactAdapter=new ContactAdapter(users,this);
-        RecyclerView recyclerView=(RecyclerView)findViewById(R.id.recyclerView);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(contactAdapter);
+
+                contactAdapter = new ContactAdapter(users, AddChatActivity.this);
+                RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AddChatActivity.this);
+                recyclerView.setLayoutManager(layoutManager);
+                recyclerView.setAdapter(contactAdapter);
+                findViewById(R.id.loadingUnder).setVisibility(View.GONE);
+            }
+        });
+
 
 
 
@@ -220,7 +239,54 @@ public class AddChatActivity extends AppCompatActivity {
              holder.linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   //
+                    final List<UserInfo> components=new ArrayList<UserInfo>();
+                    components.add(new UserInfo(user.getObjectId(),user.getLastName()+" "+user.getFirstName()));
+                    components.add(new UserInfo(thisUser.getObjectId(), thisUser.getLastName() + " " + thisUser.getFirstName()));
+
+
+                    ArrayList<String> filteredUsers=new ArrayList<String>();
+                    filteredUsers.add(thisUser.getObjectId());
+                    AddChatActivity.this.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                    Chat.getChatsFromRemote(filteredUsers, new Chat.OnChatsDownloaded() {
+                        @Override
+                        public void onChatsDownloaded(List<Chat> chats) {
+                            Chat chat=null;
+                            for(Chat c: Chat.getChatsFromLocal()) {
+                                ArrayList<UserInfo> userInfos = c.getChatters();
+                                if (userInfos.size() == 2) {
+                                    if (userInfos.contains(components.get(0)) && userInfos.contains(components.get(1))) {
+                                        chat = c;
+                                    }
+                                }
+                            }
+                            if(chat!=null) {
+                                AddChatActivity.this.onBackPressed();
+                                Intent i = new Intent(AddChatActivity.this, ChatActivity.class);
+                                i.putExtra("CHAT_ID", chat.getChatID());
+                                startActivity(i);
+                            }else{
+                                chat=Chat.createChat(getApplicationContext(),"",components,"",new Date());
+                                Chat.storeChatInLocal(chat);
+                                final Chat finalChat = chat;
+                                Chat.storeChatInRemote(chat, new Chat.OnChatUploaded() {
+                                    @Override
+                                    public void onChatUploaded(boolean result) {
+                                        if (result) {
+                                            AddChatActivity.this.onBackPressed();
+                                            Intent i = new Intent(AddChatActivity.this, ChatActivity.class);
+                                            i.putExtra("CHAT_ID", finalChat.getChatID());
+                                            startActivity(i);
+                                        } else {
+                                            Toast.makeText(AddChatActivity.this, "Network error occurred", Toast.LENGTH_LONG).show();
+                                        }
+                                        AddChatActivity.this.findViewById(R.id.loading).setVisibility(View.GONE);
+                                    }
+                                });
+                            }
+
+                        }
+                    });
+
                 }
             });
 

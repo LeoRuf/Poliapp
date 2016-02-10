@@ -620,6 +620,7 @@ public class FindARoomFragment extends android.support.v4.app.Fragment   {
                     }
                 };
 
+                f.setStyle(DialogFragment.STYLE_NORMAL, R.style.CustomDialog);
                 f.show(getActivity().getSupportFragmentManager(), "some tag");
 
 

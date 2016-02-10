@@ -287,7 +287,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
                 categoriesToBeFiltered.clear();
                 categoriesToBeFiltered.addAll(categoriesFiltered);
 
-                final Dialog dialog = new Dialog(getActivity());
+                final Dialog dialog = new Dialog(getActivity(),R.style.CustomDialog);
                 dialog.setContentView(R.layout.dialog_categories);
                 dialog.setCanceledOnTouchOutside(true);
                 dialog.setTitle("Filter categories");

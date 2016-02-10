@@ -10,6 +10,7 @@
     <dimen name="list_item_avatar_size">40dp</dimen>
     <dimen name="chat_item_size">90dp</dimen>
 
+    <dimen name="margin_xxxlarge">100dp</dimen>
     <dimen name="margin_xlarge">40dp</dimen>
     <dimen name="margin_large">25dp</dimen>
     <dimen name="margin_medium_large">15dp</dimen>
@@ -17,8 +18,15 @@
     <dimen name="margin_half_medium">5dp</dimen>
 
     <dimen name="button_height">42dp</dimen>
+    <dimen name="text_input_wrapper_height">50dp</dimen>
+    <dimen name="emoticon">30dp</dimen>
+    <dimen name="send_button_height">40dp</dimen>
     <dimen name="button_width">190dp</dimen>
     <dimen name="margin_small">5dp</dimen>
+    <dimen name="margin_small2">7dp</dimen>
+    <dimen name="margin_small_small">1dp</dimen>
+
+    <dimen name="time_icon">17dp</dimen>
 
     <dimen name="footer_height">35dp</dimen>
     <dimen name="description_height">120dp</dimen>
