@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.design.widget.CoordinatorLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:tools="http://schemas.android.com/tools"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	android:id="@+id/annonce.main.coordinator"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	tools:ignore="RtlHardcoded"
+	>
+
+	<android.support.design.widget.AppBarLayout
+		android:id="@+id/flexible.example.appbar"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+		>
+
+		<android.support.design.widget.CollapsingToolbarLayout
+			android:id="@+id/collapsing_toolbar"
+			android:layout_width="match_parent"
+			android:layout_height="300dp"
+			app:expandedTitleMarginBottom="120dp"
+			app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:expandedTitleTextAppearance="@style/CollapsingTextAppearance.TransparentTitle"
+			app:contentScrim="?colorPrimary"
+			>
+
+			<ImageView
+				android:layout_width="fill_parent"
+				android:layout_height="match_parent"
+				android:src="@drawable/london_flat"
+				android:tint="#BB015F92"
+				android:scaleType="centerCrop"
+				/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="110dp"
+                android:src="@drawable/ms_logo"
+                android:layout_gravity="center"
+                android:alpha="0.75"
+                android:adjustViewBounds="true"
+                android:layout_marginTop="-20dp"/>
+
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/flexible.example.toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="?attr/actionBarSize"
+				android:background="@null"
+				app:layout_collapseMode="pin"
+				style="@style/ToolBarWithNavigationBack"
+				/>
+		</android.support.design.widget.CollapsingToolbarLayout>
+	</android.support.design.widget.AppBarLayout>
+
+	<android.support.v4.widget.NestedScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:scrollbars="none"
+		app:behavior_overlapTop="78dp"
+		app:layout_behavior="@string/appbar_scrolling_view_behavior"
+		>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical"
+			>
+
+			<android.support.v7.widget.CardView
+				android:id="@+id/flexible.example.cardview"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				app:contentPaddingBottom="16dp"
+				app:contentPaddingLeft="16dp"
+				app:contentPaddingRight="16dp"
+				app:cardCornerRadius="4dp"
+				app:cardBackgroundColor="@android:color/white"
+				app:cardElevation="3dp"
+				android:layout_margin="8dp"
+				>
+
+				<LinearLayout
+					android:layout_width="match_parent"
+					android:layout_height="wrap_content"
+					android:orientation="vertical"
+					>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="JOB TITLE"
+                        android:textAppearance="@style/TextAppearance.Header"
+                        style="@style/TextComponent.ItemRow"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:lineSpacingExtra="8dp"
+                        android:textSize="16sp"
+                        android:text="Premier Field Engineer – Developer"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="PLACE OF WORK"
+                        android:textAppearance="@style/TextAppearance.Header"
+                        style="@style/TextComponent.ItemRow"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:lineSpacingExtra="8dp"
+                        android:textSize="16sp"
+                        android:text="Milan, Italy"
+                        />
+
+                    <TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:text="DESCRIPTION"
+                        android:layout_marginTop="10dp"
+                        android:textAppearance="@style/TextAppearance.Header"
+						style="@style/TextComponent.ItemRow"
+						/>
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:fontFamily="sans-serif-light"
+						android:lineSpacingExtra="8dp"
+						android:textSize="16sp"
+						android:text="CSS (Customer Service Support) is looking for a technical and passionate Premier Filed Engineer (PFE) for Development Technologies\n
+CSS mission is to earn customer and partner lifetime loyalty by understanding their needs, solving their problems, preventing their issues, and helping them get the most out of their technologies\n
+CSS is a true end-to-end organization supporting all business customers; from Enterprise to Small and Medium Businesses, Partners to Developers. CSS develop and package support offerings, land them in the field, help them get sold, make sure they are delivered with world class excellence, and make sure feedback is improving both our Services offerings and our Microsoft products. "
+						/>
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="10dp"
+						android:text="RESPONSIBILITIES"
+						android:textAppearance="@style/TextAppearance.Header"
+						style="@style/TextComponent.ItemRow"
+						/>
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:fontFamily="sans-serif-light"
+						android:lineSpacingExtra="8dp"
+						android:textSize="16sp"
+						android:text="• Assist Technical Account Manager (TAM) in building and managing customer relationship , making customers successful in supporting their IT environment\n
+• Deliver technical support to designated strategic Microsoft Services customers.\n
+• Use expert customer relationship skills, negotiation and conflict management, research experience, and process management expertise to provide complete and timely follow-up support to customers.\n
+• Demonstrated forward-thinking and strategic experiences while working in both a reactive and proactive technical mode\n
+• Demonstrated ability to function and contribute to a team-oriented environment.\n
+• Contribute to the broader Windows and CSS communities through supporting peers and/or contributing to reusable IP\n
+• Assist Microsoft customers in maintaining the health of their IT environment."
+						/>
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:layout_marginTop="10dp"
+						android:text="PREREQUISITES"
+						android:textAppearance="@style/TextAppearance.Header"
+						style="@style/TextComponent.ItemRow"
+						/>
+
+					<TextView
+						android:layout_width="match_parent"
+						android:layout_height="wrap_content"
+						android:fontFamily="sans-serif-light"
+						android:lineSpacingExtra="8dp"
+						android:textSize="16sp"
+						android:text="• Knowledge of Visual Studio development (C# or VB.Net)\n
+• ASP.Net programming skills\n
+• Knowledge of IIS and most common troubleshooting activities and instruments\n
+• Knowledge of Microsoft Operative Systems components. Good Operating System background on Threads, Processes and Memory Management (Heap, Stack, Virtual Memory)\n
+• A Microsoft Certification (MCSE or MCSA) will be considered a plus"
+						/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="EMPLOYMENT TYPE"
+                        android:textAppearance="@style/TextAppearance.Header"
+                        style="@style/TextComponent.ItemRow"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:lineSpacingExtra="8dp"
+                        android:textSize="16sp"
+                        android:text="Full-time"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="COMPANY"
+                        android:textAppearance="@style/TextAppearance.Header"
+                        style="@style/TextComponent.ItemRow"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:lineSpacingExtra="8dp"
+                        android:textSize="16sp"
+                        android:text="Microsoft"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        android:text="COMPANY DESCRIPTION"
+                        android:textAppearance="@style/TextAppearance.Header"
+                        style="@style/TextComponent.ItemRow"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:lineSpacingExtra="8dp"
+                        android:textSize="16sp"
+                        android:text="At Microsoft, we aim to empower every person and organization on the planet to achieve more — and we empower our employees the same way.\nEveryone who works here has the power to build on. Those two little words show the way we think. They’re a challenge to go beyond what’s thought possible, and they’re how we help billions of people use technology to get more out of each day.\nWe build on the work of others and invite them to build onto ours, always striving for ways to make great ideas even better.\nWhat can you build on?\nHere at Microsoft, you’ll build on your curiosity, your passions and your drive to make a difference."
+                        />
+
+                </LinearLayout>
+			</android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                app:cardCornerRadius="4dp"
+                app:cardBackgroundColor="@android:color/white"
+                app:cardElevation="3dp"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    tools:ignore="RtlHardcoded"
+                    >
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="INFO AND APPLY"
+                        android:textAppearance="@style/TextAppearance.Header"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        style="@style/TextComponent.ItemRow"
+
+                        />
+
+                    <TextView
+                        android:id="@+id/emailLabel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="sans-serif-light"
+                        android:lineSpacingExtra="8dp"
+                        android:textSize="16sp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        style="@style/TextComponent.ItemRow.Selectable"
+                        />
+
+                    <TextView
+                        android:id="@+id/main.coordinator.textview"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Apply on our website"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="16dp"
+                        android:layout_marginTop="16dp"
+                        android:textAppearance="@style/TextAppearance.ItemExample"
+                        android:drawableRight="@drawable/ic_arrow_forward_24dp"
+                        style="@style/TextComponent.ItemRow.Selectable"
+                        />
+
+
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+		</LinearLayout>
+	</android.support.v4.widget.NestedScrollView>
+
+	<android.support.design.widget.FloatingActionButton
+		android:id="@+id/flexible.example.fab"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_marginRight="32dp"
+		android:elevation="8dp"
+		android:src="@drawable/ic_discuss"
+		app:layout_anchor="@id/flexible.example.cardview"
+		app:layout_anchorGravity="right|end"
+		tools:ignore="RtlHardcoded"
+		/>
+</android.support.design.widget.CoordinatorLayout>

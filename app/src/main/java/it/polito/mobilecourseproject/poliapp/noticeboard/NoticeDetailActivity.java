@@ -62,18 +62,15 @@ public class NoticeDetailActivity extends AppCompatActivity {
     final ArrayList<ImageItem> imageItems = new ArrayList<>();
     private Notice notice;
     private String category;
-    private String[] picMode = {GOTOConstants.PicModes.CAMERA, GOTOConstants.PicModes.GALLERY};
-    public static final int REQUEST_CODE_UPDATE_PIC = 0x1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notice_detail);
 
-        final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Vendo treno italo lungo ancora prova ciao");
 
         description = (TextView)findViewById(R.id.editTextDescription);
         categoryTextView = (TextView)findViewById(R.id.categoryTextView);
@@ -86,10 +83,12 @@ public class NoticeDetailActivity extends AppCompatActivity {
 
                         notice = (Notice)noticeRetrieved;
 
-                        //workaround per aggiornare il title (non ho capito se è un bug o è by design)...
-                        //MyUtils.setRefreshToolbarEnable((CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar), false);
-                        //getSupportActionBar().setTitle(notice.getTitle());
-                        //MyUtils.setRefreshToolbarEnable((CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar), true);
+                        ((TextView)findViewById(R.id.title)).setText(notice.getTitle());
+
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+                        setSupportActionBar(toolbar);
+                        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                        getSupportActionBar().setTitle(notice.getTitle());
 
                         category = notice.getCategory();
                         categoryTextView.setText(category);

@@ -10,6 +10,7 @@ import com.parse.ParseUser;
 
 import it.polito.mobilecourseproject.poliapp.messages.MessageService;
 import it.polito.mobilecourseproject.poliapp.model.Chat;
+import it.polito.mobilecourseproject.poliapp.model.JobOffer;
 import it.polito.mobilecourseproject.poliapp.model.DataModel;
 import it.polito.mobilecourseproject.poliapp.model.Message;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
@@ -30,8 +31,8 @@ public class PoliApp extends android.support.multidex.MultiDexApplication{
         Parse.enableLocalDatastore(getApplicationContext());
         ParseUser.registerSubclass(User.class);
         ParseObject.registerSubclass(Notice.class);
+        ParseObject.registerSubclass(JobOffer.class);
         ParseObject.registerSubclass(Chat.class);
-        //ParseObject.registerSubclass(Message.class);
 
         Parse.initialize(getApplicationContext(), "WY7akYTncIqmxnem30lY0YxNljh6PkYqUtbsVx6L", "VydnpHbUe5vMtLbvY3P79iByFRilB5KFipYp2jeq");
 
