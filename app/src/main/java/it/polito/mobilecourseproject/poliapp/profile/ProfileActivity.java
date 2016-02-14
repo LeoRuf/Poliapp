@@ -3,6 +3,7 @@ package it.polito.mobilecourseproject.poliapp.profile;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -11,10 +12,22 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
+import android.text.method.PasswordTransformationMethod;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
+
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import it.polito.mobilecourseproject.poliapp.R;
+import it.polito.mobilecourseproject.poliapp.login.SignUpActivity;
 
 public class ProfileActivity extends AppCompatActivity
         implements AppBarLayout.OnOffsetChangedListener {
@@ -66,5 +79,38 @@ public class ProfileActivity extends AppCompatActivity
                     .start();
         }
     }
+
+    public void editAboutMe(View v) {
+
+        Intent intent=new Intent(this,ProfileEditAboutMeActivity.class);
+        startActivity(intent);
+
+    }
+
+    public void editBasicInfo(View v) {
+
+        Intent intent=new Intent(this,ProfileEditBasicInfoActivity.class);
+        startActivity(intent);
+    }
+
+    public void editLanguages(View v) {
+
+        Intent intent=new Intent(this,ProfileEditLanguagesActivity.class);
+        startActivity(intent);
+    }
+
+    public void editSkills(View v) {
+
+        Intent intent=new Intent(this,ProfileEditSkillsActivity.class);
+        startActivity(intent);
+    }
+
+    public void editOther(View v) {
+        Intent intent=new Intent(this,ProfileEditOtherActivity.class);
+        startActivity(intent);
+    }
+
+
+
 
 }

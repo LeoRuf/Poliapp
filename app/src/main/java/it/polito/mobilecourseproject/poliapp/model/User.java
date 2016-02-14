@@ -12,6 +12,7 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -46,6 +47,14 @@ public class User extends ParseUser {
         return getString("lastName");
     }
 
+    public void setDescription(String value) {
+        put("description", value);
+    }
+
+    public String getDescription() {
+        return getString("description");
+    }
+
     public void setLastName(String value) {
         put("lastName", value);
     }
@@ -58,7 +67,115 @@ public class User extends ParseUser {
         put("university", value);
     }
 
+    public String getCity() {
+        return getString("city");
+    }
 
+    public void setCity(String value) {
+        put("city", value);
+    }
+
+    public String getAddress() {
+        return getString("address");
+    }
+
+    public void setAddress(String value) {
+        put("address", value);
+    }
+
+    public String getZipCode() {
+        return getString("zipCode");
+    }
+
+    public void setZipCode(String value) {
+        put("zipCode", value);
+    }
+
+    public String getLinkedIn() {
+        return getString("linkedin");
+    }
+
+    public void setLinkedIn(String value) {
+        put("linkedin", value);
+    }
+
+    public String getFacebook() {
+        return getString("facebook");
+    }
+
+    public void setFacebook(String value) {
+        put("facebook", value);
+    }
+
+    public String getWebsite() {
+        return getString("website");
+    }
+
+    public void setWebsite(String value) {
+        put("website", value);
+    }
+
+    public String getCountry() {
+        return getString("country");
+    }
+
+    public void setCountry(String value) {
+        put("country", value);
+    }
+
+    public String getMobilePhone() {
+        return getString("mobilePhone");
+    }
+
+    public void setMobilePhone(String value) {
+        put("mobilePhone", value);
+    }
+
+    public String getSkills() {
+        return getString("skills");
+    }
+
+    public void setSkills(String value) {
+
+        put("skills", value);
+        put("skills_search", value.toLowerCase());
+    }
+
+    public Date getDateOfBirth() {
+        return getDate("dateOfBirth");
+    }
+
+    public void setDateOfBirth(Date value) {
+        put("dateOfBirth", value);
+    }
+
+    public ArrayList<String> getLanguageSkills(){
+        String languagesText=(String)this.getString("languages");
+        if(languagesText==null || languagesText.trim().equals(""))return  new ArrayList<String>();
+        String[] languages=languagesText.split("\n");
+
+        return  new ArrayList<String>(Arrays.asList(languages));
+    }
+    public void setLanguageSkills(String value){
+        put("languages", value);
+    }
+
+
+    public void addLanguageSkill(String lang, final SaveCallback onDone) {
+
+        String languagesText=this.getString("languages");
+        if(languagesText==null)languagesText="";
+        if(languagesText.trim().equals(""))languagesText=lang;
+        else languagesText=languagesText+"\n"+lang;
+
+        this.put("languages", languagesText);
+        this.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(com.parse.ParseException e) {
+                onDone.done(e);
+            }
+        });
+    }
 
 
     public static User createUser(String firstName,String lastName, String university){

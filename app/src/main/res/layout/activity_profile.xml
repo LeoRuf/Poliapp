@@ -142,10 +142,16 @@
                             style="@style/TextComponent.ItemRow"
                             />
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:paddingTop="10dp"
+                            android:paddingRight="5dp"
+                            android:paddingLeft="10dp"
+                            android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
-                            android:padding="5dp"/>
+                            android:clickable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:onClick="editAboutMe"/>
                     </LinearLayout>
 
                     <TextView
@@ -188,21 +194,28 @@
                             style="@style/TextComponent.ItemRow"
                             />
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:paddingTop="10dp"
+                            android:paddingRight="5dp"
+                            android:paddingLeft="10dp"
+                            android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
-                            android:padding="5dp"/>
+                            android:clickable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:onClick="editBasicInfo"/>
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingBottom="2dp">
+                        android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="First name: "
+                            android:text="First name   "
+                            android:layout_weight="1"
                             android:textAppearance="@style/TextAppearance.ItemExample"
                             />
                         <TextView
@@ -217,11 +230,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingBottom="2dp">
+                        android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Last name: "
+                            android:text="Last name   "
+                            android:layout_weight="1"
                             android:textAppearance="@style/TextAppearance.ItemExample"
                             />
                         <TextView
@@ -236,11 +250,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingBottom="2dp">
+                        android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Date of birth: "
+                            android:text="Date of birth   "
+                            android:layout_weight="1"
                             android:textAppearance="@style/TextAppearance.ItemExample"
                             />
                         <TextView
@@ -255,11 +270,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingBottom="2dp">
+                        android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Address: "
+                            android:text="Address   "
+                            android:layout_weight="1"
                             android:textAppearance="@style/TextAppearance.ItemExample"
                             />
                         <TextView
@@ -268,17 +284,19 @@
                             android:layout_height="wrap_content"
                             android:text="Via Dante Di Nanni 29\nTurin (TO), 10138\nItaly"
                             android:textIsSelectable="true"
+                            android:gravity="right"
                             />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingBottom="2dp">
+                        android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Mobile phone: "
+                            android:text="Mobile phone   "
+                            android:layout_weight="1"
                             android:textAppearance="@style/TextAppearance.ItemExample"
                             />
                         <TextView
@@ -293,11 +311,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingBottom="2dp">
+                        android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Email address: "
+                            android:text="Email address   "
+                            android:layout_weight="1"
                             android:textAppearance="@style/TextAppearance.ItemExample"
                             />
                         <TextView
@@ -340,10 +359,16 @@
                             style="@style/TextComponent.ItemRow"
                             />
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:paddingTop="10dp"
+                            android:paddingRight="5dp"
+                            android:paddingLeft="10dp"
+                            android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
-                            android:padding="5dp"/>
+                            android:clickable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:onClick="editLanguages"/>
                     </LinearLayout>
 
                     <TextView
@@ -386,10 +411,16 @@
                             style="@style/TextComponent.ItemRow"
                             />
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:paddingTop="10dp"
+                            android:paddingRight="5dp"
+                            android:paddingLeft="10dp"
+                            android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
-                            android:padding="5dp"/>
+                            android:clickable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:onClick="editSkills"/>
                     </LinearLayout>
 
                     <TextView
@@ -639,15 +670,31 @@
                     tools:ignore="RtlHardcoded"
                     >
 
-                    <TextView
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Other"
-                        android:textAppearance="@style/TextAppearance.Header"
-                        android:paddingRight="8dp"
-                        android:paddingLeft="8dp"
-                        style="@style/TextComponent.ItemRow"
-                        />
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="8dp"
+                            android:text="OTHER"
+                            android:textAppearance="@style/TextAppearance.Header"
+                            style="@style/TextComponent.ItemRow"
+                            />
+                        <ImageView
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:paddingTop="10dp"
+                            android:paddingRight="5dp"
+                            android:paddingLeft="10dp"
+                            android:paddingBottom="10dp"
+                            android:src="@android:drawable/ic_menu_edit"
+                            android:clickable="true"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:onClick="editOther"/>
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/website"

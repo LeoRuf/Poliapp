@@ -410,7 +410,8 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
             final JobOffer jobOffer = jobOffers.get(position);
             ((TextView)holder.cardView.findViewById(R.id.title)).setText(jobOffer.getTitle());
             ((TextView)holder.cardView.findViewById(R.id.location)).setText(jobOffer.getLocation());
-            ((TextView)holder.cardView.findViewById(R.id.description)).setText(jobOffer.getDescription());
+
+            ((TextView)holder.cardView.findViewById(R.id.description)).setText(MyUtils.ellipsize(jobOffer.getDescription(), 150));
             ((TextView)holder.cardView.findViewById(R.id.time_text)).setText(TimeManager.getFormattedTimestamp(jobOffer.getCreatedAt(), "Published"));
 
             ((TextView) holder.cardView.findViewById(R.id.company)).setText(jobOffer.getCompany());

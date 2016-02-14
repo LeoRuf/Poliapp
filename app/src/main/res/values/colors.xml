@@ -33,6 +33,7 @@
     <color name="externalBorderColor">#e3e3e3</color>
 
     <color name="grayTextColor">#a5828282</color>
+    <color name="grayDarkTextColor">#82161616</color>
     <color name="grayDarkerTextColor">#a5161616</color>
 
     <color name="labelTextColor">#0c5d88</color>

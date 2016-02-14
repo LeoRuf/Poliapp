@@ -61,6 +61,42 @@
             android:theme="@style/AppThemeBlueStatusBar"
             />
         <activity
+            android:name=".profile.ProfileEditBasicInfoActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".profile.ProfileActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppThemeBlueStatusBar"
+            />
+        <activity
+            android:name=".profile.ProfileEditAboutMeActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".profile.ProfileActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppThemeBlueStatusBar"
+            />
+        <activity
+            android:name=".profile.ProfileEditLanguagesActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".profile.ProfileActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppThemeBlueStatusBar"
+            />
+        <activity
+            android:name=".profile.ProfileEditOtherActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".profile.ProfileActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppThemeBlueStatusBar"
+            />
+        <activity
+            android:name=".profile.ProfileEditSkillsActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".profile.ProfileActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppThemeBlueStatusBar"
+            />
+
+        <activity
             android:name=".jobs.JobOfferDetailActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".MainActivity"

@@ -11,20 +11,20 @@ public class ExternalIntents {
 
     public static void sendMail(Activity activity,String mailAddress ){
 
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        String aEmailList[] = { mailAddress };
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + mailAddress));
+        //Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        //String aEmailList[] = { mailAddress };
         //String aEmailCCList[] = { "user3@fakehost.com","user4@fakehost.com"};
         //String aEmailBCCList[] = { "user5@fakehost.com" };
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, aEmailList);
+        //emailIntent.putExtra(Intent.EXTRA_EMAIL, aEmailList);
         //emailIntent.putExtra(android.content.Intent.EXTRA_CC, aEmailCCList);
         //emailIntent.putExtra(android.content.Intent.EXTRA_BCC, aEmailBCCList);
         //emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "My subject");
-        emailIntent.setType("plain/text");
+        //emailIntent.setType("plain/text");
         //emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "My message body.");
         try{
-            activity.startActivity(emailIntent);}
-
-        catch(Exception e){
+            activity.startActivity(Intent.createChooser(emailIntent, "Contact the employer"));
+        } catch(Exception e){
             Toast.makeText(activity, "No Mail Client", Toast.LENGTH_LONG).show();
         }
     }

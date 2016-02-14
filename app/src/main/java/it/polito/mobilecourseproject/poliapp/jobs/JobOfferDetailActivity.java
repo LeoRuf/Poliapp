@@ -14,9 +14,19 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.StyleSpan;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+
+import it.polito.mobilecourseproject.poliapp.ExternalIntents;
+import it.polito.mobilecourseproject.poliapp.MyUtils;
 import it.polito.mobilecourseproject.poliapp.R;
+import it.polito.mobilecourseproject.poliapp.model.JobOffer;
+import it.polito.mobilecourseproject.poliapp.model.Notice;
 
 public class JobOfferDetailActivity extends AppCompatActivity
         implements AppBarLayout.OnOffsetChangedListener {
@@ -27,6 +37,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
     private View mFab;
     private int mMaxScrollSize;
     private boolean mIsImageHidden;
+    private JobOffer jobOffer;
     CollapsingToolbarLayout collapsingToolbarLayout;
 
     @Override
@@ -34,7 +45,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_joboffer_detail);
 
-        mFab = findViewById(R.id.flexible_example_fab);
+        mFab = findViewById(R.id.emailFab);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.flexible_example_toolbar);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -48,15 +59,52 @@ public class JobOfferDetailActivity extends AppCompatActivity
 
         collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
 
-        String emailLabel = "For any additional information, contact us on ";
-        String email = "hr@microsoft.com";
+        ParseQuery.getQuery("JobOffer").fromLocalDatastore().getInBackground(getIntent().getStringExtra("jobOfferId"), new GetCallback<ParseObject>() {
+            public void done(ParseObject jobOfferRetrieved, ParseException e) {
+                if (e == null) {
 
-        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(emailLabel + email);
-        stringBuilder.setSpan(new StyleSpan(Typeface.NORMAL), 0, emailLabel.length()-1,
-                Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        stringBuilder.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), emailLabel.length(),
-                emailLabel.length() + email.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        ((TextView)findViewById(R.id.emailLabel)).setText(stringBuilder);
+                    //TODO: Gestire meglio cosa succede mentre carica
+
+                    jobOffer = (JobOffer)jobOfferRetrieved;
+
+                    ((TextView)findViewById(R.id.title)).setText(jobOffer.getTitle());
+                    ((TextView)findViewById(R.id.placeOfWork)).setText(jobOffer.getLocation());
+                    ((TextView)findViewById(R.id.description)).setText(jobOffer.getDescription());
+                    ((TextView)findViewById(R.id.responsibilities)).setText(jobOffer.getResponsibilities());
+                    ((TextView)findViewById(R.id.prerequisites)).setText(jobOffer.getPrerequisites());
+                    ((TextView)findViewById(R.id.employmentType)).setText(jobOffer.getEmploymentType());
+                    ((TextView)findViewById(R.id.company)).setText(jobOffer.getCompany());
+                    ((TextView)findViewById(R.id.companyDescription)).setText(jobOffer.getCompanyDescription());
+
+                    String emailLabel = "For any additional information, contact us on ";
+                    String email = jobOffer.getEmailAddress();
+
+                    SpannableStringBuilder stringBuilder = new SpannableStringBuilder(emailLabel + email);
+                    stringBuilder.setSpan(new StyleSpan(Typeface.NORMAL), 0, emailLabel.length()-1,
+                            Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+                    stringBuilder.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), emailLabel.length(),
+                            emailLabel.length() + email.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+                    ((TextView)findViewById(R.id.emailLabel)).setText(stringBuilder);
+                    ((TextView)findViewById(R.id.emailLabel)).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sendEmail(view);
+                        }
+                    });
+
+
+                    (findViewById(R.id.website)).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ExternalIntents.goToWebsite(JobOfferDetailActivity.this, jobOffer.getWebsite());
+                        }
+                    });
+
+                }
+            }
+        });
+
     }
 
     @Override
@@ -84,7 +132,9 @@ public class JobOfferDetailActivity extends AppCompatActivity
         if (currentScrollPercentage >= PERCENTAGE_TO_SHOW_TITLE) {
             if (mIsTitleHidden) {
                 mIsTitleHidden = false;
-                collapsingToolbarLayout.setTitle("Premier Field Engineer – Developer");
+                if(jobOffer!=null) {
+                    collapsingToolbarLayout.setTitle(jobOffer.getTitle());
+                }
 
             }
         }
@@ -96,5 +146,10 @@ public class JobOfferDetailActivity extends AppCompatActivity
             }
         }
 
+    }
+
+
+    public void sendEmail(View view) {
+        ExternalIntents.sendMail(this, jobOffer.getEmailAddress());
     }
 }

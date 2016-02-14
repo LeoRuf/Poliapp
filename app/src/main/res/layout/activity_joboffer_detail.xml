@@ -98,6 +98,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:id="@+id/title"
                         android:fontFamily="sans-serif-light"
                         android:lineSpacingExtra="8dp"
                         android:textSize="16sp"
@@ -118,6 +119,7 @@
                         android:fontFamily="sans-serif-light"
                         android:lineSpacingExtra="8dp"
                         android:textSize="16sp"
+                        android:id="@+id/placeOfWork"
                         android:text="Milan, Italy"
                         />
 
@@ -135,7 +137,8 @@
 						android:layout_height="wrap_content"
 						android:fontFamily="sans-serif-light"
 						android:lineSpacingExtra="8dp"
-						android:textSize="16sp"
+                        android:id="@+id/description"
+                        android:textSize="16sp"
 						android:text="CSS (Customer Service Support) is looking for a technical and passionate Premier Filed Engineer (PFE) for Development Technologies\n
 CSS mission is to earn customer and partner lifetime loyalty by understanding their needs, solving their problems, preventing their issues, and helping them get the most out of their technologies\n
 CSS is a true end-to-end organization supporting all business customers; from Enterprise to Small and Medium Businesses, Partners to Developers. CSS develop and package support offerings, land them in the field, help them get sold, make sure they are delivered with world class excellence, and make sure feedback is improving both our Services offerings and our Microsoft products. "
@@ -155,7 +158,8 @@ CSS is a true end-to-end organization supporting all business customers; from En
 						android:layout_height="wrap_content"
 						android:fontFamily="sans-serif-light"
 						android:lineSpacingExtra="8dp"
-						android:textSize="16sp"
+                        android:id="@+id/responsibilities"
+                        android:textSize="16sp"
 						android:text="• Assist Technical Account Manager (TAM) in building and managing customer relationship , making customers successful in supporting their IT environment\n
 • Deliver technical support to designated strategic Microsoft Services customers.\n
 • Use expert customer relationship skills, negotiation and conflict management, research experience, and process management expertise to provide complete and timely follow-up support to customers.\n
@@ -179,7 +183,8 @@ CSS is a true end-to-end organization supporting all business customers; from En
 						android:layout_height="wrap_content"
 						android:fontFamily="sans-serif-light"
 						android:lineSpacingExtra="8dp"
-						android:textSize="16sp"
+                        android:id="@+id/prerequisites"
+                        android:textSize="16sp"
 						android:text="• Knowledge of Visual Studio development (C# or VB.Net)\n
 • ASP.Net programming skills\n
 • Knowledge of IIS and most common troubleshooting activities and instruments\n
@@ -201,6 +206,7 @@ CSS is a true end-to-end organization supporting all business customers; from En
                         android:fontFamily="sans-serif-light"
                         android:lineSpacingExtra="8dp"
                         android:textSize="16sp"
+                        android:id="@+id/employmentType"
                         android:text="Full-time"
                         />
 
@@ -218,6 +224,7 @@ CSS is a true end-to-end organization supporting all business customers; from En
                         android:fontFamily="sans-serif-light"
                         android:lineSpacingExtra="8dp"
                         android:textSize="16sp"
+                        android:id="@+id/company"
                         android:text="Microsoft"
                         />
 
@@ -236,6 +243,7 @@ CSS is a true end-to-end organization supporting all business customers; from En
                         android:fontFamily="sans-serif-light"
                         android:lineSpacingExtra="8dp"
                         android:textSize="16sp"
+                        android:id="@+id/companyDescription"
                         android:text="At Microsoft, we aim to empower every person and organization on the planet to achieve more — and we empower our employees the same way.\nEveryone who works here has the power to build on. Those two little words show the way we think. They’re a challenge to go beyond what’s thought possible, and they’re how we help billions of people use technology to get more out of each day.\nWe build on the work of others and invite them to build onto ours, always striving for ways to make great ideas even better.\nWhat can you build on?\nHere at Microsoft, you’ll build on your curiosity, your passions and your drive to make a difference."
                         />
 
@@ -283,7 +291,7 @@ CSS is a true end-to-end organization supporting all business customers; from En
                         />
 
                     <TextView
-                        android:id="@+id/main.coordinator.textview"
+                        android:id="@+id/website"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Apply on our website"
@@ -302,7 +310,7 @@ CSS is a true end-to-end organization supporting all business customers; from En
 	</android.support.v4.widget.NestedScrollView>
 
 	<android.support.design.widget.FloatingActionButton
-		android:id="@+id/flexible.example.fab"
+		android:id="@+id/emailFab"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_marginRight="32dp"
@@ -310,6 +318,8 @@ CSS is a true end-to-end organization supporting all business customers; from En
 		android:src="@drawable/ic_discuss"
 		app:layout_anchor="@id/flexible.example.cardview"
 		app:layout_anchorGravity="right|end"
-		tools:ignore="RtlHardcoded"
+        android:onClick="sendEmail"
+        android:focusable="true"
+        android:clickable="true"
 		/>
 </android.support.design.widget.CoordinatorLayout>
