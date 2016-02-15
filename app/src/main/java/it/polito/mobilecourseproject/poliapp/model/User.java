@@ -149,34 +149,21 @@ public class User extends ParseUser {
         put("dateOfBirth", value);
     }
 
-    public ArrayList<String> getLanguageSkills(){
-        String languagesText=(String)this.getString("languages");
+    public ArrayList<String> getLanguageSkillsAsList(){
+        String languagesText=this.getLanguageSkills();
         if(languagesText==null || languagesText.trim().equals(""))return  new ArrayList<String>();
         String[] languages=languagesText.split("\n");
 
         return  new ArrayList<String>(Arrays.asList(languages));
     }
+
+    public String getLanguageSkills() {
+        return getString("languages");
+    }
+
     public void setLanguageSkills(String value){
         put("languages", value);
     }
-
-
-    public void addLanguageSkill(String lang, final SaveCallback onDone) {
-
-        String languagesText=this.getString("languages");
-        if(languagesText==null)languagesText="";
-        if(languagesText.trim().equals(""))languagesText=lang;
-        else languagesText=languagesText+"\n"+lang;
-
-        this.put("languages", languagesText);
-        this.saveInBackground(new SaveCallback() {
-            @Override
-            public void done(com.parse.ParseException e) {
-                onDone.done(e);
-            }
-        });
-    }
-
 
     public static User createUser(String firstName,String lastName, String university){
         User user = new User();

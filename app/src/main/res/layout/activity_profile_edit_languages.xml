@@ -33,215 +33,30 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="0.5"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="6dp"
-                    android:layout_marginTop="@dimen/margin_half_medium"
-                    android:textColorHint="@color/myLightPrimaryColor"
-                    android:id="@+id/firstNameWrapper"
-                    >
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/firstName"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:singleLine="true"
-                        android:textColor="@color/grayDarkTextColor"
-                        android:clickable="false"
-                        android:cursorVisible="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:text="Enrico"
-                        android:hint="Name"
-                        />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="0.5"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="@dimen/margin_half_medium"
-                    android:textColorHint="@color/myLightPrimaryColor"
-                    android:id="@+id/lastNameWrapper"
-                    >
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/grayDarkTextColor"
-                        android:clickable="false"
-                        android:cursorVisible="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:id="@+id/lastName"
-                        android:hint="Last name"
-                        android:text="Di Fazio"
-                        android:textColorHint="@android:color/darker_gray"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:singleLine="true" />
-                </android.support.design.widget.TextInputLayout>
-
-            </LinearLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/margin_half_medium"
-                android:id="@+id/dateOfBirthWrapper"
-                android:textColorHint="@color/myLightPrimaryColor"
-                >
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/dateOfBirth"
-                    android:hint="Date of birth"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:focusableInTouchMode="false"
-                    android:clickable="true"
-                    android:onClick="selectDateOfBirth"/>
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/margin_half_medium"
-                android:id="@+id/addressWrapper"
-                android:textColorHint="@color/myLightPrimaryColor"
-                >
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/address"
-                    android:hint="Address"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:layout_marginTop="10dp">
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="0.6"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:layout_marginRight="6dp"
-                    android:layout_marginTop="@dimen/margin_half_medium"
-                    android:textColorHint="@color/myLightPrimaryColor"
-                    android:id="@+id/cityWrapper"
-                    >
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/city"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:singleLine="true"
-                        android:hint="City"
-                        />
-                </android.support.design.widget.TextInputLayout>
-
-                <android.support.design.widget.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="0.4"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="6dp"
-                    android:layout_marginRight="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="@dimen/margin_half_medium"
-                    android:textColorHint="@color/myLightPrimaryColor"
-                    android:id="@+id/zipCodeWrapper"
-                    >
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/zipCode"
-                        android:hint="Zip code"
-                        android:textColorHint="@android:color/darker_gray"
-                        android:imeOptions="actionNext"
-                        android:inputType="text"
-                        android:singleLine="true" />
-                </android.support.design.widget.TextInputLayout>
+                android:id="@+id/languagesContainer"
+                android:orientation="vertical"
+                android:layout_marginTop="15dp"
+                >
 
             </LinearLayout>
 
-            <android.support.design.widget.TextInputLayout
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/margin_half_medium"
-                android:id="@+id/countryWrapper"
-                android:textColorHint="@color/myLightPrimaryColor"
-                >
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/country"
-                    android:hint="Country"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
+                android:text="ADD A NEW LANGUAGE"
+                android:textAppearance="@style/TextAppearance.Header"
+                style="@style/TextComponent.ItemRow"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:clickable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:onClick="addNewLanguage"
+                />
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/margin_half_medium"
-                android:id="@+id/mobilephoneWrapper"
-                android:textColorHint="@color/myLightPrimaryColor"
-                >
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/mobilephone"
-                    android:hint="Mobile phone"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="@dimen/margin_half_medium"
-                android:id="@+id/emailWrapper"
-                android:textColorHint="@color/myLightPrimaryColor"
-                >
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/email"
-                    android:hint="Public email address"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
 
             <com.dd.processbutton.iml.ActionProcessButton
                 android:id="@+id/saveButton"
