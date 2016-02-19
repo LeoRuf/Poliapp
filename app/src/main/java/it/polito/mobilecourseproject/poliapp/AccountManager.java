@@ -18,18 +18,20 @@ public class AccountManager {
     }
 
 
-    public static void signup(String firstName, String lastName, String email, String password, String university) throws ParseException {
+    public static void signup(String firstName, String lastName,String companyName, String email, String password, String university,boolean isCompany) throws ParseException {
 
         //create ParseUser
         User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
+        user.setCompanyName(companyName);
         user.setUsername(email);
         user.setPassword(password);
         user.setUniversity(university);
+        if(!isCompany)user.setStudent();
+        else user.setCompany();
         user.signUp();
         ParseUser.logOut();
-
     }
 
 
@@ -44,6 +46,24 @@ public class AccountManager {
             // show the signup or login screen
             return false;
         }
+    }
+
+
+    public static boolean checkIfStudentLoggedIn(){
+        User currentUser = null;
+        try {
+            currentUser = AccountManager.getCurrentUser();
+            if (currentUser != null) {
+                if(currentUser.isCompany())return false;
+                else return true;
+            } else {
+                return false;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
     }
 
 

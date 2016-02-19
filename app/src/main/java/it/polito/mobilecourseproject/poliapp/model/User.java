@@ -34,6 +34,24 @@ public class User extends ParseUser {
     }
 
 
+    public boolean isCompany(){
+        return getBoolean("isCompany");
+    }
+
+    public void setCompany(){
+        put("isCompany", true);
+    }
+    public void setStudent(){
+        put("isCompany", false);
+    }
+
+    public String getCompanyName() {
+        return getString("companyName");
+    }
+
+    public void setCompanyName(String value) {
+        put("companyName", value);
+    }
 
     public String getFirstName() {
         return getString("firstName");
@@ -180,8 +198,9 @@ public class User extends ParseUser {
     }
 
 
-    public static void downloadAllUsers(final Context ctx,final OnUsersDownloadedCallback callback){
+    public static void downloadAllUserStudents(final Context ctx, final OnUsersDownloadedCallback callback){
         ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("isCompany",false);
          //query.orderByDescending("updatedAt");
         // query.whereGreaterThan("updatedAt", new Date(PreferenceManager.getDefaultSharedPreferences(ctx).getLong("Users_timestamp", 0)));
         query.findInBackground(new FindCallback<ParseUser>() {
@@ -209,9 +228,10 @@ public class User extends ParseUser {
     }
 
 
-    public static void getFromLocalStorageAllUsers(final Context ctx,final OnUsersDownloadedCallback callback){
+    public static void getFromLocalStorageAllUserStudents(final Context ctx, final OnUsersDownloadedCallback callback){
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.fromLocalDatastore();
+        query.whereEqualTo("isCompany",false);
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(final List<ParseUser> objects, ParseException e) {
@@ -229,6 +249,47 @@ public class User extends ParseUser {
         });
 
     }
+
+
+
+    public static void searchStudentsBySkills(final Context ctx, final ArrayList<String> skills, final OnUsersDownloadedCallback callback){
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereEqualTo("isCompany", false);
+        //query.orderByDescending("updatedAt");
+        // query.whereGreaterThan("updatedAt", new Date(PreferenceManager.getDefaultSharedPreferences(ctx).getLong("Users_timestamp", 0)));
+        query.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(final List<ParseUser> objects, ParseException e) {
+                ArrayList<User> filteredUsers= new ArrayList<User>();
+                if(objects==null || objects.size()==0){
+                    callback.onUsersDownloaded(filteredUsers);
+                }else{
+                    ArrayList<User> allUsers= new ArrayList<User>();
+                    for(ParseUser pu : objects){
+                        allUsers.add((User)pu);
+                    }
+
+                   if(skills.size()!=0){
+                    for(User u : allUsers){
+                        for(String skill : skills){
+                            if(u.getSkills()!=null && u.getSkills().contains(skill)){
+                                filteredUsers.add(u);
+                            }
+                        }
+                    }
+                   }else{
+                       filteredUsers.addAll(allUsers);
+                   }
+
+
+                    callback.onUsersDownloaded((filteredUsers));
+                }
+
+            }
+        });
+
+    }
+
 
 
 

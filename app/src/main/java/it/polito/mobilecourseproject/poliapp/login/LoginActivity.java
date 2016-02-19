@@ -16,6 +16,7 @@ import com.dd.processbutton.iml.ActionProcessButton;
 
 import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.AsyncTaskWithoutProgressBar;
+import it.polito.mobilecourseproject.poliapp.CompanyMainActivity;
 import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.MainActivity;
 import it.polito.mobilecourseproject.poliapp.R;
@@ -55,9 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if(AccountManager.checkIfLoggedIn()){
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
-            return;
+           nextActivity();
         }
 
         setContentView(R.layout.activity_login);
@@ -179,8 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                 super.onPostExecute(resultMessage);
                 if(resultMessage==null) {
                     loginButton.setProgress(100);
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                    finish();
+                  nextActivity();
                 } else {
                     loginButton.setProgress(-1);
                     Snackbar sb=Snackbar.make(findViewById(R.id.parentView), "Wrong username or password", Snackbar.LENGTH_LONG);
@@ -191,6 +189,20 @@ public class LoginActivity extends AppCompatActivity {
             }
 
         }.execute();
+    }
+
+
+
+
+
+    public void nextActivity(){
+        if(AccountManager.checkIfStudentLoggedIn()){
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+        }else{
+            startActivity(new Intent(LoginActivity.this, CompanyMainActivity.class));
+        }
+        finish();
+        return;
     }
 
 }

@@ -18,41 +18,20 @@
 
     <group android:checkableBehavior="single"
         android:id="@+id/nav_social_section">
-
         <item
-            android:id="@+id/nav_noticeboard"
-            android:icon="@drawable/noticeboard_icon"
-            android:title="Noticeboard" />
-        <item
-            android:id="@+id/nav_messages"
-            android:icon="@drawable/ic_forum"
-            android:title="Chat" />
+            android:id="@+id/nav_students"
+            android:icon="@drawable/search_student"
+            android:title="Search students" />
     </group>
     <group android:checkableBehavior="single"
         android:id="@+id/nav_student_section">
         <item
-            android:id="@+id/nav_timetable"
-            android:icon="@drawable/ic_event"
-            android:title="My timetable" />
-        <item
-            android:id="@+id/nav_time_schedule"
-            android:icon="@drawable/timetable_icon"
-            android:title="Time schedule" />
-        <item
-            android:id="@+id/nav_findaroom"
-            android:icon="@drawable/map_icon"
-            android:title="Find a room" />
-        <item
             android:id="@+id/nav_joboffers"
             android:icon="@drawable/ic_action_trending_up"
-            android:title="Job offers" />
+            android:title="My job offers" />
     </group>
     <group android:checkableBehavior="single"
         android:id="@+id/nav_settings_section">
-        <item
-            android:id="@+id/nav_profile"
-            android:icon="@drawable/ic_action_account_box"
-            android:title="My profile" />
         <item
             android:id="@+id/nav_logout"
             android:icon="@drawable/logout"

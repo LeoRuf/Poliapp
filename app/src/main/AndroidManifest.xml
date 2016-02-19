@@ -33,11 +33,16 @@
         <activity
             android:name=".login.SignUpActivity"
             android:configChanges="orientation|screenSize"
-            android:parentActivityName=".login.LoginActivity"
             android:theme="@style/WhiteBackgroundTheme"
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".MainActivity"
+            android:configChanges="orientation|screenSize"
+            android:windowSoftInputMode="stateHidden" />
+
+
+        <activity
+            android:name=".CompanyMainActivity"
             android:configChanges="orientation|screenSize"
             android:windowSoftInputMode="stateHidden" />
         <activity

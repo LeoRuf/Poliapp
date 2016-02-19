@@ -22,10 +22,10 @@ public class DataModel {
 
         this.ctx=ctx;
 
-        User.downloadAllUsers(ctx, new User.OnUsersDownloadedCallback() {
+        User.downloadAllUserStudents(ctx, new User.OnUsersDownloadedCallback() {
             @Override
             public void onUsersDownloaded(List<User> users) {
-                contacts=users;
+                contacts = users;
             }
         });
 
@@ -57,7 +57,7 @@ public class DataModel {
             //get da ram
             callback.onUsersDownloaded(contacts);
         }else{
-            User.getFromLocalStorageAllUsers(ctx, new User.OnUsersDownloadedCallback() {
+            User.getFromLocalStorageAllUserStudents(ctx, new User.OnUsersDownloadedCallback() {
                 @Override
                 public void onUsersDownloaded(List<User> users) {
                     if (users.size() != 0) {
@@ -66,10 +66,10 @@ public class DataModel {
                         callback.onUsersDownloaded(contacts);
                     } else {
                         //scarico dalla rete
-                        User.downloadAllUsers(ctx, new User.OnUsersDownloadedCallback() {
+                        User.downloadAllUserStudents(ctx, new User.OnUsersDownloadedCallback() {
                             @Override
                             public void onUsersDownloaded(List<User> users) {
-                               contacts = users;
+                                contacts = users;
                                 callback.onUsersDownloaded(contacts);
                             }
                         });

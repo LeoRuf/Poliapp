@@ -61,11 +61,52 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/myRadioGroup"
+                android:layout_marginTop="@dimen/margin_vertical_radio_button"
+                android:orientation="horizontal"
+                android:checkedButton="@+id/student" >
+
+                <RadioButton
+                    android:textSize="16sp"
+                    android:textColor="@color/myPrimaryColor"
+                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_marginRight="6dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/student"
+                    android:text="Student account" />
+
+                <RadioButton
+                    android:textSize="16sp"
+                    android:textColor="@color/myPrimaryColor"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="6dp"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/company"
+                    android:text="Company account" />
+
+
+            </RadioGroup>
+
+
+
+
+
+
             <LinearLayout
+                android:id="@+id/studentWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginTop="10dp">
+                android:visibility="visible"
+                android:layout_marginTop="@dimen/margin_half_medium">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="0dp"
@@ -109,6 +150,31 @@
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/margin_half_medium"
+                android:id="@+id/companyNameWrapper"
+                android:textColorHint="@color/myLightPrimaryColor"
+                >
+                <EditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/companyName"
+                    android:hint="Company name"
+                    android:imeOptions="actionNext"
+                    android:inputType="textEmailAddress"
+                    android:singleLine="true" />
+            </android.support.design.widget.TextInputLayout>
+
+
+
+
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

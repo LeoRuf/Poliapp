@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -12,11 +13,9 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,9 +31,10 @@ import it.polito.mobilecourseproject.poliapp.model.Chat;
 import it.polito.mobilecourseproject.poliapp.model.User;
 import it.polito.mobilecourseproject.poliapp.noticeboard.NoticeboardFragment;
 import it.polito.mobilecourseproject.poliapp.profile.ProfileActivity;
+import it.polito.mobilecourseproject.poliapp.searchstudent.SearchStudentFragment;
 import it.polito.mobilecourseproject.poliapp.time_schedule.TimeScheduleFragment;
 
-public class MainActivity extends AppCompatActivity {
+public class CompanyMainActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
     private String currentFragment;
@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_company);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -87,49 +87,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setChatItemInfo(){
-        ArrayList<Chat> chats=Chat.getChatsFromLocal();
-        int count=0;
-        for(Chat c : chats){
-            if(c.getSeen(getApplicationContext())==false){
-                count++;
-            }
-        }
-        MenuItem chatItem=(MenuItem)navigationView.getMenu().findItem(R.id.nav_messages);
-        String s="";
-        if(count!=0)s=" ("+count+")";
-        chatItem.setTitle("Chat" + s);
-    }
 
-    BroadcastReceiver broadcastReceiver;
     @Override
     public void onResume(){
         super.onResume();
-        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_name)).setText(thisUser.getFirstName() + " " + thisUser.getLastName());
-        setChatItemInfo();
-        try{
-            IntentFilter intentFilter = new IntentFilter(MessageService.SERVICE_INTENT_BROADCAST);
-            broadcastReceiver = new BroadcastReceiver() {
-                @Override
-                public void onReceive(Context context, Intent intent) {
-                   MainActivity.this.setChatItemInfo();
-                }
-            };
-            //registering our receiver
-            this.registerReceiver(broadcastReceiver, intentFilter);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_name)).setText(thisUser.getCompanyName());
+
     }
     @Override
     public void onPause() {
         super.onPause();
-        //unregister our receiver
-        try{
-            this.unregisterReceiver(this.broadcastReceiver);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+
     }
 
 
@@ -154,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupDrawerContent(NavigationView navigationView,Bundle savedInstanceState)  {
 
-           FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if(savedInstanceState != null) {
             try {
                 Class<?> c = Class.forName(savedInstanceState.getString("currentFragment"));
@@ -167,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }else{
-            NoticeboardFragment homeFragment=new  NoticeboardFragment();
+            SearchStudentFragment homeFragment=new  SearchStudentFragment();
             fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
             fragmentTransaction.replace(R.id.frame, homeFragment, homeFragment.getClass().getName());
             fragmentTransaction.commit();
@@ -187,74 +155,23 @@ public class MainActivity extends AppCompatActivity {
 
                         //Check to see which item was being clicked and perform appropriate action
                         switch (menuItem.getItemId()){
-                            case R.id.nav_noticeboard:
 
-                                NoticeboardFragment noticeboardFragment = (NoticeboardFragment)getSupportFragmentManager().findFragmentByTag(NoticeboardFragment.class.getName());
-                                if(noticeboardFragment==null)
-                                    noticeboardFragment = new NoticeboardFragment();
+                            //Replacing the main content with ContentFragment Which is our Inbox View;
+                            case R.id.nav_students:
 
-                                if (!noticeboardFragment.isVisible()) {
-                                    final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                SearchStudentFragment homeFragment = ( SearchStudentFragment)getSupportFragmentManager().findFragmentByTag( SearchStudentFragment.class.getName());
+                                if(homeFragment==null)
+                                    homeFragment = new  SearchStudentFragment();
+
+                                if (!homeFragment.isVisible()) {
+                                     final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                                     fragmentTransaction.replace(R.id.frame, noticeboardFragment, NoticeboardFragment.class.getName());
-                                    startFragment(fragmentTransaction);
-                                }
-                                currentFragment=noticeboardFragment.getClass().getName();
-                                return true;
-
-
-                            case R.id.nav_messages:
-
-                                MessagesFragment messagesFragment = (MessagesFragment)getSupportFragmentManager().findFragmentByTag(MessagesFragment.class.getName());
-                                if(messagesFragment==null)
-                                    messagesFragment = new MessagesFragment();
-
-                                if (!messagesFragment.isVisible()) {
-                                    final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                                    fragmentTransaction.replace(R.id.frame, messagesFragment, MessagesFragment.class.getName());
-                                    startFragment(fragmentTransaction);
-                                }
-                                currentFragment=messagesFragment.getClass().getName();
-                                return true;
-
-                            case R.id.nav_findaroom:
-
-                                FindARoomFragment findARoomFragment = (FindARoomFragment)getSupportFragmentManager().findFragmentByTag(FindARoomFragment.class.getName());
-                                //Toast.makeText(getApplicationContext(),findARoomFragment+"",Toast.LENGTH_LONG).show();
-
-                                if(findARoomFragment==null)
-                                    findARoomFragment = new FindARoomFragment();
-
-
-                                if (! findARoomFragment.isVisible()) {
-                                   final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                                    fragmentTransaction.replace(R.id.frame, findARoomFragment, FindARoomFragment.class.getName());
+                                     fragmentTransaction.replace(R.id.frame, homeFragment,  SearchStudentFragment.class.getName());
                                     startFragment( fragmentTransaction);
                                 }
-                                currentFragment=findARoomFragment.getClass().getName();
+                                currentFragment=homeFragment.getClass().getName();
                                 return true;
 
-                            case R.id.nav_time_schedule:
-                                TimeScheduleFragment timeScheduleFragment = (TimeScheduleFragment)getSupportFragmentManager().findFragmentByTag(TimeScheduleFragment.class.getName());
-                                if(timeScheduleFragment==null)
-                                    timeScheduleFragment = new TimeScheduleFragment();
-
-                                if (!timeScheduleFragment.isVisible()) {
-                                    final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-                                    fragmentTransaction.replace(R.id.frame, timeScheduleFragment, TimeScheduleFragment.class.getName());
-                                    startFragment( fragmentTransaction);
-                                }
-                                currentFragment=timeScheduleFragment.getClass().getName();
-                                return true;
-
-                            case R.id.nav_profile:
-
-                                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
-                                startActivity(i);
-                                return true;
 
                             case R.id.nav_joboffers:
 
@@ -271,9 +188,10 @@ public class MainActivity extends AppCompatActivity {
                                 currentFragment=jobOffersFragment.getClass().getName();
                                 return true;
 
+
                             case R.id.nav_logout:
                                 AccountManager.logout();
-                                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                                startActivity(new Intent(CompanyMainActivity.this, LoginActivity.class));
                                 finish();
                                 return true;
 

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.SearchView;
@@ -306,8 +308,6 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
         hideSoftKeyboard();
 
 
-         FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
-         fab.setVisibility(View.GONE);
 
 
 
@@ -504,6 +504,38 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
                     String chatID= chat.getChatID();
                     i.putExtra("CHAT_ID",chatID);
                     startActivity(i);
+                }
+            });
+
+            holder.linearLayout.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    final Dialog dialog = new Dialog(getActivity());
+                    dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                    dialog.setContentView(R.layout.dialog_delete_chat);
+                    dialog.setCanceledOnTouchOutside(true);
+                    dialog.setCancelable(true);
+                    dialog.findViewById(R.id.delete_chat).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            chats.remove(position);
+                            notifyDataSetChanged();
+                            dialog.dismiss();
+                             Snackbar.make(getActivity().findViewById(R.id.drawer_layout), "Chat archived", Snackbar.LENGTH_LONG)
+                                    .setAction("Cancel", new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            chats.add(position, chat);
+                                            notifyDataSetChanged();
+                                        }
+                                    }).show();
+                            //((TextView)((ViewGroup)sb.getView()).findViewById(android.support.design.R.id.snackbar_text)).setBackgroundColor(0);
+
+
+                        }
+                    });
+                    dialog.show();
+                    return true;
                 }
             });
 

@@ -16,6 +16,7 @@
     <dimen name="margin_medium_large">15dp</dimen>
     <dimen name="margin_medium">10dp</dimen>
     <dimen name="margin_half_medium">5dp</dimen>
+    <dimen name="margin_vertical_radio_button">20dp</dimen>
 
     <dimen name="button_height">42dp</dimen>
     <dimen name="text_input_wrapper_height">50dp</dimen>
