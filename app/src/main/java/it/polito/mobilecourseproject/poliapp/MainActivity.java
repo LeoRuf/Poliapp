@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
             fragmentTransaction.replace(R.id.frame, myScheduleFragment, myScheduleFragment.getClass().getName());
             fragmentTransaction.commit();
-            navigationView.getMenu().getItem(3).setChecked(true);
+            navigationView.getMenu().getItem(2).setChecked(true);
 
             //TODO: CONTROLLARE CHE L'INDEX DEL GETITEM SIA CORRETTO
             
