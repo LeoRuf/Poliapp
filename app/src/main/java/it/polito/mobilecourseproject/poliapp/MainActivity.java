@@ -31,6 +31,7 @@ import it.polito.mobilecourseproject.poliapp.model.Chat;
 import it.polito.mobilecourseproject.poliapp.model.User;
 import it.polito.mobilecourseproject.poliapp.noticeboard.NoticeboardFragment;
 import it.polito.mobilecourseproject.poliapp.profile.ProfileActivity;
+import it.polito.mobilecourseproject.poliapp.time_schedule.MyScheduleFragment;
 import it.polito.mobilecourseproject.poliapp.time_schedule.TimeScheduleFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private String currentFragment;
     private User thisUser;
     private NavigationView navigationView;
+
+    private String alert=null;
 
 
 
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         ab.setHomeAsUpIndicator(R.drawable.ic_menu);
         ab.setDisplayHomeAsUpEnabled(true);
 
+        alert = getIntent().getStringExtra("alert");
 
         try{
             thisUser=AccountManager.getCurrentUser();
@@ -165,16 +169,22 @@ public class MainActivity extends AppCompatActivity {
             } catch ( Exception e) {
                 e.printStackTrace();
             }
-        }else{
+        } else if(alert!=null){
+            MyScheduleFragment myScheduleFragment=new MyScheduleFragment();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame, myScheduleFragment, myScheduleFragment.getClass().getName());
+            fragmentTransaction.commit();
+            navigationView.getMenu().getItem(3).setChecked(true);
+
+            //TODO: CONTROLLARE CHE L'INDEX DEL GETITEM SIA CORRETTO
+
+        } else{
             HomeFragment homeFragment=new HomeFragment();
             fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
             fragmentTransaction.replace(R.id.frame, homeFragment, homeFragment.getClass().getName());
             fragmentTransaction.commit();
             navigationView.getMenu().getItem(0).setChecked(true);
         }
- 
-
-
 
 
         navigationView.setNavigationItemSelectedListener(
@@ -264,6 +274,19 @@ public class MainActivity extends AppCompatActivity {
                                     startFragment( fragmentTransaction);
                                 }
                                 currentFragment=timeScheduleFragment.getClass().getName();
+                                return true;
+                            case R.id.nav_my_timetable:
+                                MyScheduleFragment myScheduleFragment = (MyScheduleFragment)getSupportFragmentManager().findFragmentByTag(MyScheduleFragment.class.getName());
+                                if(myScheduleFragment==null)
+                                    myScheduleFragment = new MyScheduleFragment();
+
+                                if (!myScheduleFragment.isVisible()) {
+                                    final FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+                                    fragmentTransaction.replace(R.id.frame, myScheduleFragment, MyScheduleFragment.class.getName());
+                                    startFragment( fragmentTransaction);
+                                }
+                                currentFragment=myScheduleFragment.getClass().getName();
                                 return true;
 
                             case R.id.nav_profile:

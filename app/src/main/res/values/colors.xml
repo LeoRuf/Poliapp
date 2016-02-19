@@ -43,4 +43,8 @@
     <color name="ultra_dark">#29303F</color>
     <color name="dark">#696E79</color>
     <color name="ultra_dark_overlay">#3329303F</color>
+
+    <color name="toolbar">#efefef</color>
+    <color name="toolbar_text">#8f000000</color>
+
 </resources>

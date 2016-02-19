@@ -5,11 +5,14 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.parse.Parse;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseUser;
 
 import it.polito.mobilecourseproject.poliapp.messages.MessageService;
 import it.polito.mobilecourseproject.poliapp.model.Chat;
+import it.polito.mobilecourseproject.poliapp.model.Event;
 import it.polito.mobilecourseproject.poliapp.model.JobOffer;
 import it.polito.mobilecourseproject.poliapp.model.DataModel;
 import it.polito.mobilecourseproject.poliapp.model.Message;
@@ -33,8 +36,12 @@ public class PoliApp extends android.support.multidex.MultiDexApplication{
         ParseObject.registerSubclass(Notice.class);
         ParseObject.registerSubclass(JobOffer.class);
         ParseObject.registerSubclass(Chat.class);
+        ParseObject.registerSubclass(Event.class);
 
-        Parse.initialize(getApplicationContext(), "WY7akYTncIqmxnem30lY0YxNljh6PkYqUtbsVx6L", "VydnpHbUe5vMtLbvY3P79iByFRilB5KFipYp2jeq");
+        Parse.initialize(this);
+        ParseInstallation.getCurrentInstallation().saveInBackground();
+
+        ParsePush.subscribeInBackground("Event");
 
         ctx=getApplicationContext();
 
