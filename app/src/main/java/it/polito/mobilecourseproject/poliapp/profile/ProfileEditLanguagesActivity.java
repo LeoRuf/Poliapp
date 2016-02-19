@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.dd.processbutton.iml.ActionProcessButton;
 
 import java.util.ArrayList;
@@ -168,7 +169,14 @@ public class ProfileEditLanguagesActivity extends AppCompatActivity {
     }
 
     public void addNewLanguage(View v){
-        
+/*
+        boolean wrapInScrollView = true;
+        new MaterialDialog.Builder(this)
+                .title(R.string.title)
+                .customView(R.layout.custom_view, wrapInScrollView)
+                .positiveText(R.string.positive)
+                .show();
+*/
         String language = "Italian (Native proficiency)";
         languages.add(language);
         inflateLanguage(language);
