@@ -31,7 +31,7 @@
     <group android:checkableBehavior="single"
         android:id="@+id/nav_student_section">
         <item
-            android:id="@+id/nav_timetable"
+            android:id="@+id/nav_my_timetable"
             android:icon="@drawable/ic_event"
             android:title="My timetable" />
         <item

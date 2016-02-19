@@ -2,58 +2,42 @@ package it.polito.mobilecourseproject.poliapp.time_schedule;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.SearchView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.parse.FindCallback;
-import com.parse.ParseException;
-import com.parse.ParseObject;
-import com.parse.ParseQuery;
-import com.parse.SaveCallback;
+import java.util.Arrays;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import it.polito.mobilecourseproject.poliapp.ExternalIntents;
-import it.polito.mobilecourseproject.poliapp.MyUtils;
 import it.polito.mobilecourseproject.poliapp.R;
-import it.polito.mobilecourseproject.poliapp.TimeManager;
-import it.polito.mobilecourseproject.poliapp.model.Notice;
-import it.polito.mobilecourseproject.poliapp.noticeboard.AddNoticeActivity;
-import it.polito.mobilecourseproject.poliapp.noticeboard.CategoriesAdapter;
 
 
-public class TimeScheduleFragment extends android.support.v4.app.Fragment {
+public class TimeScheduleFragment extends android.support.v4.app.Fragment{
 
     CoordinatorLayout.Behavior behavior;
     int scrollFlags;
-
+    ImageView searchButton;
+    CardView searchCardView;
+    View fragmentView;
+    String[] searchList=null;
+    AutoCompleteTextView autoCompleteTextView=null;
 
     public TimeScheduleFragment() {
         // Required empty public constructor
@@ -69,10 +53,78 @@ public class TimeScheduleFragment extends android.support.v4.app.Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View fragmentView = inflater.inflate(R.layout.fragment_time_schedule, container, false);
+        fragmentView= inflater.inflate(R.layout.fragment_time_schedule, container, false);
+        FloatingActionButton fab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
 
+        searchCardView = (CardView) fragmentView.findViewById(R.id.card_view);
+        searchButton = (ImageView) fragmentView.findViewById(R.id.searchButton);
+        autoCompleteTextView = (AutoCompleteTextView) fragmentView.findViewById(R.id.autocompleteId);
+        searchList = new String[] { "Malnati", "MAD" };
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),android.R.layout.simple_list_item_1, searchList);
+        autoCompleteTextView.setAdapter(adapter);
+
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchTypedString();
+            }
+        });
+
+        autoCompleteTextView.setOnKeyListener(new View.OnKeyListener()
+        {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            searchTypedString();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
 
         return fragmentView;
+    }
+
+    public void searchTypedString(){
+        if(autoCompleteTextView.getText().toString()!=null && !autoCompleteTextView.getText().toString().isEmpty()){
+
+            if (Arrays.asList(searchList).contains(autoCompleteTextView.getText().toString())) {
+
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("stringTyped",autoCompleteTextView.getText().toString());
+                if(((CheckBox)getActivity().findViewById(R.id.flagConsulting)).isChecked()){
+                    editor.putString("consulting","yes");
+                }else{
+                    editor.putString("consulting","no");
+                }
+                editor.apply();
+                closeKeyboard(getActivity(), autoCompleteTextView.getWindowToken());
+
+                final FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.replace(R.id.frame, new TimeScheduleTimetableFragment(), "TIMESCHEDULE_TIMETABLE_FRAGMENT");
+                ft.addToBackStack(null);
+                getActivity().getSupportFragmentManager().executePendingTransactions();
+                ft.commit();
+            }else{
+                Toast.makeText(getActivity(), autoCompleteTextView.getText() + " non trovato/a", Toast.LENGTH_SHORT).show();
+            }
+
+        } else {
+            Toast.makeText(getActivity(), "Search view is empty! " + autoCompleteTextView.getText(), Toast.LENGTH_SHORT).show();
+        }
+    }
+    public static void closeKeyboard(Context c, IBinder windowToken) {
+        InputMethodManager mgr = (InputMethodManager) c.getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(windowToken, 0);
     }
 
     /*
@@ -136,6 +188,9 @@ public class TimeScheduleFragment extends android.support.v4.app.Fragment {
 
     */
 
+        FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -174,7 +229,8 @@ public class TimeScheduleFragment extends android.support.v4.app.Fragment {
 
         behavior = null;
         */
+
+        FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
     }
-
-
 }
