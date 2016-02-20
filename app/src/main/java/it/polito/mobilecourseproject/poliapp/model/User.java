@@ -212,6 +212,81 @@ public class User extends ParseUser {
         put("languages", value);
     }
 
+    public ArrayList<JobExperience> getJobExperiencesAsList(){
+        String jobsText=this.getJobExperiences();
+        if(jobsText==null || jobsText.trim().equals(""))
+            return new ArrayList<JobExperience>();
+
+        String[] jobs=jobsText.split(Pattern.quote(MyUtils.CUSTOM_DELIMITER));
+        ArrayList<JobExperience> list = new ArrayList<JobExperience>();
+
+        for(String job:jobs){
+
+            //Per sicurezza...
+            if(job.trim().isEmpty() || job.contains(MyUtils.CUSTOM_DELIMITER))
+                continue;
+
+            String[] tokens=job.split(Pattern.quote(MyUtils.CUSTOM_DELIMITER_2));
+            JobExperience jobExperienceObj = new JobExperience();
+            jobExperienceObj.setTitle(tokens[0]);
+            jobExperienceObj.setOrganization(tokens[1]);
+            jobExperienceObj.setCity(tokens[2]);
+            jobExperienceObj.setStartDate(tokens[3]);
+            jobExperienceObj.setEndDate(tokens[4]);
+            jobExperienceObj.setDescription(tokens[5]);
+
+            list.add(jobExperienceObj);
+        }
+
+        return list;
+    }
+
+    public String getJobExperiences() {
+        return getString("jobExperiences");
+    }
+
+    public void setJobExperiences(String value){
+        put("jobExperiences", value);
+    }
+
+    public ArrayList<Education> getEducationsAsList(){
+        String educationsText=this.getEducations();
+        if(educationsText==null || educationsText.trim().equals(""))
+            return new ArrayList<Education>();
+
+        String[] educations=educationsText.split(Pattern.quote(MyUtils.CUSTOM_DELIMITER));
+        ArrayList<Education> list = new ArrayList<Education>();
+
+        for(String education:educations){
+
+            //Per sicurezza...
+            if(education.trim().isEmpty() || education.contains(MyUtils.CUSTOM_DELIMITER))
+                continue;
+
+            String[] tokens=education.split(Pattern.quote(MyUtils.CUSTOM_DELIMITER_2));
+            Education eduObj = new Education();
+            eduObj.setTitle(tokens[0]);
+            eduObj.setUniversity(tokens[1]);
+            eduObj.setCity(tokens[2]);
+            eduObj.setStartDate(tokens[3]);
+            eduObj.setEndDate(tokens[4]);
+            eduObj.setFinalGrade(tokens[5]);
+
+            list.add(eduObj);
+        }
+
+        return list;
+    }
+
+    public String getEducations() {
+        return getString("educations");
+    }
+
+    public void setEducations(String value){
+        put("educations", value);
+    }
+
+
     public static User createUser(String firstName,String lastName, String university){
         User user = new User();
         user.setFirstName(firstName);

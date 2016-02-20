@@ -99,6 +99,13 @@ public class ProfileActivity extends AppCompatActivity
         startActivity(intent);
     }
 
+    public void editJobExperiences(View v) {
+
+        Intent intent=new Intent(this,ProfileEditJobExperiencesActivity.class);
+        startActivity(intent);
+    }
+
+
     public void editSkills(View v) {
 
         Intent intent=new Intent(this,ProfileEditSkillsActivity.class);
