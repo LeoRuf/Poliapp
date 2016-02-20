@@ -1,24 +1,35 @@
 package it.polito.mobilecourseproject.poliapp.login;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.AccountManager;
-import it.polito.mobilecourseproject.poliapp.AsyncTaskWithoutProgressBar;
 import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.R;
+import it.polito.mobilecourseproject.poliapp.model.User;
+import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.GOTOConstants;
+import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.ImageCropActivity;
 
 public class SignUpActivity extends AppCompatActivity {
     private EditText companyName;
@@ -30,6 +41,8 @@ public class SignUpActivity extends AppCompatActivity {
     private EditText university;
     private ActionProcessButton signUpButton;
     private boolean isCompany=false;
+    private  Bitmap bitmap;
+    private CircleImageView imageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +57,41 @@ public class SignUpActivity extends AppCompatActivity {
                 (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbar.setTitle("Sign up!");
 
-        findViewById(R.id.imgAvatar).setOnClickListener(new View.OnClickListener() {
+        imageView=((CircleImageView)findViewById(R.id.imgAvatar));
+
+
+        imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO: Aggiungere logica per upload immagine
-                //((de.hdodenhof.circleimageview.CircleImageView) findViewById(R.id.imgAvatar)).setImageResource(R.drawable.my_photo);
+                selectPhoto();
+            }
+        });
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                final Dialog dialog = new Dialog(SignUpActivity.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.dialog_delete);
+                dialog.setCanceledOnTouchOutside(true);
+                dialog.setCancelable(true);
+                ((TextView) dialog.findViewById(R.id.text)).setText("DROP PHOTO");
+                dialog.findViewById(R.id.delete_chat).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        bitmap=null;
+                        imageView.setImageResource(R.drawable.default_avatar);
+
+                    }
+                });
+                dialog.show();
+
+
+                return true;
             }
         });
 
-        companyName = (EditText)findViewById(R.id.companyName);
+        companyName = (EditText) findViewById(R.id.companyName);
         firstName = (EditText)findViewById(R.id.firstName);
         lastName = (EditText)findViewById(R.id.lastName);
         email = (EditText)findViewById(R.id.email);
@@ -290,11 +329,12 @@ public class SignUpActivity extends AppCompatActivity {
                     if (universityText == null || universityText.trim().isEmpty())
                         universityText = "Politecnico di Torino";
 
-                    AccountManager.signup(firstNameText, lastNameText, companyNameText, emailText, passwordText, universityText, isCompany);
+                    AccountManager.signup(firstNameText, lastNameText, companyNameText, emailText, passwordText, universityText, isCompany,bitmap);
                 } catch (Exception e) {
                     resultMessage = "Error occurred:\n" + e.getMessage();
                     e.printStackTrace();
                 }
+
 
 
                 try {
@@ -328,5 +368,79 @@ public class SignUpActivity extends AppCompatActivity {
             }
         })).start();
     }
+
+
+
+
+
+
+    /********select photo from gallery or camera***********************/
+    public void selectPhoto() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Mode")
+                .setItems(picMode, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String action = picMode[which].equalsIgnoreCase(GOTOConstants.PicModes.CAMERA) ? GOTOConstants.IntentExtras.ACTION_CAMERA : GOTOConstants.IntentExtras.ACTION_GALLERY;
+                        Intent intent = new Intent(SignUpActivity.this,ImageCropActivity.class);
+                        intent.putExtra("ACTION",action);
+                        startActivityForResult(intent, REQUEST_CODE_UPDATE_PIC);
+                    }
+                });
+        builder.create().show();
+
+    }
+
+
+
+    public void deletePhoto(){
+       /* profilePictureImage.setImageResource(R.drawable.no_profile_picture);
+        deleteProfilePictureTextView.setVisibility(View.GONE);
+        profilePictureTextView.setText("Deleting the photo...");
+        profilePictureTextView.setVisibility(View.VISIBLE);
+        pro_yourPhoto.setVisibility(View.VISIBLE);
+        myProfile.removePhoto(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+                    DialogManager.toastMessage("Photo deleted", getActivity(), "center", true);
+                    if (pro_yourPhoto != null){
+                        pro_yourPhoto.setVisibility(View.GONE);
+                        profilePictureTextView.setText("Tap on the photo to choose a profile picture.");
+                    }
+                } else {
+                    DialogManager.toastMessage("" + e.getMessage(), getActivity(), "center", true);
+                }
+            }
+        });*/
+    }
+
+
+
+
+    private String[] picMode = {GOTOConstants.PicModes.CAMERA,GOTOConstants.PicModes.GALLERY};
+    public static final String TEMP_PHOTO_FILE_NAME = "temp_photo.jpg";
+    public static final int REQUEST_CODE_UPDATE_PIC = 0x1;
+
+    //handle data returning from camera or gallery
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+
+            if(requestCode == REQUEST_CODE_UPDATE_PIC) {
+                String imagePath = data.getStringExtra(GOTOConstants.IntentExtras.IMAGE_PATH);
+                if (imagePath != null) {
+                    bitmap = BitmapFactory.decodeFile(imagePath);
+                    imageView.setImageBitmap(bitmap);
+                }
+
+            }
+
+        }
+
+    }
+
+
 
 }

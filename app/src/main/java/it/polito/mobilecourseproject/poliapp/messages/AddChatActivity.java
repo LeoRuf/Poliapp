@@ -2,6 +2,7 @@ package it.polito.mobilecourseproject.poliapp.messages;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,6 +34,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.MainActivity;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
@@ -109,7 +111,7 @@ public class AddChatActivity extends AppCompatActivity {
         Collections.sort(users, new Comparator<User>() {
             @Override
             public int compare(User lhs, User rhs) {
-                return (lhs.getLastName()+" "+lhs.getFirstName()).compareTo(rhs.getLastName()+" "+rhs.getFirstName());
+                return (lhs.getLastName().toLowerCase()).compareTo(rhs.getLastName().toLowerCase());
             }
         });
     }
@@ -234,8 +236,12 @@ public class AddChatActivity extends AppCompatActivity {
 
             ((TextView)holder.linearLayout.findViewById(R.id.nameV)).setText(user.getLastName()+" "+user.getFirstName());
 
-            //((ImageView)holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap();
-
+            Bitmap b= PoliApp.getModel().getBitmapByUser(AddChatActivity.this, user,this);
+            if(b!=null){
+                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap(b);
+            }else{
+                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.default_avatar);
+            }
              holder.linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

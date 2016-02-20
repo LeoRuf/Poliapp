@@ -1,9 +1,14 @@
 package it.polito.mobilecourseproject.poliapp.model;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.mobilecourseproject.poliapp.AccountManager;
 
@@ -14,8 +19,17 @@ public class DataModel {
 
     private List<User> contacts;
     private List<Chat> chats;
+    private Bitmap profileBitmap;
+    private Map<String,Bitmap> usersBitmaps=new HashMap<String,Bitmap>();
     private Context ctx;
 
+
+
+    public void flush(){
+        contacts=null;
+        chats=null;
+        profileBitmap=null;
+    }
 
 
     public DataModel(Context ctx ){
@@ -121,6 +135,46 @@ public class DataModel {
 
 
 
+    public void getProfileBitmap(Activity act,User thisUser, final User.OnGetPhoto onGetPhoto){
+
+        if(profileBitmap!=null){
+            onGetPhoto.onGetPhoto(profileBitmap);
+            return;
+        }
+        thisUser.getPhotoAsync(act, new User.OnGetPhoto() {
+            @Override
+            public void onGetPhoto(Bitmap b) {
+                profileBitmap=b;
+                onGetPhoto.onGetPhoto(profileBitmap);
+            }
+        });
+
+    }
+
+
+    public Bitmap getBitmapByUser(Activity act, final User user,final RecyclerView.Adapter adapter){
+        Bitmap b=usersBitmaps.get(user.getObjectId());
+        if(b==null){
+            user.getPhotoAsync(act, new User.OnGetPhoto() {
+                @Override
+                public void onGetPhoto(Bitmap b) {
+                    if(b!=null){
+                        usersBitmaps.put(user.getObjectId(), b);
+                        try{
+                            adapter.notifyDataSetChanged();
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                }
+
+                }
+            });
+            return null;
+        }else{
+            return b;
+        }
+
+    }
 
 
 

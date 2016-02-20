@@ -25,6 +25,7 @@
 
 
             <TextView
+                android:id="@+id/text"
                 android:textSize="14sp"
                 android:paddingLeft="@dimen/margin_large"
                 android:paddingRight="@dimen/margin_large"

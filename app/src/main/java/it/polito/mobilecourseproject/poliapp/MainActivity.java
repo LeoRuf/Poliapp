@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -23,6 +24,7 @@ import android.widget.Toast;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.findaroom.FindARoomFragment;
 import it.polito.mobilecourseproject.poliapp.jobs.JobOffersFragment;
 import it.polito.mobilecourseproject.poliapp.login.LoginActivity;
@@ -88,6 +90,15 @@ public class MainActivity extends AppCompatActivity {
             setupDrawerContent(navigationView,savedInstanceState);
         }
 
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_name)).setText(thisUser.getFirstName() + " " + thisUser.getLastName());
+       final CircleImageView imageView=(( CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.imgAvatar));
+       PoliApp.getModel().getProfileBitmap(this, thisUser, new User.OnGetPhoto() {
+           @Override
+           public void onGetPhoto(Bitmap b) {
+               if(b==null)return;
+               imageView.setImageBitmap(b);
+           }
+       });
     }
 
 
@@ -109,8 +120,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_name)).setText(thisUser.getFirstName() + " " + thisUser.getLastName());
-        setChatItemInfo();
+          setChatItemInfo();
         try{
             IntentFilter intentFilter = new IntentFilter(MessageService.SERVICE_INTENT_BROADCAST);
             broadcastReceiver = new BroadcastReceiver() {

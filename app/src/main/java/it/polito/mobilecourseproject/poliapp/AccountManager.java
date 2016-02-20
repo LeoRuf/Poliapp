@@ -1,8 +1,11 @@
 package it.polito.mobilecourseproject.poliapp;
 
+import android.graphics.Bitmap;
+
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
+import it.polito.mobilecourseproject.poliapp.messages.MessageService;
 import it.polito.mobilecourseproject.poliapp.model.User;
 
 /**
@@ -18,7 +21,7 @@ public class AccountManager {
     }
 
 
-    public static void signup(String firstName, String lastName,String companyName, String email, String password, String university,boolean isCompany) throws ParseException {
+    public static void signup(String firstName, String lastName,String companyName, String email, String password, String university,boolean isCompany,Bitmap b) throws ParseException {
 
         //create ParseUser
         User user = new User();
@@ -31,6 +34,16 @@ public class AccountManager {
         if(!isCompany)user.setStudent();
         else user.setCompany();
         user.signUp();
+
+        if(b!=null){
+            try {
+                user.updatePhotoSync(b);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+
         ParseUser.logOut();
     }
 
@@ -75,8 +88,10 @@ public class AccountManager {
     }
 
    public static void logout(){
-       ParseUser.logOut();
+       PoliApp.getModel().flush();
 
+       ParseUser.logOut();
+       MessageService.restart();
    }
 
 }

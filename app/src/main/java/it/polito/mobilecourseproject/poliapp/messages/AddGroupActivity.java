@@ -2,6 +2,7 @@ package it.polito.mobilecourseproject.poliapp.messages;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatCheckBox;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
@@ -91,11 +93,12 @@ public class AddGroupActivity extends AppCompatActivity {
 
     }
 
+
     public void sortUsers(){
         Collections.sort(users, new Comparator<User>() {
             @Override
             public int compare(User lhs, User rhs) {
-                return (lhs.getLastName() + " " + lhs.getFirstName()).compareTo(rhs.getLastName() + " " + rhs.getFirstName());
+                return (lhs.getLastName().toLowerCase()).compareTo(rhs.getLastName().toLowerCase());
             }
         });
     }
@@ -310,9 +313,13 @@ public class AddGroupActivity extends AppCompatActivity {
 
             ((TextView)holder.linearLayout.findViewById(R.id.nameV)).setText(user.getLastName() + " " + user.getFirstName());
 
-            //((ImageView)holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap();
-
-             holder.linearLayout.setOnClickListener(new View.OnClickListener() {
+            Bitmap b= PoliApp.getModel().getBitmapByUser(AddGroupActivity.this, user,this);
+            if(b!=null){
+                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap(b);
+            }else{
+                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.default_avatar);
+            }
+            holder.linearLayout.setOnClickListener(new View.OnClickListener() {
                  @Override
                  public void onClick(View v) {
                      //

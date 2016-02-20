@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.findaroom.FindARoomFragment;
 import it.polito.mobilecourseproject.poliapp.jobs.JobOffersFragment;
 import it.polito.mobilecourseproject.poliapp.login.LoginActivity;
@@ -83,6 +85,17 @@ public class CompanyMainActivity extends AppCompatActivity {
         if (navigationView != null) {
             setupDrawerContent(navigationView,savedInstanceState);
         }
+
+
+        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_name)).setText(thisUser.getFirstName() + " " + thisUser.getLastName());
+        final CircleImageView imageView=(( CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.imgAvatar));
+        PoliApp.getModel().getProfileBitmap(this, thisUser, new User.OnGetPhoto() {
+            @Override
+            public void onGetPhoto(Bitmap b) {
+                if(b==null)return;
+                imageView.setImageBitmap(b);
+            }
+        });
 
     }
 

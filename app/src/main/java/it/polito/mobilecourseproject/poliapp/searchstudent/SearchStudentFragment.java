@@ -3,6 +3,7 @@ package it.polito.mobilecourseproject.poliapp.searchstudent;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
@@ -21,8 +22,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.model.User;
 
@@ -177,7 +182,6 @@ public class SearchStudentFragment extends android.support.v4.app.Fragment   {
 
 
 
-
         final AppCompatEditText skillsEdit=(AppCompatEditText)getActivity().findViewById(R.id.skills);
 
         getActivity().findViewById(R.id.searchButton).setOnClickListener(new View.OnClickListener() {
@@ -191,16 +195,17 @@ public class SearchStudentFragment extends android.support.v4.app.Fragment   {
                 getActivity().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
                 getActivity().findViewById(R.id.no_result).setVisibility(View.GONE);
                 getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
-                User.searchStudentsBySkills(getActivity(),words, new User.OnUsersDownloadedCallback() {
+                User.searchStudentsBySkills(getActivity(), words, new User.OnUsersDownloadedCallback() {
                     @Override
                     public void onUsersDownloaded(List<User> users) {
                         getActivity().findViewById(R.id.progressBar).setVisibility(View.GONE);
-                        if(users==null || users.size()==0){
+                        if (users == null || users.size() == 0) {
                             getActivity().findViewById(R.id.no_result).setVisibility(View.VISIBLE);
-                        }else{
+                        } else {
                             getActivity().findViewById(R.id.recyclerView).setVisibility(View.VISIBLE);
                             students.clear();
                             students.addAll(users);
+                            sortUsers();
                             studentsAdapter.setUsers(students);
                             studentsAdapter.notifyDataSetChanged();
 
@@ -209,18 +214,17 @@ public class SearchStudentFragment extends android.support.v4.app.Fragment   {
                 });
 
 
-
-
-
             }
         });
+    }
 
-
-
-
-
-
-
+    public void sortUsers(){
+        Collections.sort(students, new Comparator<User>() {
+            @Override
+            public int compare(User lhs, User rhs) {
+                return (lhs.getLastName().toLowerCase()).compareTo(rhs.getLastName().toLowerCase());
+            }
+        });
     }
 
     public void hideSoftKeyboard() {
@@ -396,7 +400,13 @@ public class SearchStudentFragment extends android.support.v4.app.Fragment   {
 
             ((TextView)holder.linearLayout.findViewById(R.id.nameV)).setText(user.getLastName()+" "+user.getFirstName());
 
-            //((ImageView)holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap();
+            Bitmap b= PoliApp.getModel().getBitmapByUser(getActivity(), user,this);
+            if(b!=null){
+                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap(b);
+            }else{
+                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.default_avatar);
+            }
+
 
             holder.linearLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

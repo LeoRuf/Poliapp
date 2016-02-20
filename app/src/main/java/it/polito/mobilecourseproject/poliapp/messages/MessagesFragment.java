@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
@@ -37,10 +38,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.model.Chat;
 import it.polito.mobilecourseproject.poliapp.model.Message;
+import it.polito.mobilecourseproject.poliapp.model.User;
+import it.polito.mobilecourseproject.poliapp.model.UserInfo;
 
 
 public class MessagesFragment extends android.support.v4.app.Fragment   {
@@ -55,7 +59,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
     ArrayList<Chat> chats;
     //SwipeRefreshLayout refreshLayout;
 
-
+    User thisUser;
 
 
     public MessagesFragment() {
@@ -260,6 +264,12 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
         myOnAttach(getActivity());
 
 
+        try {
+            thisUser= AccountManager.getCurrentUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
 
 
         recyclerView=(RecyclerView)getView().findViewById(R.id.listView);
@@ -479,7 +489,6 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
             }
             ((TextView)holder.linearLayout.findViewById(R.id.timeAgoView)).setText(chat.getLastMessageDate(getActivity()));
 
-           // ((ImageView)holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap();
 
             if(!chat.getSeen(getActivity())){
                 holder.linearLayout.findViewById(R.id.notReadV).setVisibility(View.VISIBLE);
@@ -493,7 +502,24 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
             if(chat.isGroup()){
                 ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.person);
             }else{
-                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.default_avatar);
+                User user=null;
+                for(UserInfo ui : chat.getChatters()){
+                    if(!ui.userID.equals(thisUser.getObjectId())){
+                        user=User.getFromLocalStorageStudentById(ui.userID);
+                    }
+                }
+                Bitmap b = null;
+                if (user != null) {
+                    b = PoliApp.getModel().getBitmapByUser(getActivity(), user,this);
+                }
+                if (b != null) {
+                    ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageBitmap(b);
+                } else {
+                    ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.default_avatar);
+                }
+
+
+
             }
 
 
@@ -512,7 +538,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
                 public boolean onLongClick(View v) {
                     final Dialog dialog = new Dialog(getActivity());
                     dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    dialog.setContentView(R.layout.dialog_delete_chat);
+                    dialog.setContentView(R.layout.dialog_delete);
                     dialog.setCanceledOnTouchOutside(true);
                     dialog.setCancelable(true);
                     dialog.findViewById(R.id.delete_chat).setOnClickListener(new View.OnClickListener() {
@@ -521,7 +547,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
                             chats.remove(position);
                             notifyDataSetChanged();
                             dialog.dismiss();
-                             Snackbar.make(getActivity().findViewById(R.id.drawer_layout), "Chat archived", Snackbar.LENGTH_LONG)
+                            Snackbar.make(getActivity().findViewById(R.id.drawer_layout), "Chat archived", Snackbar.LENGTH_LONG)
                                     .setAction("Cancel", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {

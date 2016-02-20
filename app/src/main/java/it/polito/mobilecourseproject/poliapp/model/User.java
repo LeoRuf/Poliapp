@@ -1,16 +1,22 @@
 package it.polito.mobilecourseproject.poliapp.model;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
 
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -247,6 +253,20 @@ public class User extends ParseUser {
 
             }
         });
+    }
+
+
+    public static  User getFromLocalStorageStudentById(String objectID){
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.fromLocalDatastore();
+        query.whereEqualTo("isCompany", false);
+        try {
+            User u=(User)query.get(objectID);
+            return u;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
 
     }
 
@@ -291,6 +311,81 @@ public class User extends ParseUser {
     }
 
 
+    public interface OnGetPhoto{
+        void onGetPhoto(Bitmap b);
+    }
+
+    public void getPhotoAsync(final Activity activity, final OnGetPhoto onGetPhoto)  {
+        (new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    final Bitmap b=getPhotoSync(activity);
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            onGetPhoto.onGetPhoto(b);
+                        }
+                    });
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+
+
+            }
+        })).start();
+
+    }
+
+
+    public Bitmap getPhotoSync(Context context){
+        try{
+            ParseObject photo = (ParseObject)this.get("photoProfile");
+            if(photo==null)return null;
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("Photo");
+            byte[]  data = query.get(photo.getObjectId()).getParseFile("photo").getData();
+            if(data==null)return null;
+            Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+            return bitmap;
+        }catch (Exception e){
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+
+    public void updatePhotoAsync(Bitmap bitImage, SaveCallback saveCallback) {
+        ParseObject photo = new ParseObject("Photo");
+        photo.put("name", "photoProfile");
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitImage.compress(Bitmap.CompressFormat.PNG, 50, stream);
+        byte[] byteArray = stream.toByteArray();
+        photo.put("photo", new ParseFile(byteArray));
+
+        if(this.has("photoProfile"))
+            this.getParseObject("photoProfile").deleteInBackground();
+
+        this.put("photoProfile", photo);
+        this.saveInBackground(saveCallback);
+
+    }
+
+    public void updatePhotoSync(Bitmap bitImage) throws ParseException {
+        ParseObject photo = new ParseObject("Photo");
+        photo.put("name", "photoProfile");
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitImage.compress(Bitmap.CompressFormat.PNG, 50, stream);
+        byte[] byteArray = stream.toByteArray();
+        photo.put("photo", new ParseFile(byteArray));
+
+        if(this.has("photoProfile"))
+            this.getParseObject("photoProfile").deleteInBackground();
+
+        this.put("photoProfile", photo);
+        this.save();
+
+    }
 
 
 

@@ -40,6 +40,9 @@ import it.polito.mobilecourseproject.poliapp.model.UserInfo;
 
 public class MessageService extends Service {
 
+
+    private static MessageService service;
+
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
@@ -103,6 +106,7 @@ public class MessageService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        service=this;
        // sendNotification(Message.createMessage("-", new UserInfo("-", "service started"), "service started", new Date()));
         connectAndSubscribeMQTT();
 
@@ -478,6 +482,12 @@ public class MessageService extends Service {
     public static void hideNotification(Context ctx,Chat chat){
         NotificationManager notificationManager = (NotificationManager) ctx.getSystemService(NOTIFICATION_SERVICE);
         notificationManager.cancel(chat.getChatID().hashCode());
+    }
+
+
+    public static void restart(){
+        if(service!=null)
+        service.restartService();
     }
 
 
