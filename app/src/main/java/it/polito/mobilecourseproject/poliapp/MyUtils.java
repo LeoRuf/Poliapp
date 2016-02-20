@@ -13,6 +13,8 @@ public class MyUtils {
     private final static String SEARCH_BOOK = "Looking for books";
     private final static String RENT_HOUSE = "Renting house";
 
+    public final static String CUSTOM_DELIMITER = "£$$%Cust!&2&3Delim£$$%";
+    public final static String CUSTOM_DELIMITER_2 = "£$$%Cust!&1&2dELim£$$%";
 
 
     private final static String NON_THIN = "[^iIl1\\.,']";

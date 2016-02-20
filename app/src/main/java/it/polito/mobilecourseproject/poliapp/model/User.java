@@ -1,10 +1,12 @@
 package it.polito.mobilecourseproject.poliapp.model;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.GetCallback;
@@ -21,6 +23,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
+
+import it.polito.mobilecourseproject.poliapp.MyUtils;
 
 /**
  * Created by Enrico on 19/06/15.
@@ -173,12 +178,30 @@ public class User extends ParseUser {
         put("dateOfBirth", value);
     }
 
-    public ArrayList<String> getLanguageSkillsAsList(){
+    public ArrayList<Language> getLanguageSkillsAsList(){
         String languagesText=this.getLanguageSkills();
-        if(languagesText==null || languagesText.trim().equals(""))return  new ArrayList<String>();
-        String[] languages=languagesText.split("\n");
+        if(languagesText==null || languagesText.trim().equals(""))
+            return new ArrayList<Language>();
 
-        return  new ArrayList<String>(Arrays.asList(languages));
+        String[] languages=languagesText.split(Pattern.quote(MyUtils.CUSTOM_DELIMITER));
+        ArrayList<Language> list = new ArrayList<Language>();
+
+        for(String lang:languages){
+
+            //Per sicurezza...
+            if(lang.trim().isEmpty() || lang.contains(MyUtils.CUSTOM_DELIMITER))
+                continue;
+
+            String[] tokens=lang.split(Pattern.quote(MyUtils.CUSTOM_DELIMITER_2));
+            Language languageObj = new Language();
+            languageObj.setLanguage(tokens[0]);
+            if(tokens.length>1 && !tokens[1].contains(MyUtils.CUSTOM_DELIMITER_2))
+                languageObj.setLevel(tokens[1]);
+
+            list.add(languageObj);
+        }
+
+        return list;
     }
 
     public String getLanguageSkills() {
