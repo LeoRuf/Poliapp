@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MASTER'S DEGREE IN COMPUTER ENGINEERING"
+                android:textAppearance="@style/TextAppearance.SubHeader"
+                android:lineSpacingExtra="6dp"
+                android:textIsSelectable="true"
+                android:id="@+id/title"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Politecnico di Torino (Turin, Italy)"
+                android:textStyle="italic"
+                android:lineSpacingExtra="6dp"
+                android:textIsSelectable="true"
+                android:id="@+id/universityAndLocation"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dates attended: July 2015 - June 2016"
+                android:id="@+id/dates"
+                android:layout_marginTop="8dp"
+                android:textIsSelectable="true"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Final grade: 110/110"
+                android:id="@+id/finalGrade"
+                android:textIsSelectable="true"
+                />
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="15dp" />
+
+</LinearLayout>

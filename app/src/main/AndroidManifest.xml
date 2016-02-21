@@ -125,6 +125,27 @@
             android:theme="@style/AppThemeBlueStatusBar"
             />
         <activity
+            android:name=".profile.ProfileEditJobExperiencesActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".profile.ProfileActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppThemeBlueStatusBar"
+            />
+        <activity
+            android:name=".profile.ProfileEditProfessionalHeadlineActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".profile.ProfileActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppThemeBlueStatusBar"
+            />
+        <activity
+            android:name=".profile.ProfileEditEducationsActivity"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".profile.ProfileActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppThemeBlueStatusBar"
+            />
+        <activity
             android:name=".profile.ProfileEditOtherActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".profile.ProfileActivity"

@@ -189,10 +189,10 @@ public class ProfileEditLanguagesActivity extends AppCompatActivity {
         });
 
         (languageLayout.getChildAt(0)).setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View view) {
                 showDialog(language, languageLayout);
-                return;
             }
 
         });
@@ -272,7 +272,10 @@ public class ProfileEditLanguagesActivity extends AppCompatActivity {
         });
 
         dialog.show();
-        positiveAction.setEnabled(false); // disabled by default
+        if(languageToEdit==null) {
+
+            positiveAction.setEnabled(false); // disabled by default
+        }
 
     }
 

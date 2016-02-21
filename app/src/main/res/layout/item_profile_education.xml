@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="3dp"
+    >
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginBottom="3dp"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:background="?android:attr/selectableItemBackground"
+        android:foreground="?android:attr/selectableItemBackground"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="6dp"
+            >
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="MASTER'S DEGREE IN COMPUTER ENGINEERING"
+                android:textAppearance="@style/TextAppearance.SubHeader"
+                android:lineSpacingExtra="6dp"
+                android:id="@+id/title"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Politecnico di Torino (Turin, Italy)"
+                android:textStyle="italic"
+                android:lineSpacingExtra="6dp"
+                android:id="@+id/universityAndLocation"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Dates attended: July 2015 - June 2016"
+                android:id="@+id/dates"
+                android:layout_marginTop="8dp"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Final grade: 110/110"
+                android:id="@+id/finalGrade"
+                />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+</RelativeLayout>

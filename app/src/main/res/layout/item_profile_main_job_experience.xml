@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SUPPORT ENGINEER"
+                android:textAppearance="@style/TextAppearance.SubHeader"
+                android:lineSpacingExtra="6dp"
+                android:id="@+id/title"
+                android:textIsSelectable="true"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Microsoft, Milan (Italy)"
+                android:textStyle="italic"
+                android:lineSpacingExtra="6dp"
+                android:id="@+id/companyAndLocation"
+                android:textIsSelectable="true"
+                />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="July 2015 - June 2016"
+                android:id="@+id/dates"
+                android:textIsSelectable="true"
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Delivering high quality service to Microsoft Enterprise customers by solving complex technical problems related to networking and involving Microsoft technologies (Windows Server, Active Directory, NLB, DFS, etc.) and helping to pro-actively prevent new issues."
+                android:id="@+id/description"
+                android:layout_marginTop="8dp"
+                android:textIsSelectable="true"
+                />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="20dp" />
+
+</LinearLayout>
