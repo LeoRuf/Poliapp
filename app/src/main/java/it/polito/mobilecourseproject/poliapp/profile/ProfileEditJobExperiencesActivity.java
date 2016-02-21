@@ -79,6 +79,17 @@ public class ProfileEditJobExperiencesActivity extends AppCompatActivity {
 
         findViewById(R.id.parentView).requestFocus();
 
+        for(JobExperience jobExperience : jobExperiences) {
+            if(jobExperience.getTitle()==null || jobExperience.getTitle().trim().isEmpty() ||
+                    jobExperience.getCity()==null || jobExperience.getCity().trim().isEmpty() ||
+                    jobExperience.getStartDate()==null || jobExperience.getStartDate().trim().isEmpty() ||
+                    jobExperience.getEndDate()==null || jobExperience.getEndDate().trim().isEmpty() ||
+                    jobExperience.getDescription()==null || jobExperience.getDescription().trim().isEmpty() ||
+                    jobExperience.getOrganization()==null || jobExperience.getOrganization().trim().isEmpty()){
+                error=true;
+            }
+        }
+
         if(!Connectivity.hasNetworkConnection(getApplicationContext())){
             Snackbar.make(findViewById(R.id.parentView), "No network connection", Snackbar.LENGTH_LONG)
                     .setAction("Retry", new View.OnClickListener() {
@@ -94,6 +105,16 @@ public class ProfileEditJobExperiencesActivity extends AppCompatActivity {
 
         if(error){
             saveButton.setProgress(-1);
+            Snackbar.make(findViewById(R.id.parentView), "Cannot save: There are some empty fields", Snackbar.LENGTH_LONG)
+                    .show();
+
+            saveButton.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                   saveButton.setProgress(0);
+                }
+            }, 3000);
+
             return;
         }
 

@@ -1,7 +1,10 @@
 package it.polito.mobilecourseproject.poliapp.profile;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
@@ -10,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
@@ -29,10 +33,13 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.parse.ParseException;
+import com.parse.SaveCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.ExternalIntents;
 import it.polito.mobilecourseproject.poliapp.R;
@@ -41,12 +48,21 @@ import it.polito.mobilecourseproject.poliapp.model.Education;
 import it.polito.mobilecourseproject.poliapp.model.JobExperience;
 import it.polito.mobilecourseproject.poliapp.model.Language;
 import it.polito.mobilecourseproject.poliapp.model.User;
+import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.GOTOConstants;
+import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.ImageCropActivity;
 
 public class ProfileActivity extends AppCompatActivity
         implements AppBarLayout.OnOffsetChangedListener {
 
     private static final int PERCENTAGE_TO_ANIMATE_AVATAR = 20;
     private boolean mIsAvatarShown = true;
+
+    private Bitmap bitmap;
+    private CircleImageView imageView;
+    private User user;
+
+    private String[] picMode = {GOTOConstants.PicModes.CAMERA,GOTOConstants.PicModes.GALLERY};
+    public static final int REQUEST_CODE_UPDATE_PIC = 0x1;
 
     private ImageView mProfileImage;
     private int mMaxScrollSize;
@@ -70,7 +86,9 @@ public class ProfileActivity extends AppCompatActivity
         appbarLayout.addOnOffsetChangedListener(this);
         mMaxScrollSize = appbarLayout.getTotalScrollRange();
 
-        User user = new User(); //SENNO' NON COMPILA XD
+        user = new User(); //SENNO' NON COMPILA XD
+
+        imageView = (CircleImageView) findViewById(R.id.profile_image);
 
         if(getIntent().hasExtra("userId")){
 
@@ -98,12 +116,13 @@ public class ProfileActivity extends AppCompatActivity
                     }
                 });
 
-                findViewById(R.id.profile_image).setOnClickListener(new View.OnClickListener() {
+                imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
 
                         String[] options = new String[2];
 
+                        //TODO: Remove photo non dovrebbe spuntare se non c'è ancora la foto
                         options[0] = "Remove photo";
                         options[1] = "Upload new photo";
 
@@ -114,9 +133,13 @@ public class ProfileActivity extends AppCompatActivity
                                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
 
                                         if(which==0){
-                                            //TODO: Gestire remove photo
+
+                                            dialog.dismiss();
+                                            ((CircleImageView)findViewById(R.id.profile_image)).setImageResource(R.drawable.default_avatar);
+
+                                            //TODO: Gestire remove photo su parse, salvando null
                                         } else {
-                                            //TODO: Gestire upload photo
+                                            selectPhoto();
                                         }
                                     }
                                 })
@@ -131,6 +154,29 @@ public class ProfileActivity extends AppCompatActivity
         }
 
         ((TextView)findViewById(R.id.name)).setText(user.getFirstName()+" "+user.getLastName());
+
+        if(getIntent().hasExtra("userId")){
+
+            //TODO: PER NICO - In questo if c'è il caso in cui sto aprendo il profilo di un altro
+            // L'oggetto User è nella variabile "user", però non ho ancora gestito la parte
+            // in cui faccio la query per scaricarmi lo user XD
+            //
+            // SAMPLE CODE:
+            //
+            // Bitmap bitmap = user.getPhotoSync();
+            // imageView.setImageDrawable(bitmap);
+
+        } else {
+
+            //TODO: PER NICO - In questo if c'è il caso in cui sto aprendo il profilo MIO
+            // Il mio profilo è già salvato nell'oggetto user
+            //
+            // SAMPLE CODE:
+            //
+            // Bitmap bitmap = user.getPhotoSync();
+            // imageView.setImageDrawable(bitmap);
+
+        }
 
         if(user.getProfessionalHeadline()!=null)
             ((TextView)findViewById(R.id.professionalHeadline)).setText(user.getProfessionalHeadline());
@@ -360,6 +406,55 @@ public class ProfileActivity extends AppCompatActivity
     public void editOther(View v) {
         Intent intent=new Intent(this,ProfileEditOtherActivity.class);
         startActivity(intent);
+    }
+
+    public void selectPhoto() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Mode")
+                .setItems(picMode, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String action = picMode[which].equalsIgnoreCase(GOTOConstants.PicModes.CAMERA) ? GOTOConstants.IntentExtras.ACTION_CAMERA : GOTOConstants.IntentExtras.ACTION_GALLERY;
+                        Intent intent = new Intent(ProfileActivity.this,ImageCropActivity.class);
+                        intent.putExtra("ACTION",action);
+                        startActivityForResult(intent, REQUEST_CODE_UPDATE_PIC);
+                    }
+                });
+        builder.create().show();
+
+    }
+
+    //handle data returning from camera or gallery
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == RESULT_OK) {
+
+            if(requestCode == REQUEST_CODE_UPDATE_PIC) {
+                String imagePath = data.getStringExtra(GOTOConstants.IntentExtras.IMAGE_PATH);
+                if (imagePath != null) {
+                    bitmap = BitmapFactory.decodeFile(imagePath);
+                    imageView.setImageBitmap(bitmap);
+
+                    final MaterialDialog dialog = new MaterialDialog.Builder(this)
+                            .title("Upload in progress")
+                            .content("Please wait")
+                            .progress(true, 0)
+                            .progressIndeterminateStyle(true)
+                            .show();
+
+                    user.updatePhotoAsync(bitmap, new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            dialog.dismiss();
+                        }
+                    });
+                }
+
+            }
+
+        }
+
     }
 
 

@@ -28,6 +28,7 @@ import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.model.Education;
+import it.polito.mobilecourseproject.poliapp.model.JobExperience;
 import it.polito.mobilecourseproject.poliapp.model.User;
 
 public class ProfileEditEducationsActivity extends AppCompatActivity {
@@ -91,12 +92,31 @@ public class ProfileEditEducationsActivity extends AppCompatActivity {
             return;
         }
 
-        if(error){
-            saveButton.setProgress(-1);
-            return;
+        for(Education education : educations) {
+            if(education.getTitle()==null || education.getTitle().trim().isEmpty() ||
+                    education.getCity()==null || education.getCity().trim().isEmpty() ||
+                    education.getStartDate()==null || education.getStartDate().trim().isEmpty() ||
+                    education.getEndDate()==null || education.getEndDate().trim().isEmpty() ||
+                    education.getFinalGrade()==null || education.getFinalGrade().trim().isEmpty() ||
+                    education.getUniversity()==null || education.getUniversity().trim().isEmpty()){
+                error=true;
+            }
         }
 
+        if(error){
+            saveButton.setProgress(-1);
+            Snackbar.make(findViewById(R.id.parentView), "Cannot save: There are some empty fields", Snackbar.LENGTH_LONG)
+                    .show();
 
+            saveButton.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    saveButton.setProgress(0);
+                }
+            }, 3000);
+
+            return;
+        }
         new AsyncTaskWithoutProgressBar(this) {
 
             @Override
