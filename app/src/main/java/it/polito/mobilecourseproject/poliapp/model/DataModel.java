@@ -175,12 +175,27 @@ public class DataModel {
         }
 
     }
+    public void getBitmapByUser(Activity act, final User user, final User.OnGetPhoto onGetPhoto){
+        Bitmap b=usersBitmaps.get(user.getObjectId());
+        if(b!=null){
+            onGetPhoto.onGetPhoto(b);
+        }else {
+            user.getPhotoAsync(act, new User.OnGetPhoto() {
+                @Override
+                public void onGetPhoto(Bitmap b) {
+                    if (b != null) {
+                        usersBitmaps.put(user.getObjectId(), b);
+                    }
+                    onGetPhoto.onGetPhoto(b);
+
+                }
+            });
+        }
+
+    }
 
 
-
-
-
-
-
-
+    public void removeLocalCacheProfileBitmap() {
+        profileBitmap=null;
+    }
 }

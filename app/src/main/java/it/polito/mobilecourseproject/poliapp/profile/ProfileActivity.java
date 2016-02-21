@@ -1,5 +1,6 @@
 package it.polito.mobilecourseproject.poliapp.profile;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -42,6 +43,7 @@ import java.util.ArrayList;
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.ExternalIntents;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.login.SignUpActivity;
 import it.polito.mobilecourseproject.poliapp.model.Education;
@@ -154,7 +156,7 @@ public class ProfileActivity extends AppCompatActivity
         }
 
         ((TextView)findViewById(R.id.name)).setText(user.getFirstName()+" "+user.getLastName());
-
+        imageView.setImageResource(R.drawable.default_avatar);
         if(getIntent().hasExtra("userId")){
 
             //TODO: PER NICO - In questo if c'è il caso in cui sto aprendo il profilo di un altro
@@ -166,6 +168,21 @@ public class ProfileActivity extends AppCompatActivity
             // Bitmap bitmap = user.getPhotoSync();
             // imageView.setImageDrawable(bitmap);
 
+            //TODO: PER ENRICO: TUTTI GLI USER VENGONO SCARICATI ALL'AVVIO:
+            String userID=getIntent().getStringExtra("userId");
+            User otherUser=User.getFromLocalStorageStudentById(userID);
+            PoliApp.getModel().getBitmapByUser(this, otherUser, new User.OnGetPhoto(){
+                @Override
+                public void onGetPhoto(Bitmap b) {
+                    if(b==null)return;
+                    imageView.setImageBitmap(b);
+
+                }
+            });
+
+
+
+
         } else {
 
             //TODO: PER NICO - In questo if c'è il caso in cui sto aprendo il profilo MIO
@@ -175,6 +192,14 @@ public class ProfileActivity extends AppCompatActivity
             //
             // Bitmap bitmap = user.getPhotoSync();
             // imageView.setImageDrawable(bitmap);
+            PoliApp.getModel().getProfileBitmap(this, user, new User.OnGetPhoto() {
+                @Override
+                public void onGetPhoto(Bitmap b) {
+                    if(b==null)return;
+                    imageView.setImageBitmap(b);
+                }
+            });
+
 
         }
 
@@ -447,6 +472,8 @@ public class ProfileActivity extends AppCompatActivity
                         @Override
                         public void done(ParseException e) {
                             dialog.dismiss();
+                            //TODO: da mettere ogni volta che la foto cambia
+                            PoliApp.getModel().removeLocalCacheProfileBitmap();
                         }
                     });
                 }

@@ -91,14 +91,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_name)).setText(thisUser.getFirstName() + " " + thisUser.getLastName());
-       final CircleImageView imageView=(( CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.imgAvatar));
-       PoliApp.getModel().getProfileBitmap(this, thisUser, new User.OnGetPhoto() {
-           @Override
-           public void onGetPhoto(Bitmap b) {
-               if(b==null)return;
-               imageView.setImageBitmap(b);
-           }
-       });
+
     }
 
 
@@ -120,6 +113,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
+        final CircleImageView imageView=(( CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.imgAvatar));
+        PoliApp.getModel().getProfileBitmap(this, thisUser, new User.OnGetPhoto() {
+            @Override
+            public void onGetPhoto(Bitmap b) {
+                if (b == null) return;
+                imageView.setImageBitmap(b);
+            }
+        });
           setChatItemInfo();
         try{
             IntentFilter intentFilter = new IntentFilter(MessageService.SERVICE_INTENT_BROADCAST);

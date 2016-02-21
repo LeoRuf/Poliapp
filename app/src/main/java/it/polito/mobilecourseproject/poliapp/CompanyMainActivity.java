@@ -87,15 +87,7 @@ public class CompanyMainActivity extends AppCompatActivity {
         }
 
 
-        ((TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_name)).setText(thisUser.getFirstName() + " " + thisUser.getLastName());
-        final CircleImageView imageView=(( CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.imgAvatar));
-        PoliApp.getModel().getProfileBitmap(this, thisUser, new User.OnGetPhoto() {
-            @Override
-            public void onGetPhoto(Bitmap b) {
-                if(b==null)return;
-                imageView.setImageBitmap(b);
-            }
-        });
+
 
     }
 
@@ -105,6 +97,14 @@ public class CompanyMainActivity extends AppCompatActivity {
     public void onResume(){
         super.onResume();
         ((TextView) navigationView.getHeaderView(0).findViewById(R.id.drawer_name)).setText(thisUser.getCompanyName());
+            final CircleImageView imageView=(( CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.imgAvatar));
+            PoliApp.getModel().getProfileBitmap(this, thisUser, new User.OnGetPhoto() {
+                @Override
+                public void onGetPhoto(Bitmap b) {
+                    if (b == null) return;
+                    imageView.setImageBitmap(b);
+                }
+            });
 
     }
     @Override
