@@ -37,7 +37,7 @@
         </android.support.design.widget.CollapsingToolbarLayout>
         ​
         <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/materialup.profile_image"
+            android:id="@+id/profile_image"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:layout_marginTop="-100dp"
@@ -76,6 +76,7 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
                 android:text="Enrico Di Fazio"
+                android:id="@+id/name"
                 android:textColor="@android:color/white"
                 />
             ​
@@ -86,6 +87,7 @@
                 android:layout_marginBottom="30dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
                 android:text="Student at Politecnico di Torino"
+                android:id="@+id/professionalHeadline"
                 android:textStyle="italic"
                 android:textColor="@android:color/white"
                 />
@@ -121,6 +123,7 @@
                 app:contentPaddingRight="8dp"
                 app:contentPaddingLeft="8dp"
                 app:contentPaddingBottom="8dp"
+                android:id="@+id/aboutMeCardView"
                 >
 
                 <LinearLayout
@@ -149,6 +152,7 @@
                             android:paddingLeft="10dp"
                             android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
+                            android:id="@+id/editAboutMe"
                             android:clickable="true"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:onClick="editAboutMe"/>
@@ -159,6 +163,7 @@
                         android:layout_height="wrap_content"
                         android:text="I’m a student currently pursuing a Master of Science in Computer Engineering at Politecnico di Torino (Italy). I am enthusiastic about programming, problem solving and new technologies and I am passionate about further broadening my knowledge in the area of networking and mobile application development."
                         android:lineSpacingExtra="6dp"
+                        android:id="@+id/aboutMe"
                         android:textIsSelectable="true"
                         />
 
@@ -201,6 +206,7 @@
                             android:paddingLeft="10dp"
                             android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
+                            android:id="@+id/editBasicInfo"
                             android:clickable="true"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:onClick="editBasicInfo"/>
@@ -250,6 +256,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
+                        android:id="@+id/dateOfBirthWrapper"
                         android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
@@ -270,6 +277,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
+                        android:id="@+id/addressWrapper"
                         android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
@@ -291,6 +299,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
+                        android:id="@+id/mobilephoneWrapper"
                         android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
@@ -311,6 +320,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
+                        android:id="@+id/emailWrapper"
                         android:paddingBottom="5dp">
                         <TextView
                             android:layout_width="wrap_content"
@@ -338,6 +348,7 @@
                 app:contentPaddingRight="8dp"
                 app:contentPaddingLeft="8dp"
                 app:contentPaddingBottom="8dp"
+                android:id="@+id/languagesCardView"
                 >
 
                 <LinearLayout
@@ -365,6 +376,7 @@
                             android:paddingRight="5dp"
                             android:paddingLeft="10dp"
                             android:paddingBottom="10dp"
+                            android:id="@+id/editLanguages"
                             android:src="@android:drawable/ic_menu_edit"
                             android:clickable="true"
                             android:background="?attr/selectableItemBackgroundBorderless"
@@ -376,6 +388,7 @@
                         android:layout_height="wrap_content"
                         android:text="Italian (Native proficiency)\nEnglish (C1 - Advanced)\nFrench (B1 - Intermediate)"
                         android:lineSpacingExtra="6dp"
+                        android:id="@+id/languages"
                         android:textIsSelectable="true"
                         />
 
@@ -418,6 +431,7 @@
                             android:paddingLeft="10dp"
                             android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
+                            android:id="@+id/editSkills"
                             android:clickable="true"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:onClick="editSkills"/>
@@ -428,6 +442,7 @@
                         android:layout_height="wrap_content"
                         android:text="Java, C#, TCP/IP, Xamarin, C++, Suca"
                         android:lineSpacingExtra="6dp"
+                        android:id="@+id/skills"
                         android:textIsSelectable="true"
                         />
 
@@ -442,12 +457,14 @@
                 app:contentPaddingRight="8dp"
                 app:contentPaddingLeft="8dp"
                 app:contentPaddingBottom="8dp"
+                android:id="@+id/educationsCardView"
                 >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:id="@+id/educationsContainer"
                     >
 
                     <LinearLayout
@@ -463,87 +480,18 @@
                             style="@style/TextComponent.ItemRow"
                             />
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:paddingTop="10dp"
+                            android:paddingRight="5dp"
+                            android:paddingLeft="10dp"
+                            android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
-                            android:padding="5dp"/>
+                            android:clickable="true"
+                            android:id="@+id/editEducation"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:onClick="editEducations"/>
                     </LinearLayout>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="MASTER'S DEGREE IN COMPUTER ENGINEERING"
-                        android:textAppearance="@style/TextAppearance.SubHeader"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Politecnico di Torino (Turin, Italy)"
-                        android:textStyle="italic"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Dates attended: 2014 - 2016"
-                        android:layout_marginTop="8dp"
-                        android:textIsSelectable="true"
-                        />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Final grade: 110/110"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="BACHELOR'S DEGREE IN COMPUTER ENGINEERING"
-                        android:textAppearance="@style/TextAppearance.SubHeader"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Politecnico di Torino (Turin, Italy)"
-                        android:textStyle="italic"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Dates attended: 2014 - 2016"
-                        android:layout_marginTop="8dp"
-                        android:textIsSelectable="true"
-                        />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Final grade: 110/110"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="15dp" />
-
-
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
@@ -555,12 +503,14 @@
                 app:contentPaddingRight="8dp"
                 app:contentPaddingLeft="8dp"
                 app:contentPaddingBottom="8dp"
+                android:id="@+id/jobsCardView"
                 >
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
+                    android:id="@+id/jobsContainer"
                     >
 
                     <LinearLayout
@@ -576,83 +526,18 @@
                             style="@style/TextComponent.ItemRow"
                             />
                         <ImageView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            android:layout_width="60dp"
+                            android:layout_height="50dp"
+                            android:paddingTop="10dp"
+                            android:paddingRight="5dp"
+                            android:paddingLeft="10dp"
+                            android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
-                            android:padding="5dp"
+                            android:clickable="true"
+                            android:id="@+id/editJobExperiences"
+                            android:background="?attr/selectableItemBackgroundBorderless"
                             android:onClick="editJobExperiences"/>
                     </LinearLayout>
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="WEB APPLICATION DEVELOPER (INTERNSHIP)"
-                        android:textAppearance="@style/TextAppearance.SubHeader"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Telecom Italia LAB, Turin (Italy)"
-                        android:textStyle="italic"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="May 2014 - PRESENT"
-                        android:textIsSelectable="true"
-                        />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="- Development of demo applications for Firefox OS (entirely written using HTML5, CSS3 and Javascript), in order to test the available APIs (camera, gps, etc.) and get a basic knowledge of the Firefox OS environment.\n- Quality Assurance activity in coordination with Telefonica, Mozilla and Qualcomm (test cases, user stories and bug reporting)."
-                        android:textIsSelectable="true"
-                        android:layout_marginTop="8dp"
-                        />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="20dp" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="SUPPORT ENGINEER"
-                        android:textAppearance="@style/TextAppearance.SubHeader"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Microsoft, Milan (Italy)"
-                        android:textStyle="italic"
-                        android:lineSpacingExtra="6dp"
-                        android:textIsSelectable="true"
-                        />
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="July 2015 - June 2016"
-                        android:textIsSelectable="true"
-                        />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Delivering high quality service to Microsoft Enterprise customers by solving complex technical problems related to networking and involving Microsoft technologies (Windows Server, Active Directory, NLB, DFS, etc.) and helping to pro-actively prevent new issues."
-                        android:textIsSelectable="true"
-                        android:layout_marginTop="8dp"
-                        />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="15dp" />
-
 
                 </LinearLayout>
             </android.support.v7.widget.CardView>
@@ -693,6 +578,7 @@
                             android:paddingBottom="10dp"
                             android:src="@android:drawable/ic_menu_edit"
                             android:clickable="true"
+                            android:id="@+id/editLinks"
                             android:background="?attr/selectableItemBackgroundBorderless"
                             android:onClick="editOther"/>
                     </LinearLayout>

@@ -286,6 +286,14 @@ public class User extends ParseUser {
         put("educations", value);
     }
 
+    public String getProfessionalHeadline() {
+        return getString("professionalHeadline");
+    }
+
+    public void setProfessionalHeadline(String value){
+        put("professionalHeadline", value);
+    }
+
 
     public static User createUser(String firstName,String lastName, String university){
         User user = new User();

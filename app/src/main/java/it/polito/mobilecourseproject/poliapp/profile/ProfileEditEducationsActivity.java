@@ -27,35 +27,34 @@ import it.polito.mobilecourseproject.poliapp.AsyncTaskWithoutProgressBar;
 import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
 import it.polito.mobilecourseproject.poliapp.R;
-import it.polito.mobilecourseproject.poliapp.model.JobExperience;
-import it.polito.mobilecourseproject.poliapp.model.Language;
+import it.polito.mobilecourseproject.poliapp.model.Education;
 import it.polito.mobilecourseproject.poliapp.model.User;
 
-public class ProfileEditJobExperiencesActivity extends AppCompatActivity {
+public class ProfileEditEducationsActivity extends AppCompatActivity {
 
-    ArrayList<RelativeLayout> jobExperienceLayouts = new ArrayList<>();
-    ArrayList<JobExperience> jobExperiences = new ArrayList<>();
+    ArrayList<RelativeLayout> educationsLayouts = new ArrayList<>();
+    ArrayList<Education> educations = new ArrayList<>();
 
     private ActionProcessButton saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile_edit_job_experiences);
+        setContentView(R.layout.activity_profile_edit_educations);
 
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setTitle("Edit your job experiences");
+        getSupportActionBar().setTitle("Edit education");
 
 
         try {
             User thisUser = AccountManager.getCurrentUser();
 
-            jobExperiences = thisUser.getJobExperiencesAsList();
+            educations = thisUser.getEducationsAsList();
 
-            for(JobExperience jobExperience: jobExperiences) {
-                inflateJobExperience(jobExperience);
+            for(Education education: educations) {
+                inflateEducation(education);
             }
 
 
@@ -116,23 +115,23 @@ public class ProfileEditJobExperiencesActivity extends AppCompatActivity {
 
                     String finalStringInParse="";
 
-                    for(JobExperience jobExperience: jobExperiences) {
-                        finalStringInParse+=jobExperience.getTitle();
+                    for(Education education: educations) {
+                        finalStringInParse+=education.getTitle();
                         finalStringInParse+=MyUtils.CUSTOM_DELIMITER_2;
-                        finalStringInParse+=jobExperience.getOrganization();
+                        finalStringInParse+=education.getUniversity();
                         finalStringInParse+=MyUtils.CUSTOM_DELIMITER_2;
-                        finalStringInParse+=jobExperience.getCity();
+                        finalStringInParse+=education.getCity();
                         finalStringInParse+=MyUtils.CUSTOM_DELIMITER_2;
-                        finalStringInParse+=jobExperience.getStartDate();
+                        finalStringInParse+=education.getStartDate();
                         finalStringInParse+=MyUtils.CUSTOM_DELIMITER_2;
-                        finalStringInParse+=jobExperience.getEndDate();
+                        finalStringInParse+=education.getEndDate();
                         finalStringInParse+=MyUtils.CUSTOM_DELIMITER_2;
-                        finalStringInParse+=jobExperience.getDescription();
+                        finalStringInParse+=education.getFinalGrade();
 
                         finalStringInParse+=MyUtils.CUSTOM_DELIMITER;
                     }
 
-                    thisUser.setJobExperiences(finalStringInParse);
+                    thisUser.setEducations(finalStringInParse);
                     thisUser.save();
 
                 } catch (Exception e) {
@@ -168,117 +167,116 @@ public class ProfileEditJobExperiencesActivity extends AppCompatActivity {
 
 
 
-    public void inflateJobExperience(final JobExperience jobExperience){
+    public void inflateEducation(final Education education){
 
-        //Qua faccio l'inflate... Su StackOverflow avevo trovato che bisognava passare qualcos'altro al posto di null, ma non serve a un cazzo °_°
-        final RelativeLayout jobExperienceLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.item_profile_job_experience, null );
-        jobExperienceLayouts.add(jobExperienceLayout);
+        final RelativeLayout educationLayout = (RelativeLayout) getLayoutInflater().inflate(R.layout.item_profile_education, null );
+        educationsLayouts.add(educationLayout);
 
-        TextView titleTextView = (TextView)((LinearLayout)((CardView)jobExperienceLayout.getChildAt(0)).getChildAt(0)).getChildAt(0);
-        TextView organizationLocationTextView = (TextView)((LinearLayout)((CardView)jobExperienceLayout.getChildAt(0)).getChildAt(0)).getChildAt(1);
-        TextView dateTextView = (TextView)((LinearLayout)((CardView)jobExperienceLayout.getChildAt(0)).getChildAt(0)).getChildAt(2);
-        TextView descriptionTextView = (TextView)((LinearLayout)((CardView)jobExperienceLayout.getChildAt(0)).getChildAt(0)).getChildAt(3);
+        TextView titleTextView = (TextView)((LinearLayout)((CardView)educationLayout.getChildAt(0)).getChildAt(0)).getChildAt(0);
+        TextView universityLocationTextView = (TextView)((LinearLayout)((CardView)educationLayout.getChildAt(0)).getChildAt(0)).getChildAt(1);
+        TextView dateTextView = (TextView)((LinearLayout)((CardView)educationLayout.getChildAt(0)).getChildAt(0)).getChildAt(2);
+        TextView finalGradeTextView = (TextView)((LinearLayout)((CardView)educationLayout.getChildAt(0)).getChildAt(0)).getChildAt(3);
 
-        titleTextView.setText(jobExperience.getTitle());
-        organizationLocationTextView.setText(jobExperience.getOrganization()+", "+jobExperience.getCity());
-        dateTextView.setText(jobExperience.getStartDate()+" - "+jobExperience.getEndDate());
-        descriptionTextView.setText(jobExperience.getDescription());
+        titleTextView.setText(education.getTitle());
+        universityLocationTextView.setText(education.getUniversity()+" ("+education.getCity()+")");
+        dateTextView.setText("Dates attended: "+education.getStartDate()+" - "+education.getEndDate());
+        finalGradeTextView.setText("Final grade: "+education.getFinalGrade());
 
-        ((LinearLayout) findViewById(R.id.jobsContainer)).addView(jobExperienceLayout);
+        ((LinearLayout) findViewById(R.id.educationsContainer)).addView(educationLayout);
 
         //Qua provo a settare l'onLongClickListener sul primo figlio (Che è una CardView)
-        (jobExperienceLayout.getChildAt(0)).setOnLongClickListener(new View.OnLongClickListener() {
+        (educationLayout.getChildAt(0)).setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                removeJobExperience(jobExperience, jobExperienceLayout);
+                removeEducation(education, educationLayout);
                 return true;
             }
 
         });
 
-        (jobExperienceLayout.getChildAt(0)).setOnClickListener(new View.OnClickListener() {
+        (educationLayout.getChildAt(0)).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                showDialog(jobExperience, jobExperienceLayout);
+                showDialog(education, educationLayout);
             }
 
         });
 
     }
 
-    public void removeJobExperience(final JobExperience jobExperience, final RelativeLayout jobExperienceLayout){
+    public void removeEducation(final Education education, final RelativeLayout educationLayout){
 
         new MaterialDialog.Builder(this)
-                .content("Do you want to delete this job experience?")
+                .content("Do you want to delete this education?")
                 .positiveText("DELETE")
                 .negativeText("CANCEL")
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        jobExperiences.remove(jobExperience);
-                        jobExperienceLayout.setVisibility(View.GONE);
-                        jobExperienceLayouts.remove(jobExperienceLayout);
+                        educations.remove(education);
+                        educationLayout.setVisibility(View.GONE);
+                        educationsLayouts.remove(educationLayout);
                     }
                 })
                 .show();
-
-
     }
 
-    public void showDialog(final JobExperience jobExperienceToEdit, final RelativeLayout jobExperienceLayout){
+    public void showDialog(final Education educationToEdit, final RelativeLayout educationLayout){
 
-        String title="Add a job experience";
+        String title="Add education";
         String positiveButton="Add";
 
-        if(jobExperienceToEdit!=null){
+        if(educationToEdit!=null){
 
-            title="Edit job experience";
+            title="Edit education";
             positiveButton="Edit";
         }
 
         MaterialDialog dialog = new MaterialDialog.Builder(this)
                 .title(title)
-                .customView(R.layout.dialog_profile_add_job_experience, true)
+                .customView(R.layout.dialog_profile_add_education, true)
                 .positiveText(positiveButton)
                 .negativeText(android.R.string.cancel)
                 .onPositive(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                         EditText titleEditText = (EditText) dialog.getCustomView().findViewById(R.id.titleEditText);
-                        EditText organizationEditText = (EditText) dialog.getCustomView().findViewById(R.id.organizationEditText);
+                        EditText universityEditText = (EditText) dialog.getCustomView().findViewById(R.id.universityEditText);
                         EditText locationEditText = (EditText) dialog.getCustomView().findViewById(R.id.locationEditText);
                         EditText startDateEditText = (EditText) dialog.getCustomView().findViewById(R.id.startDateEditText);
                         EditText endDateEditText = (EditText) dialog.getCustomView().findViewById(R.id.endDateEditText);
-                        EditText descriptionEditText = (EditText) dialog.getCustomView().findViewById(R.id.descriptionEditText);
+                        EditText finalGradeEditText = (EditText) dialog.getCustomView().findViewById(R.id.finalGradeEditText);
 
-                        if(jobExperienceToEdit==null) {
-                            JobExperience jobExperience = new JobExperience();
-                            jobExperience.setTitle(titleEditText.getText().toString());
-                            jobExperience.setOrganization(organizationEditText.getText().toString());
-                            jobExperience.setCity(locationEditText.getText().toString());
-                            jobExperience.setStartDate(startDateEditText.getText().toString());
-                            jobExperience.setEndDate(endDateEditText.getText().toString());
-                            jobExperience.setDescription(descriptionEditText.getText().toString());
-                            jobExperiences.add(jobExperience);
-                            inflateJobExperience(jobExperience);
+                        if(educationToEdit==null) {
+                            Education education = new Education();
+                            education.setTitle(titleEditText.getText().toString());
+                            education.setUniversity(universityEditText.getText().toString());
+                            education.setCity(locationEditText.getText().toString());
+                            education.setStartDate(startDateEditText.getText().toString());
+                            education.setEndDate(endDateEditText.getText().toString());
+                            education.setFinalGrade(finalGradeEditText.getText().toString());
+                            educations.add(education);
+                            inflateEducation(education);
                         } else {
-                            jobExperienceToEdit.setTitle(titleEditText.getText().toString());
-                            jobExperienceToEdit.setOrganization(organizationEditText.getText().toString());
-                            jobExperienceToEdit.setCity(locationEditText.getText().toString());
-                            jobExperienceToEdit.setStartDate(startDateEditText.getText().toString());
-                            jobExperienceToEdit.setEndDate(endDateEditText.getText().toString());
-                            jobExperienceToEdit.setDescription(descriptionEditText.getText().toString());
+                            educationToEdit.setTitle(titleEditText.getText().toString());
+                            educationToEdit.setUniversity(universityEditText.getText().toString());
+                            educationToEdit.setCity(locationEditText.getText().toString());
+                            educationToEdit.setStartDate(startDateEditText.getText().toString());
+                            educationToEdit.setEndDate(endDateEditText.getText().toString());
+                            educationToEdit.setFinalGrade(finalGradeEditText.getText().toString());
 
-                            TextView titleTextView = (TextView)((LinearLayout)((CardView)jobExperienceLayout.getChildAt(0)).getChildAt(0)).getChildAt(0);
-                            TextView organizationLocationTextView = (TextView)((LinearLayout)((CardView)jobExperienceLayout.getChildAt(0)).getChildAt(0)).getChildAt(1);
-                            TextView dateTextView = (TextView)((LinearLayout)((CardView)jobExperienceLayout.getChildAt(0)).getChildAt(0)).getChildAt(2);
-                            TextView descriptionTextView = (TextView)((LinearLayout)((CardView)jobExperienceLayout.getChildAt(0)).getChildAt(0)).getChildAt(3);
 
-                            titleTextView.setText(jobExperienceToEdit.getTitle());
-                            organizationLocationTextView.setText(jobExperienceToEdit.getOrganization()+", "+jobExperienceToEdit.getCity());
-                            dateTextView.setText(jobExperienceToEdit.getStartDate()+" - "+jobExperienceToEdit.getEndDate());
-                            descriptionTextView.setText(jobExperienceToEdit.getDescription());
+                            TextView titleTextView = (TextView)((LinearLayout)((CardView)educationLayout.getChildAt(0)).getChildAt(0)).getChildAt(0);
+                            TextView universityLocationTextView = (TextView)((LinearLayout)((CardView)educationLayout.getChildAt(0)).getChildAt(0)).getChildAt(1);
+                            TextView dateTextView = (TextView)((LinearLayout)((CardView)educationLayout.getChildAt(0)).getChildAt(0)).getChildAt(2);
+                            TextView finalGradeTextView = (TextView)((LinearLayout)((CardView)educationLayout.getChildAt(0)).getChildAt(0)).getChildAt(3);
+
+                            titleTextView.setText(educationToEdit.getTitle());
+                            universityLocationTextView.setText(educationToEdit.getUniversity()+" ("+educationToEdit.getCity()+")");
+                            dateTextView.setText("Dates attended: "+educationToEdit.getStartDate()+" - "+educationToEdit.getEndDate());
+                            finalGradeTextView.setText("Final grade: "+educationToEdit.getFinalGrade());
+
                         }
                     }
                 }).build();
@@ -286,19 +284,19 @@ public class ProfileEditJobExperiencesActivity extends AppCompatActivity {
         final MDButton positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
 
         EditText titleEditText = (EditText) dialog.getCustomView().findViewById(R.id.titleEditText);
-        EditText organizationEditText = (EditText) dialog.getCustomView().findViewById(R.id.organizationEditText);
+        EditText universityEditText = (EditText) dialog.getCustomView().findViewById(R.id.universityEditText);
         EditText locationEditText = (EditText) dialog.getCustomView().findViewById(R.id.locationEditText);
         EditText startDateEditText = (EditText) dialog.getCustomView().findViewById(R.id.startDateEditText);
         EditText endDateEditText = (EditText) dialog.getCustomView().findViewById(R.id.endDateEditText);
-        EditText descriptionEditText = (EditText) dialog.getCustomView().findViewById(R.id.descriptionEditText);
+        EditText finalGradeEditText = (EditText) dialog.getCustomView().findViewById(R.id.finalGradeEditText);
 
-        if(jobExperienceToEdit!=null) {
-            titleEditText.setText(jobExperienceToEdit.getTitle());
-            organizationEditText.setText(jobExperienceToEdit.getOrganization());
-            locationEditText.setText(jobExperienceToEdit.getCity());
-            startDateEditText.setText(jobExperienceToEdit.getStartDate());
-            endDateEditText.setText(jobExperienceToEdit.getEndDate());
-            descriptionEditText.setText(jobExperienceToEdit.getDescription());
+        if(educationToEdit!=null) {
+            titleEditText.setText(educationToEdit.getTitle());
+            universityEditText.setText(educationToEdit.getUniversity());
+            locationEditText.setText(educationToEdit.getCity());
+            startDateEditText.setText(educationToEdit.getStartDate());
+            endDateEditText.setText(educationToEdit.getEndDate());
+            finalGradeEditText.setText(educationToEdit.getFinalGrade());
         }
 
         //TODO: GESTIRE QUA
@@ -318,14 +316,14 @@ public class ProfileEditJobExperiencesActivity extends AppCompatActivity {
         });
 
         dialog.show();
-        if(jobExperienceToEdit==null) {
+        if(educationToEdit==null) {
 
             positiveAction.setEnabled(false); // disabled by default
         }
 
     }
 
-    public void addNewJobExperience(View v){
+    public void addEducation(View v){
         showDialog(null, null);
 
     }
