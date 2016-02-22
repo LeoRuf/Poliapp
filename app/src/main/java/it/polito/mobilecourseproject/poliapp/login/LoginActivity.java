@@ -20,6 +20,7 @@ import it.polito.mobilecourseproject.poliapp.AsyncTaskWithoutProgressBar;
 import it.polito.mobilecourseproject.poliapp.CompanyMainActivity;
 import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.MainActivity;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.messages.ChatActivity;
 import it.polito.mobilecourseproject.poliapp.messages.MessageService;
@@ -52,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+        int delay=1000;
+        if(PoliApp.firstExecution)delay=2000;
 
         (new Handler()).postDelayed(new Runnable() {
 
@@ -59,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
             public void run() {
                delayed();
             }
-        }, 1000);
+        }, delay);
 
 
 
