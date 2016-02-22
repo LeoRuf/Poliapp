@@ -462,18 +462,23 @@ public class User extends ParseUser {
 
 
     public void updatePhotoAsync(Bitmap bitImage, SaveCallback saveCallback) {
-        ParseObject photo = new ParseObject("Photo");
-        photo.put("name", "photoProfile");
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitImage.compress(Bitmap.CompressFormat.PNG, 50, stream);
-        byte[] byteArray = stream.toByteArray();
-        photo.put("photo", new ParseFile(byteArray));
 
-        if(this.has("photoProfile"))
-            this.getParseObject("photoProfile").deleteInBackground();
+        if(bitImage!=null) {
+            ParseObject photo = new ParseObject("Photo");
+            photo.put("name", "photoProfile");
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitImage.compress(Bitmap.CompressFormat.PNG, 50, stream);
+            byte[] byteArray = stream.toByteArray();
+            photo.put("photo", new ParseFile(byteArray));
 
-        this.put("photoProfile", photo);
-        this.saveInBackground(saveCallback);
+            this.put("photoProfile", photo);
+        } else {
+            if(this.has("photoProfile"))
+                this.getParseObject("photoProfile").deleteInBackground();
+
+            this.saveInBackground(saveCallback);
+
+        }
 
     }
 

@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -138,39 +139,6 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
         return fragmentView;
     }
 
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-
-    /*
- * onAttach(Context) is not called on pre API 23 versions of Android and onAttach(Activity) is deprecated
- * Use myOnAttach instead
- */
-    @TargetApi(23)
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        myOnAttach(context);
-    }
-
-    /*
-     * Deprecated on API 23
-     * Use myOnAttach instead
-     */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            myOnAttach(activity);
-        }
-    }
-
     /*
      * Called when the fragment attaches to the context
      */
@@ -210,53 +178,13 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
-        android.support.v7.widget.Toolbar toolbar =(android.support.v7.widget.Toolbar) getActivity().findViewById(R.id.toolbar);
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
+        super.onActivityCreated(savedInstanceState);
+        myOnAttach(getActivity());
 
-        //Ripristina gli scrollFlags originali
-        params.setScrollFlags(scrollFlags);
-
-        FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
-        fab.setVisibility(View.GONE);
-
-
-
-        /*
-        //SE SI VUOLE MOSTRARE IL TABLAYOUT
-
-        TabLayout tabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
-        tabLayout.setVisibility(View.GONE);
-
-
-        // SE SI VUOLE MODIFICARE IL app:layout_behavior del FrameLayout
-
-        if(behavior == null)
-            return;
-
-        FrameLayout layout =(FrameLayout) getActivity().findViewById(R.id.dashboard_content);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
-
-        params.setBehavior(behavior);
-
-        layout.setLayoutParams(params);
-
-        behavior = null;
-        */
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.noticeboard_menu, menu);
@@ -356,9 +284,46 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
 
             @Override
             public void done(List<JobOffer> objects, ParseException e) {
-                jobOffersAdapter.setJobOffers(objects);
-                jobOffersAdapter.notifyDataSetChanged();
-                swypeRefreshLayout.setRefreshing(false);
+
+                if(objects.isEmpty()) {
+                    getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                    getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+
+                    ParseQuery<JobOffer> query = ParseQuery.getQuery("JobOffer");
+                    query.setLimit(1000);
+                    query.orderByDescending("updatedAt");
+                    query.whereGreaterThan("updatedAt",new Date(PreferenceManager.getDefaultSharedPreferences(getActivity()).getLong("JobOffer_timestamp", 0)));
+                    query.findInBackground(new FindCallback<JobOffer>() {
+                        @Override
+                        public void done(final List<JobOffer> objects, ParseException e) {
+                            if(objects.size()!=0) {
+                                ParseObject.pinAllInBackground(objects, new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putLong("JobOffer_timestamp", objects.get(0).getUpdatedAt().getTime()).commit();
+                                        search();
+                                    }
+                                });
+                            } else {
+                                getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+
+                            }
+                        }
+                    });
+
+                } else {
+
+                    getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.VISIBLE);
+                    getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+
+                    jobOffersAdapter.setJobOffers(objects);
+                    jobOffersAdapter.notifyDataSetChanged();
+                    swypeRefreshLayout.setRefreshing(false);
+                }
             }
         });
     }

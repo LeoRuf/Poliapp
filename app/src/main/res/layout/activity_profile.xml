@@ -36,19 +36,6 @@
                 />
         </android.support.design.widget.CollapsingToolbarLayout>
         ​
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/profile_image"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="-100dp"
-            android:layout_gravity="center_horizontal"
-            android:src="@drawable/my_photo"
-            android:elevation="8dp"
-            app:border_width="2dp"
-            app:border_color="#FFF"
-            app:layout_scrollFlags="scroll"
-            />
-        ​
         <android.support.v7.widget.Toolbar
             android:id="@+id/materialup.toolbar"
             android:layout_width="match_parent"
@@ -61,7 +48,20 @@
             style="@style/ToolBarWithNavigationBack"
 
             />
-        ​
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/profile_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="-150dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/default_avatar"
+            android:elevation="8dp"
+            app:border_width="2dp"
+            app:border_color="#FFF"
+            app:layout_scrollFlags="scroll"
+            />
+        ​​
         <LinearLayout
             android:id="@+id/materialup.title_container"
             android:layout_width="match_parent"
@@ -161,7 +161,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="I’m a student currently pursuing a Master of Science in Computer Engineering at Politecnico di Torino (Italy). I am enthusiastic about programming, problem solving and new technologies and I am passionate about further broadening my knowledge in the area of networking and mobile application development."
+                        android:text=""
                         android:lineSpacingExtra="6dp"
                         android:id="@+id/aboutMe"
                         android:textIsSelectable="true"
@@ -386,7 +386,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Italian (Native proficiency)\nEnglish (C1 - Advanced)\nFrench (B1 - Intermediate)"
+                        android:text=""
                         android:lineSpacingExtra="6dp"
                         android:id="@+id/languages"
                         android:textIsSelectable="true"
@@ -440,7 +440,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Java, C#, TCP/IP, Xamarin, C++, Suca"
+                        android:text=""
                         android:lineSpacingExtra="6dp"
                         android:id="@+id/skills"
                         android:textIsSelectable="true"

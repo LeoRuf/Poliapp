@@ -69,6 +69,8 @@ public class ProfileActivity extends AppCompatActivity
     private ImageView mProfileImage;
     private int mMaxScrollSize;
 
+    private boolean myProfilePictureLoaded=false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,14 +90,20 @@ public class ProfileActivity extends AppCompatActivity
         appbarLayout.addOnOffsetChangedListener(this);
         mMaxScrollSize = appbarLayout.getTotalScrollRange();
 
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         user = new User(); //SENNO' NON COMPILA XD
 
         imageView = (CircleImageView) findViewById(R.id.profile_image);
 
         if(getIntent().hasExtra("userId")){
 
-            //TODO: GESTIRE caricamento user!!
-
+            //TUTTI GLI USER VENGONO SCARICATI ALL'AVVIO:
+            String userID=getIntent().getStringExtra("userId");
+            user=User.getFromLocalStorageStudentById(userID);
 
             findViewById(R.id.editAboutMe).setVisibility(View.GONE);
             findViewById(R.id.editBasicInfo).setVisibility(View.GONE);
@@ -122,11 +130,16 @@ public class ProfileActivity extends AppCompatActivity
                     @Override
                     public void onClick(View view) {
 
-                        String[] options = new String[2];
+                        String[] options;
 
-                        //TODO: Remove photo non dovrebbe spuntare se non c'è ancora la foto
-                        options[0] = "Remove photo";
-                        options[1] = "Upload new photo";
+                        if(myProfilePictureLoaded){
+                            options = new String[2];
+                            options[0] = "Remove photo";
+                            options[1] = "Upload new photo";
+                        } else {
+                            options = new String[1];
+                            options[0] = "Upload new photo";
+                        }
 
                         new MaterialDialog.Builder(ProfileActivity.this)
                                 .items(options)
@@ -134,19 +147,36 @@ public class ProfileActivity extends AppCompatActivity
                                     @Override
                                     public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
 
-                                        if(which==0){
+                                        if(which==0 && myProfilePictureLoaded){
 
                                             dialog.dismiss();
                                             ((CircleImageView)findViewById(R.id.profile_image)).setImageResource(R.drawable.default_avatar);
+                                            myProfilePictureLoaded=false;
 
-                                            //TODO: Gestire remove photo su parse, salvando null
+                                            final MaterialDialog dialog2 = new MaterialDialog.Builder(ProfileActivity.this)
+                                                    .title("Removing in progress")
+                                                    .content("Please wait")
+                                                    .progress(true, 0)
+                                                    .progressIndeterminateStyle(true)
+                                                    .show();
+
+                                            user.updatePhotoAsync(null, new SaveCallback() {
+                                                @Override
+                                                public void done(ParseException e) {
+                                                    dialog2.dismiss();
+                                                    PoliApp.getModel().removeLocalCacheProfileBitmap();
+                                                }
+                                            });
+
+
+                                            PoliApp.getModel().removeLocalCacheProfileBitmap();
+
                                         } else {
                                             selectPhoto();
                                         }
                                     }
                                 })
                                 .show();
-                        //TODO: GESTIRE UPLOAD FOTO
                     }
                 });
 
@@ -156,22 +186,9 @@ public class ProfileActivity extends AppCompatActivity
         }
 
         ((TextView)findViewById(R.id.name)).setText(user.getFirstName()+" "+user.getLastName());
-        imageView.setImageResource(R.drawable.default_avatar);
         if(getIntent().hasExtra("userId")){
 
-            //TODO: PER NICO - In questo if c'è il caso in cui sto aprendo il profilo di un altro
-            // L'oggetto User è nella variabile "user", però non ho ancora gestito la parte
-            // in cui faccio la query per scaricarmi lo user XD
-            //
-            // SAMPLE CODE:
-            //
-            // Bitmap bitmap = user.getPhotoSync();
-            // imageView.setImageDrawable(bitmap);
-
-            //TODO: PER ENRICO: TUTTI GLI USER VENGONO SCARICATI ALL'AVVIO:
-            String userID=getIntent().getStringExtra("userId");
-            User otherUser=User.getFromLocalStorageStudentById(userID);
-            PoliApp.getModel().getBitmapByUser(this, otherUser, new User.OnGetPhoto(){
+            PoliApp.getModel().getBitmapByUser(this, user, new User.OnGetPhoto(){
                 @Override
                 public void onGetPhoto(Bitmap b) {
                     if(b==null)return;
@@ -185,18 +202,12 @@ public class ProfileActivity extends AppCompatActivity
 
         } else {
 
-            //TODO: PER NICO - In questo if c'è il caso in cui sto aprendo il profilo MIO
-            // Il mio profilo è già salvato nell'oggetto user
-            //
-            // SAMPLE CODE:
-            //
-            // Bitmap bitmap = user.getPhotoSync();
-            // imageView.setImageDrawable(bitmap);
             PoliApp.getModel().getProfileBitmap(this, user, new User.OnGetPhoto() {
                 @Override
                 public void onGetPhoto(Bitmap b) {
                     if(b==null)return;
                     imageView.setImageBitmap(b);
+                    myProfilePictureLoaded=true;
                 }
             });
 
@@ -365,7 +376,6 @@ public class ProfileActivity extends AppCompatActivity
         } else
             findViewById(R.id.facebook).setVisibility(View.GONE);
 
-
     }
 
     @Override
@@ -460,6 +470,7 @@ public class ProfileActivity extends AppCompatActivity
                 if (imagePath != null) {
                     bitmap = BitmapFactory.decodeFile(imagePath);
                     imageView.setImageBitmap(bitmap);
+                    myProfilePictureLoaded=true;
 
                     final MaterialDialog dialog = new MaterialDialog.Builder(this)
                             .title("Upload in progress")
@@ -472,7 +483,7 @@ public class ProfileActivity extends AppCompatActivity
                         @Override
                         public void done(ParseException e) {
                             dialog.dismiss();
-                            //TODO: da mettere ogni volta che la foto cambia
+
                             PoliApp.getModel().removeLocalCacheProfileBitmap();
                         }
                     });
