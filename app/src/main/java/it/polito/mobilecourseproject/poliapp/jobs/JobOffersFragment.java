@@ -229,7 +229,7 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
                 SearchView searchView= (SearchView)dialog.findViewById(R.id.searchView);
                 searchView.setOnQueryTextListener(this);
 
-                RecyclerView recyclerView = (RecyclerView)dialog.findViewById(R.id.recyclerView);
+                RecyclerView recyclerView = (RecyclerView)dialog.findViewById(R.id.itemsRecyclerView);
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setAdapter(new CategoriesAdapter(categoriesToBeFiltered, false, getActivity()));
@@ -310,7 +310,7 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
                                     }
                                 });
                             } else {
-                                getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.GONE);
                                 getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
                                 getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
 

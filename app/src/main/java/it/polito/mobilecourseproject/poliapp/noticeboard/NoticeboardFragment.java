@@ -2,6 +2,7 @@ package it.polito.mobilecourseproject.poliapp.noticeboard;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Application;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -41,12 +42,16 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.ExternalIntents;
+import it.polito.mobilecourseproject.poliapp.MainActivity;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
 import it.polito.mobilecourseproject.poliapp.TimeManager;
 import it.polito.mobilecourseproject.poliapp.model.JobOffer;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
 import it.polito.mobilecourseproject.poliapp.R;
+import it.polito.mobilecourseproject.poliapp.model.User;
+import it.polito.mobilecourseproject.poliapp.profile.ProfileActivity;
 
 
 public class NoticeboardFragment extends android.support.v4.app.Fragment implements SearchView.OnQueryTextListener {
@@ -55,6 +60,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
     private List<String> categoriesFiltered;
     private List<String> categoriesToBeFiltered;
     private NoticesAdapter noticesAdapter;
+    private User currentUser = null;
     CoordinatorLayout.Behavior behavior;
     SwipeRefreshLayout swypeRefreshLayout;
     int scrollFlags;
@@ -243,7 +249,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
                 SearchView searchView= (SearchView)dialog.findViewById(R.id.searchView);
                 searchView.setOnQueryTextListener(this);
 
-                RecyclerView recyclerView = (RecyclerView)dialog.findViewById(R.id.recyclerView);
+                RecyclerView recyclerView = (RecyclerView)dialog.findViewById(R.id.itemsRecyclerView);
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
                 recyclerView.setLayoutManager(layoutManager);
                 recyclerView.setAdapter(new CategoriesAdapter(categoriesToBeFiltered, false, getActivity()));
@@ -323,7 +329,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
                                     }
                                 });
                             } else {
-                                getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.GONE);
                                 getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
                                 getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
 
@@ -396,16 +402,31 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
             ((TextView)holder.cardView.findViewById(R.id.time_text)).setText(TimeManager.getFormattedTimestamp(notice.getCreatedAt(), "Published"));
             ((ImageView)holder.cardView.findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(notice.getCategory()));
 
+
+            try {
+                currentUser = AccountManager.getCurrentUser();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
             try {
                 ((TextView) holder.cardView.findViewById(R.id.publisher_name)).setText(notice.getPublisher().getFirstName() + " " + notice.getPublisher().getLastName());
                 holder.cardView.findViewById(R.id.publisher_name).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(getActivity(), "Nome cliccato", Toast.LENGTH_LONG).show();
+                        if(notice.getPublisher().getUsername().equals(currentUser.getUsername())) {
+                            Intent i = new Intent(getActivity(), ProfileActivity.class);
+                            startActivity(i);
+                        } else {
+                            Intent i = new Intent(getActivity(), ProfileActivity.class);
+                            i.putExtra("userId", notice.getPublisher().getObjectId());
+                            startActivity(i);
+                        }
                     }
                 });
 
             } catch (Exception e) {
+                e.printStackTrace();
 
             }
 
@@ -416,14 +437,22 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
                 }
             });
 
-            holder.cardView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(getActivity(), AddNoticeActivity.class);
-                    intent.putExtra("noticeId", notice.getObjectId());
-                    startActivity(intent);
-                }
-            });
+            if(notice.getPublisher().getUsername().equals(currentUser.getUsername())) {
+
+                holder.cardView.findViewById(R.id.edit).setVisibility(View.VISIBLE);
+                holder.cardView.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(getActivity(), AddNoticeActivity.class);
+                        intent.putExtra("noticeId", notice.getObjectId());
+                        startActivity(intent);
+                    }
+                });
+
+            } else {
+                holder.cardView.findViewById(R.id.edit).setVisibility(View.GONE);
+            }
+
 
             holder.cardView.findViewById(R.id.card_view).setOnClickListener(new View.OnClickListener() {
                 @Override

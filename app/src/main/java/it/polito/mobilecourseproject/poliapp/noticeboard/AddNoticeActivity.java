@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.ExpandableHeightGridView;
 import it.polito.mobilecourseproject.poliapp.GridViewAdapter;
 import it.polito.mobilecourseproject.poliapp.ImageDetailActivity;
@@ -47,6 +48,7 @@ import it.polito.mobilecourseproject.poliapp.ImageItem;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
 import it.polito.mobilecourseproject.poliapp.R;
+import it.polito.mobilecourseproject.poliapp.model.User;
 import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.GOTOConstants;
 import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.ImageCropActivity;
 
@@ -285,6 +287,14 @@ public class AddNoticeActivity extends AppCompatActivity implements SearchView.O
         notice.setTitle(title.getText().toString().trim());
         notice.setDescription(description.getText().toString().trim());
         notice.setCategory(categoriesSelected.get(0));
+
+        User currentUser = null;
+        try {
+            currentUser = AccountManager.getCurrentUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        notice.setUser(currentUser);
 
         notice.saveInBackground(new SaveCallback() {
             @Override

@@ -224,11 +224,10 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:textColor="@color/myAccentColor"
-                        android:text="Enrico Di Fazio"
+                        android:text="Prova Static"
                         android:textStyle="bold"
                         android:textSize="13sp"
                         android:background="?android:attr/selectableItemBackground"
-                        android:focusable="true"
                         android:clickable="true" />
                 </LinearLayout>
                     <TextView
