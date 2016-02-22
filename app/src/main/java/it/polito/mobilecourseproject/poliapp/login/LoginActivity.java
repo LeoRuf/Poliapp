@@ -2,6 +2,7 @@ package it.polito.mobilecourseproject.poliapp.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setContentView(R.layout.splashscreen);
+
+
 
         //FROM NOTIFICATION
         String chatID=getIntent().getStringExtra("CHAT_ID");
@@ -49,14 +53,23 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        (new Handler()).postDelayed(new Runnable() {
 
+            @Override
+            public void run() {
+               delayed();
+            }
+        }, 1000);
+
+
+
+
+    }
+
+
+    public void delayed(){
         if(AccountManager.checkIfLoggedIn()){
-           nextActivity();
+            nextActivity();
         }
 
         setContentView(R.layout.activity_login);
@@ -88,7 +101,6 @@ public class LoginActivity extends AppCompatActivity {
                 ((TextInputLayout)findViewById(R.id.passwordWrapper)).setErrorEnabled(false);
             }
         });
-
     }
 
 
