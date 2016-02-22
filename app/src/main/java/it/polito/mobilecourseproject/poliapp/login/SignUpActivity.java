@@ -25,6 +25,7 @@ import com.dd.processbutton.iml.ActionProcessButton;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.AccountManager;
+import it.polito.mobilecourseproject.poliapp.AsyncTaskWithoutProgressBar;
 import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.model.User;
@@ -195,18 +196,23 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.student) {
-                    isCompany=false;
+                    isCompany = false;
                     findViewById(R.id.studentWrapper).setVisibility(View.VISIBLE);
                     findViewById(R.id.universityWrapper).setVisibility(View.VISIBLE);
                     findViewById(R.id.companyNameWrapper).setVisibility(View.GONE);
                 } else {
-                    isCompany=true;
+                    isCompany = true;
                     findViewById(R.id.studentWrapper).setVisibility(View.GONE);
                     findViewById(R.id.universityWrapper).setVisibility(View.GONE);
                     findViewById(R.id.companyNameWrapper).setVisibility(View.VISIBLE);
                 }
             }
         });
+
+
+
+
+
 
 
     }
@@ -231,13 +237,7 @@ public class SignUpActivity extends AppCompatActivity {
 
 
 
-    String companyNameText;
-    String firstNameText;
-    String lastNameText;
-    String emailText;
-    String passwordText;
-    String universityText;
-    String resultMessage = null;
+
     public void signUp(View v) {
 
         boolean error = false;
@@ -307,66 +307,70 @@ public class SignUpActivity extends AppCompatActivity {
 
 
 
-        signUpButton.setProgress(1);
-        signUpButton.setEnabled(false);
+        new AsyncTaskWithoutProgressBar(this) {
 
-        companyNameText = companyName.getText().toString().trim();
-        firstNameText = firstName.getText().toString().trim();
-        lastNameText = lastName.getText().toString().trim();
-        emailText = email.getText().toString().trim();
-        passwordText = password.getText().toString().trim();
-        universityText = university.getText().toString().trim();
-        SignUpActivity.this.findViewById(R.id.overlay).setVisibility(View.VISIBLE);
+            String companyNameText;
+            String firstNameText;
+            String lastNameText;
+            String emailText;
+            String passwordText;
+            String universityText;
 
-
-        (new Thread(new Runnable() {
             @Override
-            public void run() {
+            protected void onPreExecute() {
+                super.onPreExecute();
+                signUpButton.setProgress(1);
+                signUpButton.setEnabled(false);
 
+                companyNameText=companyName.getText().toString().trim();
+                firstNameText=firstName.getText().toString().trim();
+                lastNameText=lastName.getText().toString().trim();
+                emailText=email.getText().toString().trim();
+                passwordText=password.getText().toString().trim();
+                universityText=university.getText().toString().trim();
+                SignUpActivity.this.findViewById(R.id.overlay).setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                String resultMessage = null;
 
                 try {
                     //TODO: TOGLIERE QUESTO IF!
-                    if (universityText == null || universityText.trim().isEmpty())
-                        universityText = "Politecnico di Torino";
+                    if(universityText==null || universityText.trim().isEmpty())
+                        universityText="Politecnico di Torino";
 
-                    AccountManager.signup(firstNameText, lastNameText, companyNameText, emailText, passwordText, universityText, isCompany,bitmap);
+                    AccountManager.signup(firstNameText, lastNameText,companyNameText, emailText, passwordText, universityText,isCompany,bitmap);
                 } catch (Exception e) {
                     resultMessage = "Error occurred:\n" + e.getMessage();
                     e.printStackTrace();
                 }
-
-
-
-                try {
-                    SignUpActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (resultMessage == null) {
-                                signUpButton.setProgress(100);
-                                //activity.onBackPressed();
-                                finish();
-                                Snackbar.make(findViewById(R.id.parentView), "Correctly registered!", Snackbar.LENGTH_LONG).show();
-
-                            } else {
-                                signUpButton.setProgress(-1);
-                                Snackbar.make(findViewById(R.id.parentView), resultMessage, Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        signUp(v);
-                                    }
-                                }).show();
-                                SignUpActivity.this.findViewById(R.id.overlay).setVisibility(View.GONE);
-                            }
-                        }
-                    });
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-
+                return resultMessage;
             }
-        })).start();
+
+            @Override
+            protected void onPostExecute(String resultMessage) {
+                super.onPostExecute(resultMessage);
+                if(resultMessage==null) {
+                    signUpButton.setProgress(100);
+                    //activity.onBackPressed();
+                    finish();
+                    Snackbar.make(findViewById(R.id.parentView), "Correctly registered!", Snackbar.LENGTH_LONG).show();
+
+                } else {
+                    signUpButton.setProgress(-1);
+                    signUpButton.setEnabled(true);//MANCAVA questo
+                    Snackbar.make(findViewById(R.id.parentView), resultMessage, Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            signUp(v);
+                        }
+                    }).show();
+                    SignUpActivity.this.findViewById(R.id.overlay).setVisibility(View.GONE);
+                }
+            }
+
+        }.execute();
     }
 
 

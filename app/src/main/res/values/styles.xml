@@ -27,7 +27,7 @@
         <item name="colorPrimary">@color/myPrimaryColor</item>
         <item name="colorPrimaryDark">@color/myPrimaryDarkColor</item>
         <item name="colorAccent">@android:color/white</item>
-        <item name="android:background">@drawable/background_splash</item>
+        <item name="android:background">@color/myPrimaryColor</item>
         <item name="android:textColorPrimary">@android:color/white</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

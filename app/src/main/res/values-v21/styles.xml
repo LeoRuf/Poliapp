@@ -39,7 +39,7 @@
 
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
 
-        <item name="android:background">@drawable/background_splash</item>
+        <item name="android:background">@color/myPrimaryColor</item>
         <item name="android:windowContentTransitions">true</item>
     </style>
 

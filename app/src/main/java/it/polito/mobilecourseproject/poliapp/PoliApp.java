@@ -3,6 +3,7 @@ package it.polito.mobilecourseproject.poliapp;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 
 import com.parse.Parse;
 import com.parse.ParseInstallation;
@@ -26,6 +27,7 @@ public class PoliApp extends android.support.multidex.MultiDexApplication{
 
     public static Context ctx;
     private static DataModel model;
+   static public boolean firstExecution=true;
 
     @Override
     public void onCreate() {
@@ -52,6 +54,14 @@ public class PoliApp extends android.support.multidex.MultiDexApplication{
 
 
         startService(new Intent(ctx,MessageService.class));
+
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                firstExecution=false;
+            }
+        },5000);
 
     }
 

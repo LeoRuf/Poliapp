@@ -2,6 +2,7 @@ package it.polito.mobilecourseproject.poliapp.login;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,7 @@ import it.polito.mobilecourseproject.poliapp.AsyncTaskWithoutProgressBar;
 import it.polito.mobilecourseproject.poliapp.CompanyMainActivity;
 import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.MainActivity;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.messages.ChatActivity;
 import it.polito.mobilecourseproject.poliapp.messages.MessageService;
@@ -31,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.splashscreen);
+
 
 
         //FROM NOTIFICATION
@@ -48,15 +53,26 @@ public class LoginActivity extends AppCompatActivity {
 
 
 
+        int delay=1000;
+        if(PoliApp.firstExecution)delay=2000;
 
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        (new Handler()).postDelayed(new Runnable() {
 
+            @Override
+            public void run() {
+               delayed();
+            }
+        }, delay);
+
+
+
+
+    }
+
+
+    public void delayed(){
         if(AccountManager.checkIfLoggedIn()){
-           nextActivity();
+            nextActivity();
         }
 
         setContentView(R.layout.activity_login);
@@ -88,7 +104,6 @@ public class LoginActivity extends AppCompatActivity {
                 ((TextInputLayout)findViewById(R.id.passwordWrapper)).setErrorEnabled(false);
             }
         });
-
     }
 
 
