@@ -69,7 +69,10 @@ public class AddGroupActivity extends AppCompatActivity {
             @Override
             public void onUsersDownloaded(List<User> usrs) {
                 users = new ArrayList<User>();
-                users.addAll(usrs);
+                for(User u : usrs){
+                    if(!u.isCompany())
+                        users.add(u);
+                }
                 sortUsers();
                 ArrayList<User> others=new ArrayList<User>();
                 for(User u : users){

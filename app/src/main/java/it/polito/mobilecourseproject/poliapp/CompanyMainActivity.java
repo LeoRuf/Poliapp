@@ -101,8 +101,11 @@ public class CompanyMainActivity extends AppCompatActivity {
             PoliApp.getModel().getProfileBitmap(this, thisUser, new User.OnGetPhoto() {
                 @Override
                 public void onGetPhoto(Bitmap b) {
-                    if (b == null) return;
-                    imageView.setImageBitmap(b);
+                    if (b == null){
+                        imageView.setImageResource(R.drawable.default_avatar);
+                    }else{
+                        imageView.setImageBitmap(b);
+                    }
                 }
             });
 
@@ -181,6 +184,8 @@ public class CompanyMainActivity extends AppCompatActivity {
                                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                      fragmentTransaction.replace(R.id.frame, homeFragment,  SearchStudentFragment.class.getName());
                                     startFragment( fragmentTransaction);
+                                }else{
+                                    CompanyMainActivity.this.onBackPressed();
                                 }
                                 currentFragment=homeFragment.getClass().getName();
                                 return true;
@@ -197,6 +202,8 @@ public class CompanyMainActivity extends AppCompatActivity {
                                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, jobOffersFragment, JobOffersFragment.class.getName());
                                     startFragment(fragmentTransaction);
+                                }else{
+                                    CompanyMainActivity.this.onBackPressed();
                                 }
                                 currentFragment=jobOffersFragment.getClass().getName();
                                 return true;

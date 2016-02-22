@@ -73,6 +73,7 @@ public class LoginActivity extends AppCompatActivity {
     public void delayed(){
         if(AccountManager.checkIfLoggedIn()){
             nextActivity();
+            return;
         }
 
         setContentView(R.layout.activity_login);
