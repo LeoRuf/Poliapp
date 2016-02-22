@@ -42,11 +42,13 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.ExternalIntents;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.TimeManager;
 import it.polito.mobilecourseproject.poliapp.model.JobOffer;
+import it.polito.mobilecourseproject.poliapp.model.User;
 import it.polito.mobilecourseproject.poliapp.noticeboard.AddNoticeActivity;
 import it.polito.mobilecourseproject.poliapp.noticeboard.CategoriesAdapter;
 
@@ -60,6 +62,8 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
     CoordinatorLayout.Behavior behavior;
     SwipeRefreshLayout swypeRefreshLayout;
     int scrollFlags;
+    private User currentUser = null;
+
 
 
     public JobOffersFragment() {
@@ -175,7 +179,12 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
         */
 
         FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
-        fab.setVisibility(View.VISIBLE);
+
+        if(currentUser.isCompany())
+            fab.setVisibility(View.VISIBLE);
+        else
+            fab.setVisibility(View.GONE);
+
 
 
 
@@ -185,6 +194,13 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
 
         super.onActivityCreated(savedInstanceState);
+
+        try {
+            currentUser = AccountManager.getCurrentUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         myOnAttach(getActivity());
 
     }

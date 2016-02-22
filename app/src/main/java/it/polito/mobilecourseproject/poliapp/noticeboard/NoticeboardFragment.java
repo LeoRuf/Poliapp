@@ -155,6 +155,13 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
     public void onResume() {
         super.onResume();
         myOnAttach(getActivity());
+
+        try {
+            currentUser = AccountManager.getCurrentUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     /*
@@ -402,12 +409,6 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
             ((TextView)holder.cardView.findViewById(R.id.time_text)).setText(TimeManager.getFormattedTimestamp(notice.getCreatedAt(), "Published"));
             ((ImageView)holder.cardView.findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(notice.getCategory()));
 
-
-            try {
-                currentUser = AccountManager.getCurrentUser();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
             try {
                 ((TextView) holder.cardView.findViewById(R.id.publisher_name)).setText(notice.getPublisher().getFirstName() + " " + notice.getPublisher().getLastName());

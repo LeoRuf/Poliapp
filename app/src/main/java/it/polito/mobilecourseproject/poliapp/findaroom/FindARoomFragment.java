@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -394,8 +395,8 @@ public class FindARoomFragment extends android.support.v4.app.Fragment   {
         params.setBehavior(null);
         */
 
-        //FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
-        //fab.setVisibility(View.VISIBLE);
+        FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
 
 
 
