@@ -72,6 +72,14 @@ public class NoticeDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
+
+
         description = (TextView)findViewById(R.id.editTextDescription);
         categoryTextView = (TextView)findViewById(R.id.categoryTextView);
 

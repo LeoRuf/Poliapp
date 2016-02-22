@@ -14,6 +14,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -149,6 +150,9 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
         //Salvo gli scrollFlags originali per poterli ripristinare nell'onDetach
         scrollFlags = params.getScrollFlags();
         params.setScrollFlags(0);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Job offers");
+
 
         /*
         //SE SI VUOLE MOSTRARE IL TABLAYOUT
@@ -286,7 +290,7 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
             public void done(List<JobOffer> objects, ParseException e) {
 
                 if(objects.isEmpty()) {
-                    getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.GONE);
                     getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
                     getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
 

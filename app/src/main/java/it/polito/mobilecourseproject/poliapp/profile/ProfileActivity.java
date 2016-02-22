@@ -220,7 +220,7 @@ public class ProfileActivity extends AppCompatActivity
         if(user.getDescription()!=null)
             ((TextView)findViewById(R.id.aboutMe)).setText(user.getDescription());
         else if(getIntent().hasExtra("userId"))
-            findViewById(R.id.aboutMeWrapper).setVisibility(View.GONE);
+            findViewById(R.id.aboutMeCardView).setVisibility(View.GONE);
 
         ((TextView)findViewById(R.id.firstName)).setText(user.getFirstName());
         ((TextView)findViewById(R.id.lastName)).setText(user.getLastName());
@@ -335,10 +335,35 @@ public class ProfileActivity extends AppCompatActivity
         } else if(getIntent().hasExtra("userId"))
             findViewById(R.id.educationsCardView).setVisibility(View.GONE);
 
-        if(user.getSkills()!=null) {
+        if(getIntent().hasExtra("userId")){
+
+            if(user.getFacebook()==null && user.getLinkedIn()==null && user.getWebsite()==null){
+                findViewById(R.id.linksCardView).setVisibility(View.GONE);
+            }
+            findViewById(R.id.sendMessageFab).setVisibility(View.VISIBLE);
+            findViewById(R.id.sendMessageFab).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    if(user.getEmail()!=null)
+                        ExternalIntents.sendMail(ProfileActivity.this, user.getEmail(), "Contact "+ user.getFirstName());
+                    else
+                        ExternalIntents.sendMail(ProfileActivity.this, user.getUsername(), "Contact "+ user.getFirstName());
+
+                }
+            });
+
+
+        } else {
+            findViewById(R.id.sendMessageFab).setVisibility(View.GONE);
+        }
+
+
+
+    if(user.getSkills()!=null) {
             ((TextView)findViewById(R.id.skills)).setText(user.getSkills());
         } else if(getIntent().hasExtra("userId"))
-            findViewById(R.id.skillsWrapper).setVisibility(View.GONE);
+            findViewById(R.id.skillsCardView).setVisibility(View.GONE);
 
         if(user.getWebsite()!=null) {
 
@@ -375,6 +400,7 @@ public class ProfileActivity extends AppCompatActivity
             });
         } else
             findViewById(R.id.facebook).setVisibility(View.GONE);
+
 
     }
 

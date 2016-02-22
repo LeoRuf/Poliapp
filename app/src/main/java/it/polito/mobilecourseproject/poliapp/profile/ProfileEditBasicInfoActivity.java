@@ -302,6 +302,7 @@ public class ProfileEditBasicInfoActivity extends AppCompatActivity {
 
                 } else {
                     saveButton.setProgress(-1);
+                    saveButton.setEnabled(true);
                     Snackbar.make(findViewById(R.id.parentView), resultMessage, Snackbar.LENGTH_LONG).setAction("Retry", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

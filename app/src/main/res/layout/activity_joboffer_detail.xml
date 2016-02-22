@@ -287,6 +287,7 @@ CSS is a true end-to-end organization supporting all business customers; from En
                         android:textSize="16sp"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"
+						android:paddingBottom="16dp"
                         style="@style/TextComponent.ItemRow.Selectable"
                         />
 
@@ -297,7 +298,6 @@ CSS is a true end-to-end organization supporting all business customers; from En
                         android:text="Apply on our website"
                         android:paddingLeft="16dp"
                         android:paddingRight="16dp"
-                        android:layout_marginTop="16dp"
                         android:textAppearance="@style/TextAppearance.ItemExample"
                         android:drawableRight="@drawable/ic_arrow_forward_24dp"
                         style="@style/TextComponent.ItemRow.Selectable"

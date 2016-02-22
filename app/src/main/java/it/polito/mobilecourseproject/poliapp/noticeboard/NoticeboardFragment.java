@@ -13,6 +13,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -43,6 +44,7 @@ import java.util.List;
 import it.polito.mobilecourseproject.poliapp.ExternalIntents;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
 import it.polito.mobilecourseproject.poliapp.TimeManager;
+import it.polito.mobilecourseproject.poliapp.model.JobOffer;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
 import it.polito.mobilecourseproject.poliapp.R;
 
@@ -130,7 +132,6 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
             }
         });
 
-        //TODO: Capire come cambiare il colore
         swypeRefreshLayout.setColorSchemeColors(R.color.myAccentColor);
 
         return fragmentView;
@@ -144,34 +145,15 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
         }
     }
 
-
-    /*
- * onAttach(Context) is not called on pre API 23 versions of Android and onAttach(Activity) is deprecated
- * Use myOnAttach instead
- */
-    @TargetApi(23)
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        myOnAttach(context);
+    public void onResume() {
+        super.onResume();
+        myOnAttach(getActivity());
     }
 
     /*
-     * Deprecated on API 23
-     * Use myOnAttach instead
-     */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            myOnAttach(activity);
-        }
-    }
-
-    /*
-     * Called when the fragment attaches to the context
-     */
+         * Called when the fragment attaches to the context
+         */
     protected void myOnAttach(Context context) {
         android.support.v7.widget.Toolbar toolbar =(android.support.v7.widget.Toolbar) getActivity().findViewById(R.id.toolbar);
         AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
@@ -179,6 +161,9 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
         //Salvo gli scrollFlags originali per poterli ripristinare nell'onDetach
         scrollFlags = params.getScrollFlags();
         params.setScrollFlags(0);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Noticeboard");
+
 
         /*
         //SE SI VUOLE MOSTRARE IL TABLAYOUT
@@ -207,43 +192,6 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
 
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-
-        android.support.v7.widget.Toolbar toolbar =(android.support.v7.widget.Toolbar) getActivity().findViewById(R.id.toolbar);
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-
-        //Ripristina gli scrollFlags originali
-        params.setScrollFlags(scrollFlags);
-
-        FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
-        fab.setVisibility(View.GONE);
-
-
-
-        /*
-        //SE SI VUOLE MOSTRARE IL TABLAYOUT
-
-        TabLayout tabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
-        tabLayout.setVisibility(View.GONE);
-
-
-        // SE SI VUOLE MODIFICARE IL app:layout_behavior del FrameLayout
-
-        if(behavior == null)
-            return;
-
-        FrameLayout layout =(FrameLayout) getActivity().findViewById(R.id.dashboard_content);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
-
-        params.setBehavior(behavior);
-
-        layout.setLayoutParams(params);
-
-        behavior = null;
-        */
-    }
 
     /**
      * This interface must be implemented by activities that contain this
@@ -353,12 +301,50 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment impleme
         query.findInBackground(new FindCallback<Notice>() {
             @Override
             public void done(List<Notice> objects, ParseException e) {
-                noticesAdapter.setNotices(objects);
-                noticesAdapter.notifyDataSetChanged();
-                swypeRefreshLayout.setRefreshing(false);
+
+                if(objects.isEmpty()) {
+                    getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                    getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+
+                    ParseQuery<Notice> query = ParseQuery.getQuery("Notice");
+                    query.setLimit(1000);
+                    query.orderByDescending("updatedAt");
+                    query.whereGreaterThan("updatedAt",new Date(PreferenceManager.getDefaultSharedPreferences(getActivity()).getLong("Noticeboard_timestamp", 0)));
+                    query.findInBackground(new FindCallback<Notice>() {
+                        @Override
+                        public void done(final List<Notice> objects, ParseException e) {
+                            if(objects.size()!=0) {
+                                ParseObject.pinAllInBackground(objects, new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putLong("Noticeboard_timestamp", objects.get(0).getUpdatedAt().getTime()).commit();
+                                        search();
+                                    }
+                                });
+                            } else {
+                                getActivity().findViewById(R.id.recyclerView).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+
+                            }
+                        }
+                    });
+
+                } else {
+
+                    getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.VISIBLE);
+                    getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+
+                    noticesAdapter.setNotices(objects);
+                    noticesAdapter.notifyDataSetChanged();
+                    swypeRefreshLayout.setRefreshing(false);
+                }
             }
         });
     }
+
 
 
     public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.ViewHolder> {

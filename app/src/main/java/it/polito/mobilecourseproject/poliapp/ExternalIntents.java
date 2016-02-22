@@ -9,7 +9,7 @@ public class ExternalIntents {
 
 
 
-    public static void sendMail(Activity activity,String mailAddress ){
+    public static void sendMail(Activity activity,String mailAddress, String chooserTitle ){
 
         Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + mailAddress));
         //Intent emailIntent = new Intent(Intent.ACTION_SEND);
@@ -23,7 +23,7 @@ public class ExternalIntents {
         //emailIntent.setType("plain/text");
         //emailIntent.putExtra(android.content.Intent.EXTRA_TEXT, "My message body.");
         try{
-            activity.startActivity(Intent.createChooser(emailIntent, "Contact the employer"));
+            activity.startActivity(Intent.createChooser(emailIntent, chooserTitle));
         } catch(Exception e){
             Toast.makeText(activity, "No Mail Client", Toast.LENGTH_LONG).show();
         }

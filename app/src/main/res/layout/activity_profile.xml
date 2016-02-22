@@ -403,6 +403,7 @@
                 app:contentPaddingRight="8dp"
                 app:contentPaddingLeft="8dp"
                 app:contentPaddingBottom="8dp"
+                android:id="@+id/skillsCardView"
                 >
 
                 <LinearLayout
@@ -547,6 +548,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
+                android:id="@+id/linksCardView"
                 >
 
                 <LinearLayout
@@ -628,6 +630,7 @@
         android:src="@drawable/ic_discuss"
         android:layout_margin="@dimen/activity_horizontal_margin"
         android:clickable="true"
+        android:id="@+id/sendMessageFab"
         app:layout_anchor="@id/materialup.appbar"
         app:layout_anchorGravity="bottom|right|end"
         />

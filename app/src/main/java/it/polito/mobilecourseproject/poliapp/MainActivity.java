@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Spinner;
@@ -188,8 +189,6 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction.commit();
             navigationView.getMenu().getItem(2).setChecked(true);
 
-            //TODO: CONTROLLARE CHE L'INDEX DEL GETITEM SIA CORRETTO
-            
         }else{
             NoticeboardFragment homeFragment=new  NoticeboardFragment();
             fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -206,8 +205,9 @@ public class MainActivity extends AppCompatActivity {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
 
+                        if(menuItem.getItemId()!=R.id.nav_profile)
+                            menuItem.setChecked(true);
 
                         //Check to see which item was being clicked and perform appropriate action
                         switch (menuItem.getItemId()){

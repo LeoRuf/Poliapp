@@ -471,7 +471,12 @@ public class User extends ParseUser {
             byte[] byteArray = stream.toByteArray();
             photo.put("photo", new ParseFile(byteArray));
 
+            if(this.has("photoProfile"))
+                this.getParseObject("photoProfile").deleteInBackground();
+
             this.put("photoProfile", photo);
+            this.saveInBackground(saveCallback);
+
         } else {
             if(this.has("photoProfile"))
                 this.getParseObject("photoProfile").deleteInBackground();
