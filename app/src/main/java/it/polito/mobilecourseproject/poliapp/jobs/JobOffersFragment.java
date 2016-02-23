@@ -121,7 +121,7 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
                 query.findInBackground(new FindCallback<JobOffer>() {
                     @Override
                     public void done(final List<JobOffer> objects, ParseException e) {
-                        if(objects.size()!=0) {
+                        if(objects!=null && objects.size()!=0) {
                             ParseObject.pinAllInBackground(objects, new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
@@ -298,7 +298,7 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
             @Override
             public void done(List<JobOffer> objects, ParseException e) {
 
-                if(objects.isEmpty()) {
+                if(objects == null || objects.isEmpty()) {
                     getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.GONE);
                     getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
                     getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
@@ -310,7 +310,7 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
                     query.findInBackground(new FindCallback<JobOffer>() {
                         @Override
                         public void done(final List<JobOffer> objects, ParseException e) {
-                            if(objects.size()!=0) {
+                            if(objects != null && objects.size()!=0) {
                                 ParseObject.pinAllInBackground(objects, new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {

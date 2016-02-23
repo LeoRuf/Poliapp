@@ -122,7 +122,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
                 query.findInBackground(new FindCallback<Notice>() {
                     @Override
                     public void done(final List<Notice> objects, ParseException e) {
-                        if(objects.size()!=0) {
+                        if(objects!=null && objects.size()!=0) {
                             ParseObject.pinAllInBackground(objects, new SaveCallback() {
                                 @Override
                                 public void done(ParseException e) {
@@ -372,7 +372,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
             @Override
             public void done(List<Notice> objects, ParseException e) {
 
-                if(objects.isEmpty()) {
+                if(objects == null || objects.isEmpty()) {
                     getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.GONE);
                     getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
                     getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
@@ -384,7 +384,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
                     query.findInBackground(new FindCallback<Notice>() {
                         @Override
                         public void done(final List<Notice> objects, ParseException e) {
-                            if(objects.size()!=0) {
+                            if(objects != null && objects.size()!=0) {
                                 ParseObject.pinAllInBackground(objects, new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
@@ -505,7 +505,7 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
                 }
             });
 
-            if(notice.getPublisher().getUsername().equals(currentUser.getUsername())) {
+            if(notice.getPublisher().getObjectId().equals(currentUser.getObjectId())) {
 
                 holder.linearLayout.findViewById(R.id.edit).setVisibility(View.VISIBLE);
                 holder.linearLayout.findViewById(R.id.edit).setOnClickListener(new View.OnClickListener() {
