@@ -103,7 +103,8 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), AddNoticeActivity.class);
+                Intent intent = new Intent(getActivity(), JobOfferDetailActivity.class);
+                intent.putExtra("addMode", "true");
                 startActivity(intent);
             }
         });
