@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -42,9 +43,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.ExternalIntents;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.TimeManager;
 import it.polito.mobilecourseproject.poliapp.model.JobOffer;
@@ -53,11 +56,9 @@ import it.polito.mobilecourseproject.poliapp.noticeboard.AddNoticeActivity;
 import it.polito.mobilecourseproject.poliapp.noticeboard.CategoriesAdapter;
 
 
-public class JobOffersFragment extends android.support.v4.app.Fragment implements SearchView.OnQueryTextListener {
+public class JobOffersFragment extends android.support.v4.app.Fragment {
 
     private OnFragmentInteractionListener mListener;
-    private List<String> categoriesFiltered;
-    private List<String> categoriesToBeFiltered;
     private JobOffersAdapter jobOffersAdapter;
     CoordinatorLayout.Behavior behavior;
     SwipeRefreshLayout swypeRefreshLayout;
@@ -74,8 +75,6 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        categoriesToBeFiltered = new LinkedList<>();
-        categoriesFiltered = new LinkedList<>();
         jobOffersAdapter = new JobOffersAdapter();
     }
 
@@ -126,12 +125,11 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
                                 @Override
                                 public void done(ParseException e) {
                                     PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putLong("JobOffer_timestamp", objects.get(0).getUpdatedAt().getTime()).commit();
-                                    search();
+
                                 }
                             });
-                        } else {
-                            swypeRefreshLayout.setRefreshing(false);
                         }
+                        search();
                     }
                 });
 
@@ -207,17 +205,55 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.noticeboard_menu, menu);
+        inflater.inflate(R.menu.add_chat_menu, menu);
 
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setQueryHint("Search");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-
             @Override
-            public boolean onQueryTextSubmit(String s) {
-                //TODO: Aggiungere search
+            public boolean onQueryTextSubmit(String searchedText) {
 
-                return false;
+                String[] stringWords=searchedText.split(" ");
+                final List<String> words=new ArrayList<String>();
+                for(String s : stringWords){
+                    words.add(s.toLowerCase().trim());
+                }
+
+
+                getActivity().findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                ParseQuery<JobOffer> query = ParseQuery.getQuery("JobOffer");
+                query.fromLocalDatastore();
+                query.orderByDescending("createdAt");
+                query.setLimit(1000);
+                query.findInBackground(new FindCallback<JobOffer>() {
+                    @Override
+                    public void done(List<JobOffer> objects, ParseException e) {
+                        if (objects==null || objects.size()==0) {
+                            getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.GONE);
+                            getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                            getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                            jobOffersAdapter.setJobOffers(new ArrayList<JobOffer>());
+                            jobOffersAdapter.notifyDataSetChanged();
+                            swypeRefreshLayout.setRefreshing(false);
+                        } else {
+                            List<JobOffer> filteredObjects=new ArrayList<JobOffer>();
+                            for(JobOffer jo : objects){
+                                for(String w : words){
+                                if(jo.getDescription().toLowerCase().contains(w) || jo.getTitle().toLowerCase().contains(w) ){
+                                    filteredObjects.add(jo);
+                                    break;
+                                }}
+                            }
+                            getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.VISIBLE);
+                            getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                            getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                            jobOffersAdapter.setJobOffers(filteredObjects);
+                            jobOffersAdapter.notifyDataSetChanged();
+                            swypeRefreshLayout.setRefreshing(false);
+                        }
+                    }
+                });
+            return false;
             }
 
             @Override
@@ -225,6 +261,12 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
                 return false;
             }
         });
+
+
+
+
+
+
     }
 
 
@@ -232,63 +274,13 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
     public boolean onOptionsItemSelected(MenuItem item) {
         // handle item selection
         switch (item.getItemId()) {
-            case R.id.filter:
 
-                categoriesToBeFiltered.clear();
-                categoriesToBeFiltered.addAll(categoriesFiltered);
-
-                final Dialog dialog = new Dialog(getActivity());
-                dialog.setContentView(R.layout.dialog_categories);
-                dialog.setCanceledOnTouchOutside(true);
-                dialog.setTitle("Filter categories");
-                dialog.setCancelable(true);
-                SearchView searchView= (SearchView)dialog.findViewById(R.id.searchView);
-                searchView.setOnQueryTextListener(this);
-
-                RecyclerView recyclerView = (RecyclerView)dialog.findViewById(R.id.itemsRecyclerView);
-                RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                recyclerView.setLayoutManager(layoutManager);
-                recyclerView.setAdapter(new CategoriesAdapter(categoriesToBeFiltered, false, getActivity()));
-
-                Button okButton = (Button)dialog.findViewById(R.id.ok_button);
-                Button cancelButton = (Button)dialog.findViewById(R.id.cancel_button);
-
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        categoriesFiltered.clear();
-                        categoriesFiltered.addAll(categoriesToBeFiltered);
-                        search();
-                        dialog.dismiss();
-                    }
-                });
-
-                cancelButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                //recyclerView..setTextFilterEnabled(true);
-                dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-                //dialog.getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT);
-                dialog.show();
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
 
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        return false;
-    }
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -400,6 +392,21 @@ public class JobOffersFragment extends android.support.v4.app.Fragment implement
             ((TextView)holder.cardView.findViewById(R.id.time_text)).setText(TimeManager.getFormattedTimestamp(jobOffer.getCreatedAt(), "Published"));
 
             ((TextView) holder.cardView.findViewById(R.id.company)).setText(jobOffer.getCompany());
+
+
+            User company=jobOffer.getPublisher();
+            if(company==null)((ImageView) holder.cardView.findViewById(R.id.category_icon)).setImageResource(R.drawable.default_company_logo);
+            else{
+                Bitmap b= PoliApp.getModel().getBitmapByUser(getActivity(), company,this);
+                if(b!=null){
+                    ((ImageView) holder.cardView.findViewById(R.id.category_icon)).setImageBitmap(b);
+                }else{
+                    ((ImageView) holder.cardView.findViewById(R.id.category_icon)).setImageResource(R.drawable.default_company_logo);
+                }
+            }
+
+
+
 
             holder.cardView.findViewById(R.id.share).setOnClickListener(new View.OnClickListener() {
                 @Override

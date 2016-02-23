@@ -151,6 +151,17 @@
     </android.support.v7.widget.CardView>
 
 -->
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/wrapperNoticeboardItem"
+    android:orientation="vertical">
+
+
+
+
     <android.support.v7.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -301,3 +312,4 @@
             />
         </RelativeLayout>
     </android.support.v7.widget.CardView>
+</LinearLayout>

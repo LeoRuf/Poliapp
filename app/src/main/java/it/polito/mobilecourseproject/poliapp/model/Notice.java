@@ -1,6 +1,8 @@
 package it.polito.mobilecourseproject.poliapp.model;
 
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
+import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseRelation;
@@ -14,6 +16,11 @@ import it.polito.mobilecourseproject.poliapp.model.User;
  */
 @ParseClassName("Notice")
 public class Notice extends ParseObject {
+
+
+
+
+
 
     public String getTitle() {
         return getString("title");
@@ -56,6 +63,10 @@ public class Notice extends ParseObject {
     public String getCategory() {
         return getString("category");
     }
+
+
+
+
 
     /*
     public String getPhoneNumber() {

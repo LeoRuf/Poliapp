@@ -93,4 +93,13 @@ public class JobOffer extends ParseObject {
         put("responsibilities", value);
     }
 
+
+    public User getPublisher() {
+        return (User)getParseUser("user");
+    }
+
+    public void setUser(User value) {
+        put("user", value);
+    }
+
 }

@@ -102,7 +102,7 @@ public class CompanyMainActivity extends AppCompatActivity {
                 @Override
                 public void onGetPhoto(Bitmap b) {
                     if (b == null){
-                        imageView.setImageResource(R.drawable.default_avatar);
+                        imageView.setImageResource(R.drawable.default_company_logo);
                     }else{
                         imageView.setImageBitmap(b);
                     }

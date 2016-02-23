@@ -377,7 +377,14 @@ public class MainActivity extends AppCompatActivity {
             public void onDrawerOpened(View drawerView) {}
             @Override
             public void onDrawerClosed(View drawerView) {
-                try{fragmentTransaction.commit();}catch(Exception e){e.printStackTrace();}}
+                try{
+                    fragmentTransaction.commit();
+                    drawerLayout.setDrawerListener(null);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+            }
+
             @Override
             public void onDrawerStateChanged(int newState) {}
         });
@@ -397,6 +404,7 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     Intent i = new Intent(MainActivity.this, ProfileActivity.class);
                     startActivity(i);
+                    drawerLayout.setDrawerListener(null);
                 }catch(Exception e){e.printStackTrace();}}
             @Override
             public void onDrawerStateChanged(int newState) {}

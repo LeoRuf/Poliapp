@@ -376,6 +376,20 @@ public class User extends ParseUser {
 
     }
 
+    public static  User getFromLocalStorageCompanyById(String objectID){
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.fromLocalDatastore();
+        query.whereEqualTo("isCompany", true);
+        try {
+            User u=(User)query.get(objectID);
+            return u;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
 
 
     public static void searchStudentsBySkills(final Context ctx, final ArrayList<String> skills, final OnUsersDownloadedCallback callback){
