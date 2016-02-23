@@ -310,9 +310,9 @@ public class User extends ParseUser {
     }
 
 
-    public static void downloadAllUserStudents(final Context ctx, final OnUsersDownloadedCallback callback){
+    public static void downloadAllUsers(final Context ctx, final OnUsersDownloadedCallback callback){
         ParseQuery<ParseUser> query = ParseUser.getQuery();
-        query.whereEqualTo("isCompany",false);
+        //query.whereEqualTo("isCompany",true);
          //query.orderByDescending("updatedAt");
         // query.whereGreaterThan("updatedAt", new Date(PreferenceManager.getDefaultSharedPreferences(ctx).getLong("Users_timestamp", 0)));
         query.findInBackground(new FindCallback<ParseUser>() {
@@ -340,10 +340,10 @@ public class User extends ParseUser {
     }
 
 
-    public static void getFromLocalStorageAllUserStudents(final Context ctx, final OnUsersDownloadedCallback callback){
+    public static void getFromLocalStorageAllUsers(final Context ctx, final OnUsersDownloadedCallback callback){
         ParseQuery<ParseUser> query = ParseUser.getQuery();
         query.fromLocalDatastore();
-        query.whereEqualTo("isCompany",false);
+        //query.whereEqualTo("isCompany",false);
         query.findInBackground(new FindCallback<ParseUser>() {
             @Override
             public void done(final List<ParseUser> objects, ParseException e) {

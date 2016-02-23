@@ -108,6 +108,14 @@ public class MainActivity extends AppCompatActivity {
         String s="";
         if(count!=0)s=" ("+count+")";
         chatItem.setTitle("Chat" + s);
+        chatItem.setChecked(true);
+
+
+
+        navigationView.getMenu().getItem(currentItem).setChecked(true);
+
+
+
     }
 
     BroadcastReceiver broadcastReceiver;
@@ -115,11 +123,21 @@ public class MainActivity extends AppCompatActivity {
     public void onResume(){
         super.onResume();
         final CircleImageView imageView=(( CircleImageView) navigationView.getHeaderView(0).findViewById(R.id.imgAvatar));
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startProfileActivity();
+            }
+        });
         PoliApp.getModel().getProfileBitmap(this, thisUser, new User.OnGetPhoto() {
             @Override
             public void onGetPhoto(Bitmap b) {
-                if (b == null) return;
-                imageView.setImageBitmap(b);
+                if (b == null){
+                    imageView.setImageResource(R.drawable.default_avatar);
+                }else{
+                    imageView.setImageBitmap(b);
+                }
+
             }
         });
           setChatItemInfo();
@@ -168,9 +186,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    int currentItem=0;
     private void setupDrawerContent(NavigationView navigationView,Bundle savedInstanceState)  {
 
-           FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         if(savedInstanceState != null) {
             try {
                 Class<?> c = Class.forName(savedInstanceState.getString("currentFragment"));
@@ -188,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction.replace(R.id.frame, myScheduleFragment, myScheduleFragment.getClass().getName());
             fragmentTransaction.commit();
             navigationView.getMenu().getItem(2).setChecked(true);
+            currentItem=2;
 
         }else{
             NoticeboardFragment homeFragment=new  NoticeboardFragment();
@@ -195,8 +215,9 @@ public class MainActivity extends AppCompatActivity {
             fragmentTransaction.replace(R.id.frame, homeFragment, homeFragment.getClass().getName());
             fragmentTransaction.commit();
             navigationView.getMenu().getItem(0).setChecked(true);
+            currentItem=0;
         }
- 
+
 
 
 
@@ -205,8 +226,6 @@ public class MainActivity extends AppCompatActivity {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-
-                        if(menuItem.getItemId()!=R.id.nav_profile)
                             menuItem.setChecked(true);
 
                         //Check to see which item was being clicked and perform appropriate action
@@ -222,8 +241,11 @@ public class MainActivity extends AppCompatActivity {
                                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                      fragmentTransaction.replace(R.id.frame, noticeboardFragment, NoticeboardFragment.class.getName());
                                     startFragment(fragmentTransaction);
+                                }else{
+                                    MainActivity.this.onBackPressed();
                                 }
                                 currentFragment=noticeboardFragment.getClass().getName();
+                                currentItem=0;
                                 return true;
 
 
@@ -238,8 +260,11 @@ public class MainActivity extends AppCompatActivity {
                                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, messagesFragment, MessagesFragment.class.getName());
                                     startFragment(fragmentTransaction);
+                                }else{
+                                    MainActivity.this.onBackPressed();
                                 }
                                 currentFragment=messagesFragment.getClass().getName();
+                                currentItem=1;
                                 return true;
 
                             case R.id.nav_findaroom:
@@ -256,8 +281,11 @@ public class MainActivity extends AppCompatActivity {
                                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, findARoomFragment, FindARoomFragment.class.getName());
                                     startFragment( fragmentTransaction);
+                                }else{
+                                    MainActivity.this.onBackPressed();
                                 }
                                 currentFragment=findARoomFragment.getClass().getName();
+                                currentItem=4;
                                 return true;
 
                             case R.id.nav_time_schedule:
@@ -270,8 +298,11 @@ public class MainActivity extends AppCompatActivity {
                                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, timeScheduleFragment, TimeScheduleFragment.class.getName());
                                     startFragment( fragmentTransaction);
+                                }else{
+                                    MainActivity.this.onBackPressed();
                                 }
                                 currentFragment=timeScheduleFragment.getClass().getName();
+                                currentItem=3;
                                 return true;
                             case R.id.nav_my_timetable:
                                 MyScheduleFragment myScheduleFragment = (MyScheduleFragment)getSupportFragmentManager().findFragmentByTag(MyScheduleFragment.class.getName());
@@ -283,14 +314,16 @@ public class MainActivity extends AppCompatActivity {
                                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, myScheduleFragment, MyScheduleFragment.class.getName());
                                     startFragment( fragmentTransaction);
+                                }else{
+                                    MainActivity.this.onBackPressed();
                                 }
                                 currentFragment=myScheduleFragment.getClass().getName();
+                                currentItem=2;
                                 return true;
 
                             case R.id.nav_profile:
 
-                                Intent i = new Intent(MainActivity.this, ProfileActivity.class);
-                                startActivity(i);
+                                startProfileActivity();
                                 return true;
 
                             case R.id.nav_joboffers:
@@ -304,8 +337,11 @@ public class MainActivity extends AppCompatActivity {
                                     fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                                     fragmentTransaction.replace(R.id.frame, jobOffersFragment, JobOffersFragment.class.getName());
                                     startFragment(fragmentTransaction);
+                                }else{
+                                    MainActivity.this.onBackPressed();
                                 }
                                 currentFragment=jobOffersFragment.getClass().getName();
+                                currentItem=5;
                                 return true;
 
                             case R.id.nav_logout:
@@ -346,6 +382,26 @@ public class MainActivity extends AppCompatActivity {
             public void onDrawerStateChanged(int newState) {}
         });
       drawerLayout.closeDrawers();
+    }
+
+
+
+    private void startProfileActivity(){
+        drawerLayout.setDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {}
+            @Override
+            public void onDrawerOpened(View drawerView) {}
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                try{
+                    Intent i = new Intent(MainActivity.this, ProfileActivity.class);
+                    startActivity(i);
+                }catch(Exception e){e.printStackTrace();}}
+            @Override
+            public void onDrawerStateChanged(int newState) {}
+        });
+        drawerLayout.closeDrawers();
     }
 
 
