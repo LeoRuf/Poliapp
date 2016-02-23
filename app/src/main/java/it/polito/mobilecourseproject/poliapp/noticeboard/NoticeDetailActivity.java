@@ -8,8 +8,11 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -25,6 +28,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.parse.GetCallback;
@@ -38,16 +42,23 @@ import com.parse.SaveCallback;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.ExpandableHeightGridView;
 import it.polito.mobilecourseproject.poliapp.GridViewAdapter;
 import it.polito.mobilecourseproject.poliapp.ImageDetailActivity;
 import it.polito.mobilecourseproject.poliapp.ImageItem;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
+import it.polito.mobilecourseproject.poliapp.messages.ChatActivity;
+import it.polito.mobilecourseproject.poliapp.model.Chat;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
+import it.polito.mobilecourseproject.poliapp.model.User;
+import it.polito.mobilecourseproject.poliapp.model.UserInfo;
 import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.GOTOConstants;
 import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.ImageCropActivity;
 
@@ -55,6 +66,20 @@ public class NoticeDetailActivity extends AppCompatActivity {
 
     private TextView description;
     private TextView categoryTextView;
+    private User thisUser;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private ExpandableHeightGridView gridView;
     private GridViewAdapter gridAdapter;
@@ -80,6 +105,15 @@ public class NoticeDetailActivity extends AppCompatActivity {
         });
 
 
+        try {
+            thisUser= AccountManager.getCurrentUser();
+        } catch (Exception e) {
+            e.printStackTrace();
+            finish();
+            return;
+        }
+
+
         description = (TextView)findViewById(R.id.editTextDescription);
         categoryTextView = (TextView)findViewById(R.id.categoryTextView);
 
@@ -102,6 +136,86 @@ public class NoticeDetailActivity extends AppCompatActivity {
                         categoryTextView.setText(category);
                         ((ImageView)findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(category));
                         description.setText(notice.getDescription());
+
+                        //TODO: ciao, qui carico nome e foto
+                        final User user=notice.getPublisher();
+                        ((TextView)findViewById(R.id.publisher_name)).setText(user.getFirstName() + " " + user.getLastName());
+                        PoliApp.getModel().getBitmapByUser(NoticeDetailActivity.this, user, new User.OnGetPhoto() {
+                            @Override
+                            public void onGetPhoto(Bitmap b) {
+                                if (b == null) return;
+                                ((ImageView) NoticeDetailActivity.this.findViewById(R.id.imgAvatar)).setImageBitmap(b);
+
+                            }
+                        });
+
+
+                        //TODO: qui mi occupo del fab send message
+                        FloatingActionButton fab=(FloatingActionButton)findViewById(R.id.fab);
+                        if(user.getUsername().equals(thisUser.getUsername())){
+                            CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+                            p.setAnchorId(View.NO_ID);
+                            fab.setLayoutParams(p);
+                            fab.setVisibility(View.GONE);
+                        }else{
+                           fab.setOnClickListener(new View.OnClickListener() {
+                               @Override
+                               public void onClick(View v) {
+                                   //APRO LA CHAT CON LO STUDENTE
+                                   final List<UserInfo> components = new ArrayList<UserInfo>();
+                                   components.add(new UserInfo(user.getObjectId(), user.getLastName() + " " + user.getFirstName()));
+                                   components.add(new UserInfo(thisUser.getObjectId(), thisUser.getLastName() + " " + thisUser.getFirstName()));
+
+                                   ArrayList<String> filteredUsers = new ArrayList<String>();
+                                   filteredUsers.add(thisUser.getObjectId());
+                                   NoticeDetailActivity.this.findViewById(R.id.loading).setVisibility(View.VISIBLE);
+                                   Chat.getChatsFromRemote(filteredUsers, new Chat.OnChatsDownloaded() {
+                                       @Override
+                                       public void onChatsDownloaded(List<Chat> chats) {
+                                           Chat chat = null;
+                                           for (Chat c : Chat.getChatsFromLocal()) {
+                                               ArrayList<UserInfo> userInfos = c.getChatters();
+                                               if (userInfos.size() == 2) {
+                                                   if (userInfos.contains(components.get(0)) && userInfos.contains(components.get(1))) {
+                                                       chat = c;
+                                                   }
+                                               }
+                                           }
+                                           if (chat != null) {
+                                               
+                                               Intent i = new Intent(NoticeDetailActivity.this, ChatActivity.class);
+                                               i.putExtra("CHAT_ID", chat.getChatID());
+                                               startActivity(i);
+                                           } else {
+                                               chat = Chat.createChat(getApplicationContext(), "", components, "", new Date());
+                                               Chat.storeChatInLocal(chat);
+                                               final Chat finalChat = chat;
+                                               Chat.storeChatInRemote(chat, new Chat.OnChatUploaded() {
+                                                   @Override
+                                                   public void onChatUploaded(boolean result) {
+                                                       if (result) {
+                                                           
+                                                           Intent i = new Intent(NoticeDetailActivity.this, ChatActivity.class);
+                                                           i.putExtra("CHAT_ID", finalChat.getChatID());
+                                                           startActivity(i);
+                                                       } else {
+                                                           Toast.makeText(NoticeDetailActivity.this, "Network error occurred", Toast.LENGTH_LONG).show();
+                                                       }
+                                                       NoticeDetailActivity.this.findViewById(R.id.loading).setVisibility(View.GONE);
+                                                   }
+                                               });
+                                           }
+
+                                       }
+                                   });
+
+                               }
+                           });
+
+
+                        }
+
+
 
                         //TODO: Loading immagini
                     }
@@ -132,11 +246,29 @@ public class NoticeDetailActivity extends AppCompatActivity {
 
         findViewById(R.id.addPhotoButton).setVisibility(View.VISIBLE);
 
-        if(!(imageItems!=null && imageItems.size()>0))
+        if(!(imageItems!=null && imageItems.size()>0)){
             findViewById(R.id.card_view_pictures).setVisibility(View.GONE);
+        }else{
+
+        }
+
+
+
+
+
 
 
     }
+
+
+
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        NoticeDetailActivity.this.findViewById(R.id.loading).setVisibility(View.GONE);
+    }
+
 
     public void contactPublisher(View v) {
 
