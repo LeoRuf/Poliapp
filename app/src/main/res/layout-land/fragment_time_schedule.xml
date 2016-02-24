@@ -3,17 +3,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="it.polito.mobilecourseproject.poliapp.time_schedule.TimeScheduleFragment">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
 
     <android.support.v7.widget.CardView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="14dp"
-        android:layout_marginRight="14dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="2dp"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="3dp"
         android:background="?android:attr/selectableItemBackground"
@@ -21,7 +26,7 @@
         android:focusable="true"
         android:clickable="true"
         >
-            <LinearLayout
+        <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -29,62 +34,30 @@
                 android:id="@+id/main_content"
                 >
                 <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="400dp"
+                    android:layout_height="150dp"
                     android:src="@drawable/study_wallpaper"
                     android:adjustViewBounds="true"
                     android:cropToPadding="false"
                     android:scaleType="fitXY"
                     />
-
                 <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="400dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.2"
                     android:padding="10dp"
                     android:text="Start searching now a course or a teacher to find out the course time schedule or teacher's consulting hours."/>
 
                 <android.support.v7.widget.CardView
                     xmlns:android="http://schemas.android.com/apk/res/android"
                     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="14dp"
-                    android:layout_marginRight="14dp"
-                    android:layout_marginTop="1dp"
-                    android:layout_marginBottom="8dp"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:focusable="true"
-                    android:gravity="center"
-                    android:clickable="true"
-                    >
-                    <CheckBox
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:id="@+id/flagConsulting"
-                        android:src="@android:drawable/ic_search_category_default"/>
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:singleLine="true"
-                        android:gravity="center"
-                        android:layout_marginLeft="32dp"
-                        android:layout_marginTop="9dp"
-                        android:layout_marginRight="5dp"
-                        android:textSize="18sp"
-                        android:hint="Consulting hours"
-                        />
-                </android.support.v7.widget.CardView>
-
-                <android.support.v7.widget.CardView
-                    xmlns:android="http://schemas.android.com/apk/res/android"
-                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/search_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="400dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.2"
                     android:layout_marginLeft="14dp"
                     android:layout_marginRight="14dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="17dp"
                     android:layout_marginBottom="8dp"
                     card_view:cardElevation="4dp"
                     android:background="@color/white"
@@ -108,7 +81,37 @@
                         android:hint="Search now"
                         />
                     </android.support.v7.widget.CardView>
+                <LinearLayout
+                    xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="0.2"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginRight="14dp"
+                    android:layout_marginTop="17dp"
+                    android:layout_marginBottom="8dp"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:focusable="true"
+                    android:gravity="center"
+                    android:clickable="true"
+                    >
+                    <CheckBox
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:id="@+id/flagConsulting"
+                        android:src="@android:drawable/ic_search_category_default"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:singleLine="true"
+                        android:textSize="18sp"
+                        android:hint="Consulting hours"
+                        />
+                </LinearLayout>
             </LinearLayout>
     </android.support.v7.widget.CardView>
+    </LinearLayout>
 
 </FrameLayout>

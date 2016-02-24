@@ -5,12 +5,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -21,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.alamkanak.weekview.DateTimeInterpreter;
 import com.alamkanak.weekview.WeekView;
 import com.alamkanak.weekview.WeekViewEvent;
@@ -29,7 +30,6 @@ import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
+import java.util.Random;
 import it.polito.mobilecourseproject.poliapp.R;
 
 import static android.graphics.Color.parseColor;
@@ -94,6 +94,29 @@ public class TimeScheduleTimetableFragment extends android.support.v4.app.Fragme
         return fragmentView;
     }
 
+    public void setWeekView(){
+        if (mWeekViewType != TYPE_WEEK_VIEW) {
+            mWeekViewType = TYPE_WEEK_VIEW;
+            mWeekView.setNumberOfVisibleDays(7);
+
+            mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
+            mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+            mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        boolean result = menu.findItem(R.id.action_week_view).isChecked();
+        int numberOfDays = mWeekView.getNumberOfVisibleDays();
+        if(result == true && numberOfDays!=7){
+            mWeekViewType= TYPE_DAY_VIEW;
+            setWeekView();
+        }
+        return ;
+    }
+
     @Override
     public List<WeekViewEvent> onMonthChange(int newYear, int newMonth) {
 
@@ -105,14 +128,6 @@ public class TimeScheduleTimetableFragment extends android.support.v4.app.Fragme
                 currentMonthList.add(we);
             }
         }
-
-        /*if(eventsToShow.size()==0){
-            mWeekView.setVisibility(View.GONE);
-            noEventLinear.setVisibility(View.VISIBLE);
-        }else{
-            mWeekView.setVisibility(View.VISIBLE);
-            noEventLinear.setVisibility(View.GONE);
-        }*/
 
         return currentMonthList;
     }
@@ -160,7 +175,7 @@ public class TimeScheduleTimetableFragment extends android.support.v4.app.Fragme
                     startTime.set(Calendar.MINUTE, minuti);
 
                     endTime = (Calendar) startTime.clone();
-                    endTime.add(Calendar.HOUR_OF_DAY, durata);
+                    endTime.add(Calendar.MINUTE, durata*90);
 
                     newEvent = new WeekViewEvent(obj.getObjectId(),obj.getString("materia"),obj.getString("aula"), obj.getString("professore"), startTime, endTime,obj.getString("flagConsulting"));
                     //newEvent.setColor(chooseColor(obj.getString("materia")));
@@ -178,17 +193,6 @@ public class TimeScheduleTimetableFragment extends android.support.v4.app.Fragme
         });
     }
 
-    /*public int chooseColor(String subject){
-        if(mappingColor.get(subject)!= null){
-            return mappingColor.get(subject);
-        }else{
-            Random rnd = new Random();
-            int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-            mappingColor.put(subject,color);
-            return color;
-        }
-    }*/
-
     @Override
     public void onEventClick(WeekViewEvent event, RectF eventRect) {
         Intent i = new Intent(getActivity(), InfoLecture.class);
@@ -200,6 +204,7 @@ public class TimeScheduleTimetableFragment extends android.support.v4.app.Fragme
         i.putExtra("favourite","no");
         i.putExtra("event_id", event.getId());
         i.putExtra("flagConsulting", event.getFlag());
+        i.putExtra("id", event.getId());
         startActivity(i);
     }
 
@@ -232,30 +237,6 @@ public class TimeScheduleTimetableFragment extends android.support.v4.app.Fragme
 
 
     /*
- * onAttach(Context) is not called on pre API 23 versions of Android and onAttach(Activity) is deprecated
- * Use myOnAttach instead
- */
-    @TargetApi(23)
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        myOnAttach(context);
-    }
-
-    /*
-     * Deprecated on API 23
-     * Use myOnAttach instead
-     */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            myOnAttach(activity);
-        }
-    }
-
-    /*
      * Called when the fragment attaches to the context
      */
     protected void myOnAttach(Context context) {
@@ -269,6 +250,9 @@ public class TimeScheduleTimetableFragment extends android.support.v4.app.Fragme
 
         FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setVisibility(View.GONE);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("Time schedule");
+
 
         /*
         //SE SI VUOLE MOSTRARE IL TABLAYOUT
@@ -294,41 +278,9 @@ public class TimeScheduleTimetableFragment extends android.support.v4.app.Fragme
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-
-        android.support.v7.widget.Toolbar toolbar =(android.support.v7.widget.Toolbar) getActivity().findViewById(R.id.toolbar);
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-
-        //Ripristina gli scrollFlags originali
-        params.setScrollFlags(scrollFlags);
-
-        FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
-        fab.setVisibility(View.VISIBLE);
-
-
-        /*
-
-        //SE SI VUOLE MOSTRARE IL TABLAYOUT
-
-        TabLayout tabLayout = (TabLayout) getActivity().findViewById(R.id.tabs);
-        tabLayout.setVisibility(View.GONE);
-
-
-        // SE SI VUOLE MODIFICARE IL app:layout_behavior del FrameLayout
-
-        if(behavior == null)
-            return;
-
-        FrameLayout layout =(FrameLayout) getActivity().findViewById(R.id.dashboard_content);
-        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) layout.getLayoutParams();
-
-        params.setBehavior(behavior);
-
-        layout.setLayoutParams(params);
-
-        behavior = null;
-        */
+    public void onResume() {
+        super.onResume();
+        myOnAttach(getActivity());
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.RectF;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -21,12 +23,21 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import com.alamkanak.weekview.*;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+import com.alamkanak.weekview.DateTimeInterpreter;
+import com.alamkanak.weekview.WeekView;
+import com.alamkanak.weekview.WeekViewEvent;
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.Parse;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseObject;
+import com.parse.ParsePush;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.PushService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,7 +48,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 
+import it.polito.mobilecourseproject.poliapp.MainActivity;
 import it.polito.mobilecourseproject.poliapp.R;
 
 import static android.graphics.Color.parseColor;
@@ -56,6 +69,7 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
     List<WeekViewEvent> eventsToShow = null;
     Map<String,Integer> mappingColor;
     View fragmentView=null;
+    WeekViewEvent eventToDelete=null;
 
     public MyScheduleFragment() {
         // Required empty public constructor
@@ -73,31 +87,6 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
                              Bundle savedInstanceState) {
         fragmentView = inflater.inflate(R.layout.fragment_my_schedule, container, false);
 
-        /*ParsePush push = new ParsePush();
-        push.setChannel("Event");
-        push.setMessage("Ciao sono in my schedule");
-        push.sendInBackground();*/
-
-        // Android SDK
-        /*ParseCloud.callFunctionInBackground("hello", new HashMap<String, Object>(), new FunctionCallback<String>() {
-            @Override
-            public void done(String result, ParseException e) {
-                if (e == null) {
-                    Toast.makeText(getActivity(),result, Toast.LENGTH_SHORT).show();
-                }
-            }
-        });*/
-
-        /*ParseObject gameScore = new ParseObject("Event");
-        gameScore.put("data", "12/2/2");
-        gameScore.put("professore", "Malnati");
-        gameScore.put("materia", "MAD");
-        gameScore.put("aula","54");
-        gameScore.put("oreMinuti", "12:30");
-        gameScore.put("durata", "2");
-        gameScore.put("Colour", "#");
-        gameScore.saveInBackground();*/
-
 
         final FloatingActionButton fab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
         fab.setVisibility(View.VISIBLE);
@@ -109,9 +98,14 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
                     timeScheduleFragment = new TimeScheduleFragment();
 
                 if (!timeScheduleFragment.isVisible()) {
+
+                    //TODO: RICONTROLLARE
                     FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
                     fragmentTransaction.replace(R.id.frame,timeScheduleFragment,"TIMESCHEDULE_FRAGMENT");
                     fragmentTransaction.commit();
+
+                    ((MainActivity)getActivity()).navigationView.getMenu().getItem(3).setChecked(true);
+
                 }
                 fab.setVisibility(View.GONE);
             }
@@ -131,16 +125,47 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
         return fragmentView;
     }
 
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+        boolean result = menu.findItem(R.id.action_week_view).isChecked();
+        int numberOfDays = mWeekView.getNumberOfVisibleDays();
+        if(result == true && numberOfDays!=7){
+            mWeekViewType= TYPE_DAY_VIEW;
+            setWeekView();
+        }
+        return ;
+    }
+
+    public void setWeekView(){
+        if (mWeekViewType != TYPE_WEEK_VIEW) {
+            mWeekViewType = TYPE_WEEK_VIEW;
+            mWeekView.setNumberOfVisibleDays(7);
+
+            mWeekView.setColumnGap((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
+            mWeekView.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+            mWeekView.setEventTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 10, getResources().getDisplayMetrics()));
+        }
+    }
+
     private void getEventsParse(){
+        List<String> listLecture= new ArrayList<>();
         sharedPreference = PreferenceManager.getDefaultSharedPreferences(getActivity());
         SharedPreferences.Editor editor = sharedPreference.edit();
 
         String serialized = sharedPreference.getString("lectureList", null);
-        List<String> listLecture = Arrays.asList(TextUtils.split(serialized, ","));
+        if(serialized !=null) {
+            listLecture = Arrays.asList(TextUtils.split(serialized, ","));
+        }
         List<ParseQuery<ParseObject>> queries = new ArrayList<ParseQuery<ParseObject>>();
         for(String materia : listLecture){
             ParseQuery<ParseObject> queryEvent = ParseQuery.getQuery("Event");
-            queryEvent.whereEqualTo("materia", materia);
+            String[] tokens = materia.split("-");
+            String nomeMateria = tokens[0];
+            String nomeProf = tokens[1];
+
+            queryEvent.whereEqualTo("materia", nomeMateria);
+            queryEvent.whereEqualTo("professore", nomeProf);
             queries.add(queryEvent);
         }
         if(queries.size()>0){
@@ -175,7 +200,7 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
                         startTime.set(Calendar.MINUTE, minuti);
 
                         endTime = (Calendar) startTime.clone();
-                        endTime.add(Calendar.HOUR_OF_DAY, durata);
+                        endTime.add(Calendar.MINUTE, durata*90);
 
                         newEvent = new WeekViewEvent(obj.getObjectId(),obj.getString("materia"),obj.getString("aula"), obj.getString("professore"), startTime, endTime,obj.getString("flagConsulting"));
                         newEvent.setColor(parseColor(obj.getString("Colour")));
@@ -193,6 +218,7 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
             //Toast.makeText(getActivity(), "Non ci sono eventi", Toast.LENGTH_SHORT).show();
             //mWeekView.notifyDatasetChanged();
             Intent i = new Intent(getActivity(), NoEvent.class);
+            i.putExtra("longPress","no");
             startActivity(i);
         }
     }
@@ -209,19 +235,6 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
                 currentMonthList.add(we);
             }
         }
-
-        /*if(eventsToShow.size()==0){
-            Intent i = new Intent(getActivity(), NoEvent.class);
-            startActivity(i);
-        }*/
-
-         /*if(eventsToShow.size()==0){
-            mWeekView.setVisibility(View.GONE);
-            noEventLinear.setVisibility(View.VISIBLE);
-        }else{
-            mWeekView.setVisibility(View.VISIBLE);
-            noEventLinear.setVisibility(View.GONE);
-        }*/
 
         return currentMonthList;
     }
@@ -248,8 +261,14 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
         String serialized = sharedPreference.getString("lectureList", null);
         List<String> listLecture =  new LinkedList<String>(Arrays.asList(TextUtils.split(serialized, ",")));
 
-        if(listLecture.indexOf(event.getMateria())>=0) {
-            listLecture.remove(event.getMateria());
+        if(listLecture.indexOf(event.getMateria()+"-"+event.getProfessore())>=0) {
+
+            Intent i = new Intent(getActivity(), NoEvent.class);
+            i.putExtra("longPress","yes");
+            startActivityForResult(i, 1);
+            eventToDelete = event;
+
+            /*listLecture.remove(event.getMateria());
             editor.remove("lectureList");
             editor.putString("lectureList", TextUtils.join(",", listLecture));
             editor.commit();
@@ -260,12 +279,56 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
                 }
             }
             eventsToShow.removeAll(temp);
+            mWeekView.notifyDatasetChanged();*/
+        }
+
+        /*if(eventsToShow.size()==0){
+            Intent i = new Intent(getActivity(), NoEvent.class);
+            i.putExtra("longPress","no");
+            startActivity(i);
+        }*/
+    }
+
+    public void deleteLecture(){
+        sharedPreference = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = sharedPreference.edit();
+
+        String serialized = sharedPreference.getString("lectureList", null);
+        List<String> listLecture =  new LinkedList<String>(Arrays.asList(TextUtils.split(serialized, ",")));
+
+        if(listLecture.indexOf(eventToDelete.getMateria()+"-"+eventToDelete.getProfessore())>=0) {
+
+            listLecture.remove(eventToDelete.getMateria()+"-"+eventToDelete.getProfessore());
+            editor.remove("lectureList");
+            editor.putString("lectureList", TextUtils.join(",", listLecture));
+            editor.commit();
+            List<WeekViewEvent> temp= new LinkedList<>();
+            for(WeekViewEvent e : eventsToShow){
+                if(e.getMateria().equals(eventToDelete.getMateria()) && e.getProfessore().equals(eventToDelete.getProfessore())){
+                    temp.add(e);
+                }
+            }
+            eventsToShow.removeAll(temp);
             mWeekView.notifyDatasetChanged();
         }
 
         if(eventsToShow.size()==0){
             Intent i = new Intent(getActivity(), NoEvent.class);
+            i.putExtra("longPress","no");
             startActivity(i);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == 1) {
+            if(resultCode == Activity.RESULT_OK){
+                deleteLecture();
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                //Write your code if there's no result
+            }
         }
     }
 
@@ -346,30 +409,6 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
     }
 
     /*
-* onAttach(Context) is not called on pre API 23 versions of Android and onAttach(Activity) is deprecated
-* Use myOnAttach instead
-*/
-    @TargetApi(23)
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        myOnAttach(context);
-    }
-
-    /*
-     * Deprecated on API 23
-     * Use myOnAttach instead
-     */
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            myOnAttach(activity);
-        }
-    }
-
-    /*
      * Called when the fragment attaches to the context
      */
     protected void myOnAttach(Context context) {
@@ -379,20 +418,14 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
         params.setScrollFlags(0);
         FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
         fab.setVisibility(View.VISIBLE);
+
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle("My timetable");
+
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-
-        android.support.v7.widget.Toolbar toolbar =(android.support.v7.widget.Toolbar) getActivity().findViewById(R.id.toolbar);
-        AppBarLayout.LayoutParams params = (AppBarLayout.LayoutParams) toolbar.getLayoutParams();
-
-        //Ripristina gli scrollFlags originali
-        params.setScrollFlags(scrollFlags);
-
-        FloatingActionButton fab =(FloatingActionButton) getActivity().findViewById(R.id.fab);
-        fab.setVisibility(View.GONE);
+    public void onResume() {
+        super.onResume();
+        myOnAttach(getActivity());
     }
-
 }

@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private String currentFragment;
     private User thisUser;
-    private NavigationView navigationView;
+    public NavigationView navigationView;
 
     private String alert=null;
 
