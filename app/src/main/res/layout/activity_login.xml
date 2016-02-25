@@ -33,8 +33,8 @@ android:background="@color/myPrimaryColor"
         android:layout_centerHorizontal="true">
 
         <ImageView
-            android:layout_width="110dp"
-            android:layout_height="110dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_marginTop="@dimen/margin_medium_large"
             android:background="@android:color/transparent"
             android:src="@mipmap/ic_launcher" />
