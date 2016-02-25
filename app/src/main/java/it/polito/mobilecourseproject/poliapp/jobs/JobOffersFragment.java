@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
@@ -51,6 +52,7 @@ import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.TimeManager;
 import it.polito.mobilecourseproject.poliapp.model.JobOffer;
+import it.polito.mobilecourseproject.poliapp.model.Notice;
 import it.polito.mobilecourseproject.poliapp.model.User;
 import it.polito.mobilecourseproject.poliapp.noticeboard.AddNoticeActivity;
 import it.polito.mobilecourseproject.poliapp.noticeboard.CategoriesAdapter;
@@ -130,6 +132,9 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
                                 }
                             });
                         }
+
+                        searchView.setIconified(true);
+                        hideSoftKeyboard();
                         search();
                     }
                 });
@@ -143,6 +148,13 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
         return fragmentView;
     }
 
+
+    public void hideSoftKeyboard() {
+        if( getActivity().getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager)  getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow( getActivity().getCurrentFocus().getWindowToken(), 0);
+        }
+    }
     /*
      * Called when the fragment attaches to the context
      */
@@ -203,17 +215,30 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
         myOnAttach(getActivity());
 
     }
-
+   SearchView searchView;
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.add_chat_menu, menu);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setQueryHint("Search");
+        // Catch event on [x] button inside search view
+        int searchCloseButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
+        ImageView closeButton = (ImageView) this.searchView.findViewById(searchCloseButtonId);
+        // Set on click listener
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search();
+                searchView.setIconified(true);
+                hideSoftKeyboard();
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchedText) {
 
+                hideSoftKeyboard();
                 String[] stringWords=searchedText.split(" ");
                 final List<String> words=new ArrayList<String>();
                 for(String s : stringWords){
@@ -245,9 +270,15 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
                                     break;
                                 }}
                             }
-                            getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.VISIBLE);
-                            getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
-                            getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                            if(filteredObjects.size()==0){
+                                getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                            }else{
+                                getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.VISIBLE);
+                                getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                            }
                             jobOffersAdapter.setJobOffers(filteredObjects);
                             jobOffersAdapter.notifyDataSetChanged();
                             swypeRefreshLayout.setRefreshing(false);
@@ -340,6 +371,60 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
             }
         });
     }
+
+    @Override
+    public void  onResume(){
+        super.onResume();
+        searchInOnResume(true);
+    }
+
+
+
+    public void searchInOnResume(final boolean syncFromRemote){
+        ParseQuery<JobOffer> query = ParseQuery.getQuery("JobOffer");
+        query.fromLocalDatastore();
+        query.orderByDescending("createdAt");
+        query.setLimit(1000);
+        query.findInBackground(new FindCallback<JobOffer>() {
+            @Override
+            public void done(List<JobOffer> objects, ParseException e) {
+
+                if (objects != null) {
+                    jobOffersAdapter.setJobOffers(objects);
+                    jobOffersAdapter.notifyDataSetChanged();
+                    swypeRefreshLayout.setRefreshing(false);
+                    getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.VISIBLE);
+                    getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                }
+
+                if (syncFromRemote == false) return;
+
+
+                ParseQuery<JobOffer> query = ParseQuery.getQuery("JobOffer");
+                query.setLimit(1000);
+                query.orderByDescending("updatedAt");
+                query.whereGreaterThan("updatedAt", new Date(PreferenceManager.getDefaultSharedPreferences(getActivity()).getLong("JobOffer_timestamp", 0)));
+                query.findInBackground(new FindCallback<JobOffer>() {
+                    @Override
+                    public void done(final List<JobOffer> objects, ParseException e) {
+                        if (objects != null && objects.size() != 0) {
+                            ParseObject.pinAllInBackground(objects, new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putLong("JobOffer_timestamp", objects.get(0).getUpdatedAt().getTime()).commit();
+                                    searchInOnResume(false);
+                                }
+                            });
+                        }
+                    }
+                });
+
+
+            }
+        });
+    }
+
 
 
     public class JobOffersAdapter extends RecyclerView.Adapter<JobOffersAdapter.ViewHolder> {

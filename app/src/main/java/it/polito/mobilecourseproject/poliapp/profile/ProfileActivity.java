@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -117,6 +119,13 @@ public class ProfileActivity extends AppCompatActivity
         } else {
             try {
                 user = AccountManager.getCurrentUser();
+
+                //nascondo send message se sono nel mio profile
+                FloatingActionButton fab=(FloatingActionButton)findViewById(R.id.sendMessageFab);
+                CoordinatorLayout.LayoutParams p = (CoordinatorLayout.LayoutParams) fab.getLayoutParams();
+                    p.setAnchorId(View.NO_ID);
+                    fab.setLayoutParams(p);
+                    fab.setVisibility(View.GONE);
 
                 findViewById(R.id.professionalHeadline).setOnClickListener(new View.OnClickListener() {
                     @Override

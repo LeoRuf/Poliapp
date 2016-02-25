@@ -30,6 +30,8 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -59,6 +61,7 @@ import it.polito.mobilecourseproject.poliapp.model.Chat;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
 import it.polito.mobilecourseproject.poliapp.model.User;
 import it.polito.mobilecourseproject.poliapp.model.UserInfo;
+import it.polito.mobilecourseproject.poliapp.profile.ProfileActivity;
 import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.GOTOConstants;
 import it.polito.mobilecourseproject.poliapp.utils.imagezoomcrop.ImageCropActivity;
 
@@ -124,6 +127,8 @@ public class NoticeDetailActivity extends AppCompatActivity {
                         //TODO: Gestire meglio cosa succede mentre carica
 
                         notice = (Notice)noticeRetrieved;
+
+
 
                         ((TextView)findViewById(R.id.title)).setText(notice.getTitle());
 
@@ -215,9 +220,24 @@ public class NoticeDetailActivity extends AppCompatActivity {
 
                         }
 
+                            //TODO: qui vai all'utente se clicchi sul nome
+                            findViewById(R.id.goToUser).setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if(notice.getPublisher().getUsername().equals(thisUser.getUsername())) {
+                                        Intent i = new Intent(NoticeDetailActivity.this, ProfileActivity.class);
+                                        startActivity(i);
+                                    } else {
+                                        Intent i = new Intent(NoticeDetailActivity.this, ProfileActivity.class);
+                                        i.putExtra("userId", notice.getPublisher().getObjectId());
+                                        startActivity(i);
+                                    }
+                                }
+                            });
 
 
-                        //TODO: Loading immagini
+
+
                     }
                 }
             });

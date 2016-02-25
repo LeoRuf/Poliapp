@@ -13,6 +13,10 @@ import java.util.List;
 @ParseClassName("JobOffer")
 public class JobOffer extends ParseObject {
 
+
+
+
+
     public String getTitle() {
         return getString("title");
     }
@@ -20,6 +24,7 @@ public class JobOffer extends ParseObject {
     public void setTitle(String value) {
         put("title", value);
     }
+
 
     public String getDescription() {
         return getString("description");

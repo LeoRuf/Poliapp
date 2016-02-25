@@ -25,6 +25,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.dd.processbutton.iml.ActionProcessButton;
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -46,6 +48,7 @@ import it.polito.mobilecourseproject.poliapp.GridViewAdapter;
 import it.polito.mobilecourseproject.poliapp.ImageDetailActivity;
 import it.polito.mobilecourseproject.poliapp.ImageItem;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
+import it.polito.mobilecourseproject.poliapp.messages.AddChatActivity;
 import it.polito.mobilecourseproject.poliapp.model.Notice;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.model.User;
@@ -153,17 +156,17 @@ public class AddNoticeActivity extends AppCompatActivity implements SearchView.O
                 dialog.setCanceledOnTouchOutside(true);
                 dialog.setTitle("Choose a category");
                 dialog.setCancelable(true);
-                SearchView searchView= (SearchView)dialog.findViewById(R.id.searchView);
+                SearchView searchView = (SearchView) dialog.findViewById(R.id.searchView);
                 searchView.setOnQueryTextListener(AddNoticeActivity.this);
 
-                RecyclerView recyclerView = (RecyclerView)dialog.findViewById(R.id.recyclerView);
+                RecyclerView recyclerView = (RecyclerView) dialog.findViewById(R.id.recyclerView);
                 RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(AddNoticeActivity.this);
                 recyclerView.setLayoutManager(layoutManager);
 
                 recyclerView.setAdapter(new CategoriesAdapter(categoriesToBeSelected, true, getApplicationContext()));
 
-                Button okButton = (Button)dialog.findViewById(R.id.ok_button);
-                Button cancelButton = (Button)dialog.findViewById(R.id.cancel_button);
+                Button okButton = (Button) dialog.findViewById(R.id.ok_button);
+                Button cancelButton = (Button) dialog.findViewById(R.id.cancel_button);
 
                 okButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -171,11 +174,11 @@ public class AddNoticeActivity extends AppCompatActivity implements SearchView.O
                         categoriesSelected.clear();
                         categoriesSelected.addAll(categoriesToBeSelected);
 
-                        if(!categoriesSelected.isEmpty()) {
+                        if (!categoriesSelected.isEmpty()) {
                             categoryTextView.setText(categoriesSelected.get(0));
                             categoryTextView.setTextColor(getResources().getColor(R.color.myTextPrimaryColor));
-                            ((ImageView)findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(categoriesSelected.get(0)));
-                            ((ImageView)findViewById(R.id.category_icon)).setAlpha((float) 1);
+                            ((ImageView) findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(categoriesSelected.get(0)));
+                            ((ImageView) findViewById(R.id.category_icon)).setAlpha((float) 1);
                         }
                         dialog.dismiss();
                     }
@@ -260,6 +263,43 @@ public class AddNoticeActivity extends AppCompatActivity implements SearchView.O
             }
         });
 
+
+
+
+        //QUI MI OCCUPO DEL TASTO CANCELLA
+        if(editMode){
+        findViewById(R.id.delete_notice).setVisibility(View.VISIBLE);
+        findViewById(R.id.delete_notice).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final MaterialDialog dialog = new MaterialDialog.Builder(AddNoticeActivity.this)
+                        .title("Delete notice")
+                        .content("Delete this notice?")
+                        .positiveText("DELETE")
+                        .negativeText("CANCEL")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(MaterialDialog dialog, DialogAction which) {
+                                notice.setDeleted();
+                                notice.saveInBackground();
+                                notice.pinInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        AddNoticeActivity.this.onBackPressed();
+                                    }
+                                });
+                            }
+                        })
+                        .onNegative(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(MaterialDialog dialog, DialogAction which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
+            }
+        });}
+
     }
 
     public void addNotice(View v) {
@@ -320,6 +360,7 @@ public class AddNoticeActivity extends AppCompatActivity implements SearchView.O
                                 }).show();
                             } else {
                                 Snackbar.make(findViewById(R.id.drawer_layout), "Done :)", Snackbar.LENGTH_LONG).show();
+                                AddNoticeActivity.this.onBackPressed();
                             }
                         }
                     });

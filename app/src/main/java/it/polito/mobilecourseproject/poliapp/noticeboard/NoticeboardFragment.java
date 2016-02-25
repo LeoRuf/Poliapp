@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -130,6 +131,8 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
                                 }
                             });
                         }
+                        searchView.setIconified(true);
+                        hideSoftKeyboard();
                         search();
 
                     }
@@ -141,6 +144,12 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
         swypeRefreshLayout.setColorSchemeColors(R.color.myAccentColor);
 
         return fragmentView;
+    }
+    public void hideSoftKeyboard() {
+        if( getActivity().getCurrentFocus()!=null) {
+            InputMethodManager inputMethodManager = (InputMethodManager)  getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow( getActivity().getCurrentFocus().getWindowToken(), 0);
+        }
     }
 
 
@@ -161,6 +170,8 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+       searchInOnResume(true);
 
     }
 
@@ -216,16 +227,30 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+    SearchView searchView;
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.noticeboard_menu, menu);
 
-        SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
+         searchView = (SearchView) menu.findItem(R.id.search).getActionView();
         searchView.setQueryHint("Search");
+        // Catch event on [x] button inside search view
+        int searchCloseButtonId = searchView.getContext().getResources().getIdentifier("android:id/search_close_btn", null, null);
+        ImageView closeButton = (ImageView) this.searchView.findViewById(searchCloseButtonId);
+        // Set on click listener
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                search();
+                searchView.setIconified(true);
+                hideSoftKeyboard();
+            }
+        });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String searchedText) {
 
+                hideSoftKeyboard();
                 String[] stringWords = searchedText.split(" ");
                 final List<String> words = new ArrayList<String>();
                 for (String s : stringWords) {
@@ -258,9 +283,16 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
                                     }
                                 }
                             }
-                            getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.VISIBLE);
-                            getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
-                            getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                            if(filteredObjects.size()==0){
+                                getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.empty_view).setVisibility(View.VISIBLE);
+                            }else{
+                                getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.VISIBLE);
+                                getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                                getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                            }
+
                             noticesAdapter.setNotices(filteredObjects);
                             noticesAdapter.notifyDataSetChanged();
                             swypeRefreshLayout.setRefreshing(false);
@@ -417,6 +449,56 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
 
 
 
+
+
+
+    public void searchInOnResume(final boolean syncFromRemote){
+        ParseQuery<Notice> query = ParseQuery.getQuery("Notice");
+        query.fromLocalDatastore();
+        query.orderByDescending("createdAt");
+        query.setLimit(1000);
+        query.findInBackground(new FindCallback<Notice>() {
+            @Override
+            public void done(List<Notice> objects, ParseException e) {
+
+                if (objects != null) {
+                    noticesAdapter.setNotices(objects);
+                    noticesAdapter.notifyDataSetChanged();
+                    swypeRefreshLayout.setRefreshing(false);
+                    getActivity().findViewById(R.id.itemsRecyclerView).setVisibility(View.VISIBLE);
+                    getActivity().findViewById(R.id.loading).setVisibility(View.GONE);
+                    getActivity().findViewById(R.id.empty_view).setVisibility(View.GONE);
+                }
+
+                if (syncFromRemote == false) return;
+
+
+                ParseQuery<Notice> query = ParseQuery.getQuery("Notice");
+                query.setLimit(1000);
+                query.orderByDescending("updatedAt");
+                query.whereGreaterThan("updatedAt", new Date(PreferenceManager.getDefaultSharedPreferences(getActivity()).getLong("Noticeboard_timestamp", 0)));
+                query.findInBackground(new FindCallback<Notice>() {
+                    @Override
+                    public void done(final List<Notice> objects, ParseException e) {
+                        if (objects != null && objects.size() != 0) {
+                            ParseObject.pinAllInBackground(objects, new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    PreferenceManager.getDefaultSharedPreferences(getActivity()).edit().putLong("Noticeboard_timestamp", objects.get(0).getUpdatedAt().getTime()).commit();
+                                    searchInOnResume(false);
+                                }
+                            });
+                        }
+                    }
+                });
+
+
+            }
+        });
+    }
+
+
+
     public class NoticesAdapter extends RecyclerView.Adapter<NoticesAdapter.ViewHolder> {
         private List<Notice> notices;
 
@@ -462,7 +544,10 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
 
 
 
-            if(categoriesFiltered.size()!=0 && !categoriesFiltered.contains(notice.getCategory())){
+            if(categoriesFiltered.size()!=0 && !categoriesFiltered.contains(notice.getCategory())) {
+                holder.linearLayout.findViewById(R.id.card_view).setVisibility(View.GONE);
+                return;
+            }else if(notice.isDeleted()){
                 holder.linearLayout.findViewById(R.id.card_view).setVisibility(View.GONE);
                 return;
             }else{
@@ -472,7 +557,8 @@ public class NoticeboardFragment extends android.support.v4.app.Fragment   {
 
 
             ((TextView)holder.linearLayout.findViewById(R.id.title)).setText(notice.getTitle());
-            ((TextView)holder.linearLayout.findViewById(R.id.description)).setText(notice.getDescription());
+            //((TextView)holder.linearLayout.findViewById(R.id.description)).setText(notice.getDescription());
+            ((TextView)holder.linearLayout.findViewById(R.id.description)).setText(MyUtils.ellipsize(notice.getDescription(), 150));
             ((TextView)holder.linearLayout.findViewById(R.id.time_text)).setText(TimeManager.getFormattedTimestamp(notice.getCreatedAt(), "Published"));
             ((ImageView)holder.linearLayout.findViewById(R.id.category_icon)).setImageResource(MyUtils.getIconForCategory(notice.getCategory()));
 

@@ -187,9 +187,10 @@ public class SearchStudentFragment extends android.support.v4.app.Fragment   {
         getActivity().findViewById(R.id.searchButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                hideSoftKeyboard();
                 String text = skillsEdit.getText().toString().trim();
                 ArrayList<String> words = getWordsFromText(text);
+
+                hideSoftKeyboard();
 
 
                 getActivity().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);

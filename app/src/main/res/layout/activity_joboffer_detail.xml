@@ -494,7 +494,7 @@ CSS is a true end-to-end organization supporting all business customers; from En
 		android:layout_height="wrap_content"
 		android:layout_marginRight="32dp"
 		android:elevation="8dp"
-		android:src="@drawable/ic_discuss"
+		android:src="@drawable/mail"
 		app:layout_anchor="@id/flexible.example.cardview"
 		app:layout_anchorGravity="right|end"
         android:onClick="sendEmail"

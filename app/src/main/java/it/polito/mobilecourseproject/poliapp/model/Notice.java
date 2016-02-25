@@ -18,7 +18,13 @@ import it.polito.mobilecourseproject.poliapp.model.User;
 public class Notice extends ParseObject {
 
 
+    public boolean isDeleted() {
+        return getBoolean("del");
+    }
 
+    public void setDeleted() {
+        put("del", true);
+    }
 
 
 

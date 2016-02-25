@@ -45,6 +45,7 @@ import it.polito.mobilecourseproject.poliapp.model.Chat;
 import it.polito.mobilecourseproject.poliapp.model.Message;
 import it.polito.mobilecourseproject.poliapp.model.User;
 import it.polito.mobilecourseproject.poliapp.model.UserInfo;
+import it.polito.mobilecourseproject.poliapp.profile.ProfileActivity;
 
 
 public class MessagesFragment extends android.support.v4.app.Fragment   {
@@ -498,6 +499,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
                 ((TextView)holder.linearLayout.findViewById(R.id.previeW)).setTypeface(null, Typeface.NORMAL);
             }
 
+            ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setOnClickListener(null);
 
             if(chat.isGroup()){
                 ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.person);
@@ -518,6 +520,16 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
                     ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setImageResource(R.drawable.default_avatar);
                 }
 
+                final User finalUser=user;
+                ((CircleImageView) holder.linearLayout.findViewById(R.id.imgAvatar)).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(getActivity(), ProfileActivity.class);
+
+                        i.putExtra("userId", finalUser.getObjectId());
+                        startActivity(i);
+                    }
+                });
 
 
             }
@@ -547,7 +559,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
                             chats.remove(position);
                             notifyDataSetChanged();
                             dialog.dismiss();
-                            Snackbar.make(getActivity().findViewById(R.id.drawer_layout), "Chat archived", Snackbar.LENGTH_LONG)
+                            Snackbar.make(getActivity().findViewById(R.id.main_content), "Chat archived", Snackbar.LENGTH_LONG)
                                     .setAction("Cancel", new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
