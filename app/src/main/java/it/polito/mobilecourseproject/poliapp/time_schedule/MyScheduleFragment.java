@@ -174,6 +174,10 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
             mainQuery.findInBackground(new FindCallback<ParseObject>() {
                 @Override
                 public void done(List<ParseObject> objects, ParseException e) {
+                    if(objects==null)return;
+
+
+
                     for(ParseObject obj : objects){
                         WeekViewEvent newEvent;
                         Calendar startTime;
