@@ -386,7 +386,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
     public void editTitle(){
         new MaterialDialog.Builder(this)
                 .title("Edit job title")
-                .inputRangeRes(1, 35, R.color.md_material_blue_800)
+                .inputRange(1, 35)
                 .input(null, jobOffer.getTitle(), new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
@@ -730,7 +730,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
     public void editPlaceOfWork(){
         new MaterialDialog.Builder(this)
                 .title("Edit place of work")
-                .inputRangeRes(1, 35, R.color.md_material_blue_800)
+                .inputRange(1, 35)
                 .input(null, jobOffer.getLocation(), new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
@@ -765,7 +765,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
     public void editEmploymentType(){
         new MaterialDialog.Builder(this)
                 .title("Edit employment type")
-                .inputRangeRes(1, 35, R.color.md_material_blue_800)
+                .inputRange(1, 35)
                 .input(null, jobOffer.getEmploymentType(), new MaterialDialog.InputCallback() {
                     @Override
                     public void onInput(MaterialDialog dialog, CharSequence input) {
