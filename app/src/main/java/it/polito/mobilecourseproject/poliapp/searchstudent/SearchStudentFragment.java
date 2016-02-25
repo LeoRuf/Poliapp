@@ -13,10 +13,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -183,6 +185,8 @@ public class SearchStudentFragment extends android.support.v4.app.Fragment   {
 
 
         final AppCompatEditText skillsEdit=(AppCompatEditText)getActivity().findViewById(R.id.skills);
+        skillsEdit.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
 
         getActivity().findViewById(R.id.searchButton).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -217,6 +221,24 @@ public class SearchStudentFragment extends android.support.v4.app.Fragment   {
 
             }
         });
+
+        skillsEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    getActivity().findViewById(R.id.searchButton).performClick();
+                    handled=true;
+                }
+
+                return handled;
+            }
+        });
+
+
+
+
+
     }
 
     public void sortUsers(){

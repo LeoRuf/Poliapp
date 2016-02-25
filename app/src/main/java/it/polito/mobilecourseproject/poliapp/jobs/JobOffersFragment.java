@@ -29,6 +29,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -435,9 +436,9 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
         // you provide access to all the views for a data item in a view holder
         public class ViewHolder extends RecyclerView.ViewHolder {
             // each data item is just a string in this case
-            public CardView cardView;
+            public LinearLayout cardView;
 
-            public ViewHolder(CardView v) {
+            public ViewHolder(LinearLayout v) {
                 super(v);
                 cardView = v;
             }
@@ -457,8 +458,7 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
         public JobOffersAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
                                                        int viewType) {
             // create a new view
-            CardView v = (CardView)LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.joboffer_item, parent, false);
+            LinearLayout v = (LinearLayout)LayoutInflater.from(parent.getContext()).inflate(R.layout.joboffer_item, parent, false);
 
             ViewHolder vh = new ViewHolder(v);
             return vh;
@@ -471,6 +471,18 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
             // - replace the contents of the view with that element
 
             final JobOffer jobOffer = jobOffers.get(position);
+
+
+            holder.cardView.findViewById(R.id.card_view).setVisibility(View.VISIBLE);
+            if(currentUser.isCompany()){
+                if(!jobOffer.getPublisher().getObjectId().equals(currentUser.getObjectId())){
+                    holder.cardView.findViewById(R.id.card_view).setVisibility(View.GONE);
+                    return;
+                }
+            }
+
+
+
             ((TextView)holder.cardView.findViewById(R.id.title)).setText(jobOffer.getTitle());
             ((TextView)holder.cardView.findViewById(R.id.location)).setText(jobOffer.getLocation());
 
@@ -478,6 +490,9 @@ public class JobOffersFragment extends android.support.v4.app.Fragment {
             ((TextView)holder.cardView.findViewById(R.id.time_text)).setText(TimeManager.getFormattedTimestamp(jobOffer.getCreatedAt(), "Published"));
 
             ((TextView) holder.cardView.findViewById(R.id.company)).setText(jobOffer.getCompany());
+
+
+
 
 
             User company=jobOffer.getPublisher();

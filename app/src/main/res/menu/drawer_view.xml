@@ -44,7 +44,7 @@
             android:title="Find a room" />
         <item
             android:id="@+id/nav_joboffers"
-            android:icon="@drawable/ic_action_trending_up"
+            android:icon="@drawable/job_offer"
             android:title="Job offers" />
     </group>
     <group android:checkableBehavior="single"

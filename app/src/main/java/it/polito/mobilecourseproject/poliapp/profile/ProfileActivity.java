@@ -97,6 +97,8 @@ public class ProfileActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        setContentView(R.layout.activity_profile);
         user = new User(); //SENNO' NON COMPILA XD
 
         imageView = (CircleImageView) findViewById(R.id.profile_image);

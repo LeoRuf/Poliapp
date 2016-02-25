@@ -35,9 +35,10 @@
 				android:scaleType="centerCrop"
 				/>
             <ImageView
+				android:id="@+id/imageLogoComp"
                 android:layout_width="wrap_content"
                 android:layout_height="110dp"
-                android:src="@drawable/ms_logo"
+                android:src="@drawable/default_company_logo"
                 android:layout_gravity="center"
                 android:alpha="0.75"
                 android:adjustViewBounds="true"

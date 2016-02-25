@@ -1,5 +1,6 @@
 package it.polito.mobilecourseproject.poliapp.jobs;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -34,6 +36,7 @@ import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.AsyncTaskWithoutProgressBar;
 import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.ExternalIntents;
+import it.polito.mobilecourseproject.poliapp.PoliApp;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.model.JobOffer;
 import it.polito.mobilecourseproject.poliapp.model.User;
@@ -86,6 +89,22 @@ public class JobOfferDetailActivity extends AppCompatActivity
             jobOffer.setCompany(currentUser.getCompanyName());
         }
 
+
+        if(addMode){
+            ((TextView)findViewById(R.id.website)).setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            ((TextView)findViewById(R.id.website)).setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            PoliApp.getModel().getBitmapByUser(this, currentUser, new User.OnGetPhoto() {
+                @Override
+                public void onGetPhoto(Bitmap b) {
+                    if (b == null) return;
+                    ((ImageView) findViewById(R.id.imageLogoComp)).setImageBitmap(b);
+
+                }
+            });
+
+        }
+
+
         if(!addMode){
             ParseQuery.getQuery("JobOffer").fromLocalDatastore().getInBackground(getIntent().getStringExtra("jobOfferId"), new GetCallback<ParseObject>() {
                 public void done(ParseObject jobOfferRetrieved, ParseException e) {
@@ -93,7 +112,18 @@ public class JobOfferDetailActivity extends AppCompatActivity
 
                         //TODO: Gestire meglio cosa succede mentre carica
 
+
                         jobOffer = (JobOffer)jobOfferRetrieved;
+
+
+                        PoliApp.getModel().getBitmapByUser(JobOfferDetailActivity.this, jobOffer.getPublisher(), new User.OnGetPhoto() {
+                            @Override
+                            public void onGetPhoto(Bitmap b) {
+                                if (b == null) return;
+                                ((ImageView) findViewById(R.id.imageLogoComp)).setImageBitmap(b);
+
+                            }
+                        });
 
                         ((TextView)findViewById(R.id.title)).setText(jobOffer.getTitle());
                         ((TextView)findViewById(R.id.placeOfWork)).setText(jobOffer.getLocation());
@@ -106,8 +136,25 @@ public class JobOfferDetailActivity extends AppCompatActivity
 
 
 
+                        jobOffer.getPublisher().getPhotoAsync(JobOfferDetailActivity.this, new User.OnGetPhoto() {
+                            @Override
+                            public void onGetPhoto(Bitmap b) {
+                                if(b!=null){
+                                    ((ImageView)findViewById(R.id.imageLogoComp)).setImageBitmap(b);
+                                }
+                            }
+                        });
+
+
                         if (jobOffer.getPublisher().getObjectId().equals(currentUser.getObjectId())) {
                             editMode=true;
+                        }
+
+
+
+                        if(editMode ){
+
+                            ((TextView)findViewById(R.id.website)).setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                         }
 
                         if(jobOffer.getEmailAddress()!=null && !jobOffer.getEmailAddress().trim().isEmpty()) {
@@ -383,8 +430,9 @@ public class JobOfferDetailActivity extends AppCompatActivity
         findViewById(R.id.saveButton).setVisibility(View.VISIBLE);
     }
 
+     MaterialDialog dTitle;
     public void editTitle(){
-        new MaterialDialog.Builder(this)
+        dTitle=new MaterialDialog.Builder(this)
                 .title("Edit job title")
                 .inputRange(1, 35)
                 .input(null, jobOffer.getTitle(), new MaterialDialog.InputCallback() {
@@ -400,7 +448,9 @@ public class JobOfferDetailActivity extends AppCompatActivity
                             Snackbar.make(findViewById(R.id.coordinatorLayout),"Job title cannot be empty", Snackbar.LENGTH_LONG).show();
                         }
 
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+
+
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -410,7 +460,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                 }).onNeutral(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                View view = dTitle.getCurrentFocus();
                 if (view != null) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -419,6 +469,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
         }).show();
     }
 
+   
     public void editResponsibilities(){
 
         String positiveButtonText = "Edit";
@@ -445,7 +496,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                         } else {
                             Snackbar.make(findViewById(R.id.coordinatorLayout),"Responsibilities cannot be empty", Snackbar.LENGTH_LONG).show();
                         }
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -455,13 +506,14 @@ public class JobOfferDetailActivity extends AppCompatActivity
                 }).onNeutral(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
                     }
                 }).build();
+            dTitle=dialog;
 
         final MDButton positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
 
@@ -522,7 +574,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                         } else {
                             Snackbar.make(findViewById(R.id.coordinatorLayout),"Company description cannot be empty", Snackbar.LENGTH_LONG).show();
                         }
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -532,13 +584,14 @@ public class JobOfferDetailActivity extends AppCompatActivity
                 }).onNeutral(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
                     }
                 }).build();
+        dTitle=dialog;
 
         final MDButton positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
 
@@ -599,7 +652,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                         } else {
                             Snackbar.make(findViewById(R.id.coordinatorLayout),"Description cannot be empty", Snackbar.LENGTH_LONG).show();
                         }
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -609,13 +662,14 @@ public class JobOfferDetailActivity extends AppCompatActivity
                 }).onNeutral(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
                     }
                 }).build();
+        dTitle=dialog;
 
         final MDButton positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
 
@@ -676,7 +730,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                         } else {
                             Snackbar.make(findViewById(R.id.coordinatorLayout),"Prerequisites cannot be empty", Snackbar.LENGTH_LONG).show();
                         }
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -686,13 +740,14 @@ public class JobOfferDetailActivity extends AppCompatActivity
                 }).onNeutral(new MaterialDialog.SingleButtonCallback() {
                     @Override
                     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
                     }
                 }).build();
+        dTitle=dialog;
 
         final MDButton positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
 
@@ -728,7 +783,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
     }
 
     public void editPlaceOfWork(){
-        new MaterialDialog.Builder(this)
+        dTitle=new MaterialDialog.Builder(this)
                 .title("Edit place of work")
                 .inputRange(1, 35)
                 .input(null, jobOffer.getLocation(), new MaterialDialog.InputCallback() {
@@ -743,7 +798,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                         } else {
                             Snackbar.make(findViewById(R.id.coordinatorLayout),"Place of work cannot be empty", Snackbar.LENGTH_LONG).show();
                         }
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -753,17 +808,18 @@ public class JobOfferDetailActivity extends AppCompatActivity
                 }).onNeutral(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                View view = dTitle.getCurrentFocus();
                 if (view != null) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                 }
             }
         }).show();
+
     }
 
     public void editEmploymentType(){
-        new MaterialDialog.Builder(this)
+        dTitle=new MaterialDialog.Builder(this)
                 .title("Edit employment type")
                 .inputRange(1, 35)
                 .input(null, jobOffer.getEmploymentType(), new MaterialDialog.InputCallback() {
@@ -778,7 +834,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                         } else {
                             Snackbar.make(findViewById(R.id.coordinatorLayout),"Employment type cannot be empty", Snackbar.LENGTH_LONG).show();
                         }
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -788,7 +844,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                 }).onNeutral(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                View view = dTitle.getCurrentFocus();
                 if (view != null) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -798,7 +854,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
     }
 
     public void editWebsite(){
-        new MaterialDialog.Builder(this)
+       dTitle= new MaterialDialog.Builder(this)
                 .title("Edit website")
                 .input(null, jobOffer.getWebsite(), new MaterialDialog.InputCallback() {
                     @Override
@@ -815,10 +871,10 @@ public class JobOfferDetailActivity extends AppCompatActivity
                         } else {
                             ((TextView) findViewById(R.id.website_empty)).setVisibility(View.VISIBLE);
                             ((TextView) findViewById(R.id.website)).setVisibility(View.GONE);
-                            jobOffer.setWebsite(null);
+                            jobOffer.setWebsite("");
                         }
 
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -828,7 +884,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                 }).onNeutral(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                View view = dTitle.getCurrentFocus();
                 if (view != null) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -838,7 +894,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
     }
 
     public void editEmail(){
-        new MaterialDialog.Builder(this)
+        dTitle=new MaterialDialog.Builder(this)
                 .title("Edit email address")
                 .input(null, jobOffer.getEmailAddress(), new MaterialDialog.InputCallback() {
                     @Override
@@ -853,7 +909,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                             String email = input.toString();
 
                             SpannableStringBuilder stringBuilder = new SpannableStringBuilder(emailLabel + email);
-                            stringBuilder.setSpan(new StyleSpan(Typeface.NORMAL), 0, emailLabel.length()-1,
+                            stringBuilder.setSpan(new StyleSpan(Typeface.NORMAL), 0, emailLabel.length() - 1,
                                     Spannable.SPAN_INCLUSIVE_INCLUSIVE);
                             stringBuilder.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), emailLabel.length(),
                                     emailLabel.length() + email.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -867,8 +923,9 @@ public class JobOfferDetailActivity extends AppCompatActivity
                             ((TextView) findViewById(R.id.emailLabel_empty)).setVisibility(View.VISIBLE);
                             ((TextView) findViewById(R.id.emailLabel)).setVisibility(View.GONE);
                             jobOffer.setEmailAddress("");
+                            jobOffer.setEmailAddress("");
                         }
-                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        View view = dTitle.getCurrentFocus();
                         if (view != null) {
                             InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -878,7 +935,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                 }).onNeutral(new MaterialDialog.SingleButtonCallback() {
             @Override
             public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                View view = dTitle.getCurrentFocus();
                 if (view != null) {
                     InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -994,4 +1051,8 @@ public class JobOfferDetailActivity extends AppCompatActivity
         super.onResume();
         saveButton = (ActionProcessButton) findViewById(R.id.saveButton);
     }
+
+
+
+
 }

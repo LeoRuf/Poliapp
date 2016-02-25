@@ -228,7 +228,7 @@ public class MessagesFragment extends android.support.v4.app.Fragment   {
                 final Dialog dialog = new Dialog(getActivity(),R.style.CustomDialog);
                 dialog.setContentView(R.layout.dialog_add_chat);
                 dialog.setCanceledOnTouchOutside(true);
-                dialog.setTitle("Add...");
+                dialog.setTitle("Add");
                 dialog.setCancelable(true);
 
                 dialog.findViewById(R.id.newChat).setOnClickListener(new View.OnClickListener() {

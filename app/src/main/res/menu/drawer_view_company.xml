@@ -27,7 +27,7 @@
         android:id="@+id/nav_student_section">
         <item
             android:id="@+id/nav_joboffers"
-            android:icon="@drawable/ic_action_trending_up"
+            android:icon="@drawable/job_offer"
             android:title="My job offers" />
     </group>
     <group android:checkableBehavior="single"

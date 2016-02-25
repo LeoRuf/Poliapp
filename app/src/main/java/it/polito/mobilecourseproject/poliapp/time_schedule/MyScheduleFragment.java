@@ -99,8 +99,9 @@ public class MyScheduleFragment extends android.support.v4.app.Fragment implemen
 
                 if (!timeScheduleFragment.isVisible()) {
 
-                    //TODO: RICONTROLLARE
+
                     FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                     fragmentTransaction.replace(R.id.frame,timeScheduleFragment,"TIMESCHEDULE_FRAGMENT");
                     fragmentTransaction.commit();
 

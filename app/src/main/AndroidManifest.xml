@@ -75,8 +75,8 @@
             android:windowSoftInputMode="stateHidden" />
         <activity
             android:name=".MainActivity"
-            android:configChanges="orientation|screenSize"
-            android:windowSoftInputMode="stateHidden" />
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
 
 
         <activity
@@ -173,7 +173,6 @@
             android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:theme="@style/BlueBackgroundTheme"
             android:name=".utils.imagezoomcrop.ImageCropActivity"
             android:label="Choose a picture" />
         <activity

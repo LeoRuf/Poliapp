@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.RectF;
 import android.net.Uri;
 import android.os.Build;
@@ -81,17 +82,25 @@ public class TimeScheduleFragment extends android.support.v4.app.Fragment{
         // Required empty public constructor
     }
 
+
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
-
-
+    LayoutInflater inflater;
+    ViewGroup container;
+    Bundle savedInstanceState;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
+
         fragmentView= inflater.inflate(R.layout.fragment_time_schedule, container, false);
+
+
+
         FloatingActionButton fab = (FloatingActionButton)getActivity().findViewById(R.id.fab);
 
         searchCardView = (CardView) fragmentView.findViewById(R.id.card_view);
