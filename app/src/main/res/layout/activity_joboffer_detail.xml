@@ -501,4 +501,12 @@ CSS is a true end-to-end organization supporting all business customers; from En
         android:focusable="true"
         android:clickable="true"
 		/>
+	<View
+		android:id="@+id/overlay"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:background="@android:color/transparent"
+		android:clickable="true"
+		android:visibility="gone"/>
+
 </android.support.design.widget.CoordinatorLayout>

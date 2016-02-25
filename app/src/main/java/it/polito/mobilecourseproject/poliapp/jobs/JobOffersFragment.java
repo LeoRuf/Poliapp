@@ -1,13 +1,9 @@
 package it.polito.mobilecourseproject.poliapp.jobs;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
@@ -25,12 +21,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.SearchView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -40,10 +33,8 @@ import com.parse.SaveCallback;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import it.polito.mobilecourseproject.poliapp.AccountManager;
 import it.polito.mobilecourseproject.poliapp.ExternalIntents;
 import it.polito.mobilecourseproject.poliapp.MyUtils;
@@ -52,8 +43,6 @@ import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.TimeManager;
 import it.polito.mobilecourseproject.poliapp.model.JobOffer;
 import it.polito.mobilecourseproject.poliapp.model.User;
-import it.polito.mobilecourseproject.poliapp.noticeboard.AddNoticeActivity;
-import it.polito.mobilecourseproject.poliapp.noticeboard.CategoriesAdapter;
 
 
 public class JobOffersFragment extends android.support.v4.app.Fragment {

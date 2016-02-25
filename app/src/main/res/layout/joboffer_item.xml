@@ -63,10 +63,7 @@
                         android:textColor="@color/myAccentColor"
                         android:text="Microsoft"
                         android:textStyle="bold"
-                        android:textSize="13sp"
-                        android:background="?android:attr/selectableItemBackground"
-                        android:focusable="true"
-                        android:clickable="true" />
+                        android:textSize="13sp"/>
                 <TextView
                     android:id="@+id/location"
                     android:layout_width="wrap_content"
@@ -75,9 +72,7 @@
                     android:textColor="@color/myTextPrimaryColor"
                     android:text="Milan, Italy"
                     android:textSize="13sp"
-                    android:background="?android:attr/selectableItemBackground"
-                    android:focusable="true"
-                    android:clickable="true" />
+                    />
 
                 <TextView
                         android:id="@+id/description"

@@ -1,25 +1,38 @@
 package it.polito.mobilecourseproject.poliapp.jobs;
+import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
+import android.text.TextWatcher;
 import android.text.style.StyleSpan;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.internal.MDButton;
+import com.dd.processbutton.iml.ActionProcessButton;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import it.polito.mobilecourseproject.poliapp.AccountManager;
+import it.polito.mobilecourseproject.poliapp.AsyncTaskWithoutProgressBar;
+import it.polito.mobilecourseproject.poliapp.Connectivity;
 import it.polito.mobilecourseproject.poliapp.ExternalIntents;
 import it.polito.mobilecourseproject.poliapp.R;
 import it.polito.mobilecourseproject.poliapp.model.JobOffer;
@@ -36,8 +49,10 @@ public class JobOfferDetailActivity extends AppCompatActivity
     private boolean isImageHidden;
     private JobOffer jobOffer;
     private boolean addMode=false;
+    private boolean editMode=false;
     CollapsingToolbarLayout collapsingToolbarLayout;
     private User currentUser;
+    private ActionProcessButton saveButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +82,8 @@ public class JobOfferDetailActivity extends AppCompatActivity
         if(getIntent().hasExtra("addMode")) {
             addMode=true;
             jobOffer=new JobOffer();
+            jobOffer.setUser(currentUser);
+            jobOffer.setCompany(currentUser.getCompanyName());
         }
 
         if(!addMode){
@@ -88,6 +105,11 @@ public class JobOfferDetailActivity extends AppCompatActivity
                         ((TextView)findViewById(R.id.companyDescription)).setText(jobOffer.getCompanyDescription());
 
 
+
+                        if (jobOffer.getPublisher().getObjectId().equals(currentUser.getObjectId())) {
+                            editMode=true;
+                        }
+
                         if(jobOffer.getEmailAddress()!=null && !jobOffer.getEmailAddress().trim().isEmpty()) {
                             String emailLabel = "For any additional information, contact us on ";
                             String email = jobOffer.getEmailAddress();
@@ -108,7 +130,7 @@ public class JobOfferDetailActivity extends AppCompatActivity
                                 }
                             });
 
-                        } else {
+                        } else if(!editMode){
                             (findViewById(R.id.emailLabel)).setVisibility(View.GONE);
                             fab.setVisibility(View.GONE);
                         }
@@ -121,8 +143,13 @@ public class JobOfferDetailActivity extends AppCompatActivity
                                 }
                             });
 
-                        } else {
+                        } else if(!editMode){
                             (findViewById(R.id.website)).setVisibility(View.GONE);
+                        }
+
+                        if(editMode) {
+                            fab.setVisibility(View.GONE);
+                            enableEdit();
                         }
 
                     }
@@ -206,6 +233,9 @@ public class JobOfferDetailActivity extends AppCompatActivity
 
     public void enableEdit(){
 
+        TypedValue outValue = new TypedValue();
+        getTheme().resolveAttribute(R.attr.selectableItemBackground, outValue, true);
+
         findViewById(R.id.title_empty).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -241,6 +271,114 @@ public class JobOfferDetailActivity extends AppCompatActivity
             }
         });
 
+        findViewById(R.id.prerequisites_empty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editPrerequisites();
+            }
+        });
+
+        findViewById(R.id.responsibilities_empty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editResponsibilities();
+            }
+        });
+
+        findViewById(R.id.companyDescription_empty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editCompanyDescription();
+            }
+        });
+
+        findViewById(R.id.description_empty).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editDescription();
+            }
+        });
+
+
+        findViewById(R.id.title).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editTitle();
+            }
+        });
+
+        findViewById(R.id.placeOfWork).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editPlaceOfWork();
+            }
+        });
+
+        findViewById(R.id.employmentType).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editEmploymentType();
+            }
+        });
+
+        findViewById(R.id.emailLabel).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editEmail();
+            }
+        });
+
+        findViewById(R.id.website).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editWebsite();
+            }
+        });
+
+        findViewById(R.id.prerequisites).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editPrerequisites();
+            }
+        });
+
+        findViewById(R.id.responsibilities).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editResponsibilities();
+            }
+        });
+
+        findViewById(R.id.companyDescription).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editCompanyDescription();
+            }
+        });
+
+        findViewById(R.id.description).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editDescription();
+            }
+        });
+
+
+
+        findViewById(R.id.title).setBackgroundResource(outValue.resourceId);
+
+        findViewById(R.id.placeOfWork).setBackgroundResource(outValue.resourceId);
+
+        findViewById(R.id.employmentType).setBackgroundResource(outValue.resourceId);
+
+        findViewById(R.id.prerequisites).setBackgroundResource(outValue.resourceId);
+
+        findViewById(R.id.responsibilities).setBackgroundResource(outValue.resourceId);
+
+        findViewById(R.id.companyDescription).setBackgroundResource(outValue.resourceId);
+
+        findViewById(R.id.description).setBackgroundResource(outValue.resourceId);
+
 
         findViewById(R.id.saveButton).setVisibility(View.VISIBLE);
     }
@@ -259,11 +397,334 @@ public class JobOfferDetailActivity extends AppCompatActivity
                             ((TextView)findViewById(R.id.title)).setText(input.toString());
                             jobOffer.setTitle(input.toString());
                         } else {
-                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Job title cannot be empty", Snackbar.LENGTH_LONG);
+                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Job title cannot be empty", Snackbar.LENGTH_LONG).show();
+                        }
+
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
 
                     }
-                }).show();
+                }).onNeutral(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        }).show();
+    }
+
+    public void editResponsibilities(){
+
+        String positiveButtonText = "Edit";
+
+        if(jobOffer.getResponsibilities()==null)
+            positiveButtonText="Add";
+
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Edit responsibilities")
+                .customView(R.layout.dialog_company_edit_responsibilities, true)
+                .positiveText(positiveButtonText)
+                .negativeText(android.R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        EditText responsibilitiesEditText = (EditText) dialog.getCustomView().findViewById(R.id.responsibilitiesEditText);
+
+                        if(responsibilitiesEditText.getText()!=null && !responsibilitiesEditText.getText().toString().isEmpty()){
+                            ((TextView)findViewById(R.id.responsibilities_empty)).setVisibility(View.GONE);
+                            ((TextView)findViewById(R.id.responsibilities)).setVisibility(View.VISIBLE);
+                            ((TextView)findViewById(R.id.responsibilities)).setText(responsibilitiesEditText.getText().toString());
+                            jobOffer.setResponsibilities(responsibilitiesEditText.getText().toString());
+                        } else {
+                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Responsibilities cannot be empty", Snackbar.LENGTH_LONG).show();
+                        }
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+
+                    }
+                }).onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                    }
+                }).build();
+
+        final MDButton positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
+
+        EditText responsibilitiesEditText = (EditText) dialog.getCustomView().findViewById(R.id.responsibilitiesEditText);
+
+        if(jobOffer.getResponsibilities()!=null ){
+            responsibilitiesEditText.setText(jobOffer.getResponsibilities());
+        }
+
+        responsibilitiesEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                positiveAction.setEnabled(s.toString().trim().length() > 0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        dialog.show();
+
+        if(jobOffer.getResponsibilities()==null || jobOffer.getResponsibilities().isEmpty()) {
+
+            positiveAction.setEnabled(false); // disabled by default
+        }
+
+
+    }
+
+    public void editCompanyDescription(){
+
+        String positiveButtonText = "Edit";
+
+        if(jobOffer.getCompanyDescription()==null)
+            positiveButtonText="Add";
+
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Edit company description")
+                .customView(R.layout.dialog_company_edit_company_description, true)
+                .positiveText(positiveButtonText)
+                .negativeText(android.R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        EditText companyDescriptionEditText = (EditText) dialog.getCustomView().findViewById(R.id.companyDescriptionEditText);
+
+                        if(companyDescriptionEditText.getText()!=null && !companyDescriptionEditText.getText().toString().isEmpty()){
+                            ((TextView)findViewById(R.id.companyDescription_empty)).setVisibility(View.GONE);
+                            ((TextView)findViewById(R.id.companyDescription)).setVisibility(View.VISIBLE);
+                            ((TextView)findViewById(R.id.companyDescription)).setText(companyDescriptionEditText.getText().toString());
+                            jobOffer.setCompanyDescription(companyDescriptionEditText.getText().toString());
+                        } else {
+                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Company description cannot be empty", Snackbar.LENGTH_LONG).show();
+                        }
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+
+                    }
+                }).onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                    }
+                }).build();
+
+        final MDButton positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
+
+        EditText companyDescriptionEditText = (EditText) dialog.getCustomView().findViewById(R.id.companyDescriptionEditText);
+
+        if(jobOffer.getCompanyDescription()!=null ){
+            companyDescriptionEditText.setText(jobOffer.getCompanyDescription());
+        }
+
+        companyDescriptionEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                positiveAction.setEnabled(s.toString().trim().length() > 0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        dialog.show();
+
+        if(jobOffer.getCompanyDescription()==null || jobOffer.getCompanyDescription().isEmpty()) {
+
+            positiveAction.setEnabled(false); // disabled by default
+        }
+
+
+    }
+
+    public void editDescription(){
+
+        String positiveButtonText = "Edit";
+
+        if(jobOffer.getDescription()==null)
+            positiveButtonText="Add";
+
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Edit  description")
+                .customView(R.layout.dialog_company_edit_description, true)
+                .positiveText(positiveButtonText)
+                .negativeText(android.R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        EditText descriptionEditText = (EditText) dialog.getCustomView().findViewById(R.id.descriptionEditText);
+
+                        if(descriptionEditText.getText()!=null && !descriptionEditText.getText().toString().isEmpty()){
+                            ((TextView)findViewById(R.id.description_empty)).setVisibility(View.GONE);
+                            ((TextView)findViewById(R.id.description)).setVisibility(View.VISIBLE);
+                            ((TextView)findViewById(R.id.description)).setText(descriptionEditText.getText().toString());
+                            jobOffer.setDescription(descriptionEditText.getText().toString());
+                        } else {
+                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Description cannot be empty", Snackbar.LENGTH_LONG).show();
+                        }
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+
+                    }
+                }).onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                    }
+                }).build();
+
+        final MDButton positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
+
+        EditText descriptionEditText = (EditText) dialog.getCustomView().findViewById(R.id.descriptionEditText);
+
+        if(jobOffer.getDescription()!=null ){
+            descriptionEditText.setText(jobOffer.getDescription());
+        }
+
+        descriptionEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                positiveAction.setEnabled(s.toString().trim().length() > 0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        dialog.show();
+
+        if(jobOffer.getDescription()==null || jobOffer.getDescription().isEmpty()) {
+
+            positiveAction.setEnabled(false); // disabled by default
+        }
+
+
+    }
+
+    public void editPrerequisites(){
+
+        String positiveButtonText = "Edit";
+
+        if(jobOffer.getPrerequisites()==null)
+            positiveButtonText="Add";
+
+        MaterialDialog dialog = new MaterialDialog.Builder(this)
+                .title("Edit prerequisites")
+                .customView(R.layout.dialog_company_edit_prerequisites, true)
+                .positiveText(positiveButtonText)
+                .negativeText(android.R.string.cancel)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+                        EditText prerequisitesEditText = (EditText) dialog.getCustomView().findViewById(R.id.prerequisitesEditText);
+
+                        if(prerequisitesEditText.getText()!=null && !prerequisitesEditText.getText().toString().isEmpty()){
+                            ((TextView)findViewById(R.id.prerequisites_empty)).setVisibility(View.GONE);
+                            ((TextView)findViewById(R.id.prerequisites)).setVisibility(View.VISIBLE);
+                            ((TextView)findViewById(R.id.prerequisites)).setText(prerequisitesEditText.getText().toString());
+                            jobOffer.setPrerequisites(prerequisitesEditText.getText().toString());
+                        } else {
+                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Prerequisites cannot be empty", Snackbar.LENGTH_LONG).show();
+                        }
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+
+                    }
+                }).onNeutral(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+                    }
+                }).build();
+
+        final MDButton positiveAction = dialog.getActionButton(DialogAction.POSITIVE);
+
+        EditText prerequisitesEditText = (EditText) dialog.getCustomView().findViewById(R.id.prerequisitesEditText);
+
+        if(jobOffer.getPrerequisites()!=null ){
+            prerequisitesEditText.setText(jobOffer.getPrerequisites());
+        }
+
+        prerequisitesEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                positiveAction.setEnabled(s.toString().trim().length() > 0);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
+        dialog.show();
+
+        if(jobOffer.getPrerequisites()==null || jobOffer.getPrerequisites().isEmpty()) {
+
+            positiveAction.setEnabled(false); // disabled by default
+        }
+
+
     }
 
     public void editPlaceOfWork(){
@@ -280,11 +741,25 @@ public class JobOfferDetailActivity extends AppCompatActivity
                             ((TextView)findViewById(R.id.placeOfWork)).setText(input.toString());
                             jobOffer.setLocation(input.toString());
                         } else {
-                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Place of work cannot be empty", Snackbar.LENGTH_LONG);
+                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Place of work cannot be empty", Snackbar.LENGTH_LONG).show();
+                        }
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
 
                     }
-                }).show();
+                }).onNeutral(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        }).show();
     }
 
     public void editEmploymentType(){
@@ -301,11 +776,25 @@ public class JobOfferDetailActivity extends AppCompatActivity
                             ((TextView)findViewById(R.id.employmentType)).setText(input.toString());
                             jobOffer.setEmploymentType(input.toString());
                         } else {
-                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Employment type cannot be empty", Snackbar.LENGTH_LONG);
+                            Snackbar.make(findViewById(R.id.coordinatorLayout),"Employment type cannot be empty", Snackbar.LENGTH_LONG).show();
+                        }
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
 
                     }
-                }).show();
+                }).onNeutral(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        }).show();
     }
 
     public void editWebsite(){
@@ -329,8 +818,23 @@ public class JobOfferDetailActivity extends AppCompatActivity
                             jobOffer.setWebsite(null);
                         }
 
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+
                     }
-                }).show();
+                }).onNeutral(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        }).show();
     }
 
     public void editEmail(){
@@ -362,17 +866,132 @@ public class JobOfferDetailActivity extends AppCompatActivity
                         } else {
                             ((TextView) findViewById(R.id.emailLabel_empty)).setVisibility(View.VISIBLE);
                             ((TextView) findViewById(R.id.emailLabel)).setVisibility(View.GONE);
-                            jobOffer.setEmailAddress(null);
+                            jobOffer.setEmailAddress("");
+                        }
+                        View view = JobOfferDetailActivity.this.getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
                         }
 
                     }
-                }).show();
+                }).onNeutral(new MaterialDialog.SingleButtonCallback() {
+            @Override
+            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                View view = JobOfferDetailActivity.this.getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        }).show();
     }
 
 
     public void save(View view){
 
+        boolean error=false;
+
+        if(!Connectivity.hasNetworkConnection(getApplicationContext())){
+            Snackbar sb=Snackbar.make(findViewById(R.id.coordinatorLayout), "No network connection", Snackbar.LENGTH_LONG)
+                    .setAction("Retry", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            save(v);
+                        }
+                    });
+            ((TextView)((ViewGroup)sb.getView()).findViewById(android.support.design.R.id.snackbar_text)).setBackgroundColor(0);
+            sb.show();
+
+
+            return;
+        }
+
+        if(jobOffer.getTitle()==null || jobOffer.getTitle().trim().equals("") ||
+                jobOffer.getLocation()==null || jobOffer.getLocation().trim().equals("") ||
+                jobOffer.getDescription()==null || jobOffer.getDescription().trim().equals("") ||
+                jobOffer.getResponsibilities()==null || jobOffer.getResponsibilities().trim().equals("") ||
+                jobOffer.getPrerequisites()==null || jobOffer.getPrerequisites().trim().equals("") ||
+                jobOffer.getEmploymentType()==null || jobOffer.getEmploymentType().trim().equals("") ||
+                jobOffer.getCompany()==null || jobOffer.getCompany().trim().equals("") ||
+                jobOffer.getCompanyDescription()==null || jobOffer.getCompanyDescription().trim().equals("")
+                ){
+            Snackbar.make(findViewById(R.id.coordinatorLayout), "All fields are mandatory!", Snackbar.LENGTH_LONG).show();
+            error=true;
+        }
+
+        if(((jobOffer.getEmailAddress()==null || jobOffer.getEmailAddress().trim().equals("")) &&
+                (jobOffer.getWebsite()==null || jobOffer.getWebsite().trim().equals("")))){
+            Snackbar.make(findViewById(R.id.coordinatorLayout), "Specify at least one between email and website!", Snackbar.LENGTH_LONG).show();
+            error=true;
+        }
+
+        if(error){
+            saveButton.setProgress(-1);
+            saveButton.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    saveButton.setProgress(0);
+                }
+            }, 2000);
+            return;
+        }
+
+
+        new AsyncTaskWithoutProgressBar(this) {
+
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                saveButton.setProgress(1);
+                saveButton.setEnabled(false);
+                JobOfferDetailActivity.this.findViewById(R.id.overlay).setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            protected String doInBackground(Void... params) {
+                String resultMessage = null;
+
+                try {
+
+                    jobOffer.save();
+
+                } catch (Exception e) {
+                    resultMessage = "Error occurred:\n" + e.getMessage();
+                    e.printStackTrace();
+                }
+                return resultMessage;
+            }
+
+            @Override
+            protected void onPostExecute(String resultMessage) {
+                super.onPostExecute(resultMessage);
+                if(resultMessage==null) {
+                    saveButton.setProgress(100);
+                    onBackPressed(); //TODO: Controllare se l'activity quando si torna indietro
+
+                } else {
+                    saveButton.setProgress(-1);
+                    saveButton.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                           saveButton.setProgress(0);
+                        }
+                    }, 2000);
+                    Snackbar sb=Snackbar.make(findViewById(R.id.coordinatorLayout), "An error occurred", Snackbar.LENGTH_LONG);
+                    ((TextView)((ViewGroup)sb.getView()).findViewById(android.support.design.R.id.snackbar_text)).setBackgroundColor(0);
+                    sb.show();
+                    JobOfferDetailActivity.this.findViewById(R.id.overlay).setVisibility(View.GONE);
+                }
+            }
+
+        }.execute();
+
     }
 
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        saveButton = (ActionProcessButton) findViewById(R.id.saveButton);
+    }
 }
