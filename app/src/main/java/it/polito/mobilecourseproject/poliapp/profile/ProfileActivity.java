@@ -78,6 +78,16 @@ public class ProfileActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        setContentView(R.layout.activity_profile);
+
         AppBarLayout appbarLayout = (AppBarLayout) findViewById(R.id.materialup_appbar);
         mProfileImage = (ImageView) findViewById(R.id.profile_image);
 
@@ -92,13 +102,9 @@ public class ProfileActivity extends AppCompatActivity
         appbarLayout.addOnOffsetChangedListener(this);
         mMaxScrollSize = appbarLayout.getTotalScrollRange();
 
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        setContentView(R.layout.activity_profile);
+
         user = new User(); //SENNO' NON COMPILA XD
 
         imageView = (CircleImageView) findViewById(R.id.profile_image);
