@@ -231,10 +231,10 @@ public class ProfileActivity extends AppCompatActivity
 
         }
 
-        if(user.getProfessionalHeadline()!=null)
+        if(!(user.getProfessionalHeadline()==null || user.getProfessionalHeadline().trim().isEmpty()))
             ((TextView)findViewById(R.id.professionalHeadline)).setText(user.getProfessionalHeadline());
 
-        if(user.getDescription()!=null)
+        if(!(user.getDescription()==null || user.getDescription().trim().isEmpty()))
             ((TextView)findViewById(R.id.aboutMe)).setText(user.getDescription());
         else if(getIntent().hasExtra("userId"))
             findViewById(R.id.aboutMeCardView).setVisibility(View.GONE);
@@ -251,24 +251,24 @@ public class ProfileActivity extends AppCompatActivity
 
         String location="";
 
-        if(user.getAddress()!=null) {
+        if(!(user.getAddress()==null || user.getAddress().trim().isEmpty())) {
             location+=user.getAddress();
             location+="\n";
         }
 
-        if(user.getCity()!=null) {
+        if(!(user.getCity()==null || user.getCity().trim().isEmpty())) {
             location+=user.getCity();
         }
 
-        if(user.getZipCode()!=null){
-            if(user.getCity()!=null)
+        if(!(user.getZipCode()==null || user.getZipCode().trim().isEmpty())) {
+            if(!(user.getCity()==null || user.getCity().trim().isEmpty()))
                 location+=", ";
 
             location+=user.getZipCode();
             location+="\n";
         }
 
-        if(user.getCountry()!=null) {
+        if(!(user.getCountry()==null || user.getCountry().trim().isEmpty())) {
             location+=user.getCountry();
         }
 
@@ -279,12 +279,12 @@ public class ProfileActivity extends AppCompatActivity
         }
 
 
-        if(user.getMobilePhone()!=null)
+        if(!(user.getMobilePhone()==null || user.getMobilePhone().trim().isEmpty()))
             ((TextView)findViewById(R.id.mobilePhone)).setText(user.getMobilePhone());
         else
             findViewById(R.id.mobilephoneWrapper).setVisibility(View.GONE);
 
-        if(user.getEmail()!=null)
+        if(!(user.getEmail()==null || user.getEmail().trim().isEmpty()))
             ((TextView)findViewById(R.id.email)).setText(user.getEmail());
         else
             findViewById(R.id.emailWrapper).setVisibility(View.GONE);
@@ -362,7 +362,7 @@ public class ProfileActivity extends AppCompatActivity
                 @Override
                 public void onClick(View view) {
 
-                    if(user.getEmail()!=null)
+                    if(!(user.getEmail()==null || user.getEmail().trim().isEmpty()))
                         ExternalIntents.sendMail(ProfileActivity.this, user.getEmail(), "Contact "+ user.getFirstName());
                     else
                         ExternalIntents.sendMail(ProfileActivity.this, user.getUsername(), "Contact "+ user.getFirstName());
@@ -377,12 +377,12 @@ public class ProfileActivity extends AppCompatActivity
 
 
 
-    if(user.getSkills()!=null) {
+        if(!(user.getSkills()==null || user.getSkills().trim().isEmpty())) {
             ((TextView)findViewById(R.id.skills)).setText(user.getSkills());
         } else if(getIntent().hasExtra("userId"))
             findViewById(R.id.skillsCardView).setVisibility(View.GONE);
 
-        if(user.getWebsite()!=null) {
+        if(!(user.getWebsite()==null || user.getWebsite().trim().isEmpty())) {
 
             final String website = user.getWebsite();
             findViewById(R.id.website).setOnClickListener(new View.OnClickListener() {
@@ -394,7 +394,7 @@ public class ProfileActivity extends AppCompatActivity
         } else
             findViewById(R.id.website).setVisibility(View.GONE);
 
-        if(user.getLinkedIn()!=null) {
+        if(!(user.getLinkedIn()==null || user.getLinkedIn().trim().isEmpty())) {
 
             final String linkedin = user.getLinkedIn();
             findViewById(R.id.linkedin).setOnClickListener(new View.OnClickListener() {
@@ -406,7 +406,7 @@ public class ProfileActivity extends AppCompatActivity
         } else
             findViewById(R.id.linkedin).setVisibility(View.GONE);
 
-        if(user.getFacebook()!=null) {
+        if(!(user.getFacebook()==null || user.getFacebook().trim().isEmpty())) {
 
             final String facebook = user.getFacebook();
             findViewById(R.id.facebook).setOnClickListener(new View.OnClickListener() {
